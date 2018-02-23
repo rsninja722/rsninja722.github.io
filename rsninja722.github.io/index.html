@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="utf-8"/>
+	<head>
+		<title>Number Clicker</title>
+		<style>
+			.smallp {
+				margin: 0px;
+			}
+			html {
+				color: #ffffff;
+				background-color: #00aa00;
+				text-align: center;
+				font-family: Verdana, Geneva, sans-serif;
+			}
+			.boostbutton {
+			background-color: #bfbfbf;
+			border: 2px solid #ffffff;
+			color: white;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 32px;
+			cursor: pointer;
+			border-radius: 8px;
+			box-shadow: 0px 9px grey;
+			}
+			.boostbutton:active {
+				background-color: #bfbfbf;
+				box-shadow: 0 5px grey;
+  				transform: translateY(4px);
+			}
+			.normalbutton {
+			background-color: #4f4f4f;
+			border: 2px solid #ffffff;
+			color: #d6d6d6;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
+			cursor: pointer;
+			border-radius: 2px;
+			}
+			.onebutton {
+			background-color: #006eff;
+			border: 2px solid #ffffff;
+			color: #d6d6d6;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
+			cursor: pointer;
+			border-radius: 2px;
+			}
+			.twobutton {
+			background-color: #9200d1;
+			border: 2px solid #ffffff;
+			color: #d6d6d6;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
+			cursor: pointer;
+			border-radius: 2px;
+			}
+			.threebutton {
+			background-color: #31a800;
+			border: 2px solid #ffffff;
+			color: #d6d6d6;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 12px;
+			cursor: pointer;
+			border-radius: 2px;
+			}
+			.scrolldiv {
+				overflow-y: scroll;
+				position:fixed;
+				border: 5px solid #ffffff;
+			}
+			.normaldiv {
+				position:fixed;
+				border: 5px solid #ffffff;
+				display:inline-block;
+				padding: 5px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<script>
+		//nps costs
+			var nps1cost = 10;
+			var nps2cost = 150;
+			var nps3cost = 1000;
+			var nps4cost = 12500;
+			var nps5cost = 75000;
+			var nps6cost = 250000;
+			var nps7cost = 1000000;
+			var nps8cost = 10000000;
+		//needed stuff	
+			var number = 0;
+			var boost = 0;
+			var nps = 1;
+			var timevar = 0;
+		//upgradeables
+			var boostincrmt = 0.01;
+			var boostdcrs = 20;
+			var npsmulti = 1;
+		</script>
+		<h1 style="text-align: left;">Elon Idle</h1>
+		<div class="normaldiv" style="left:0px; padding: 0px 0px 15px 0px; width: 250px;">
+			<h2>Lizard Producer</h2>
+			<button class="boostbutton" onClick="boostpush()">+Lizard</button>
+		</div>
+		
+		
+		<div class="scrolldiv"  style="left: 0px; top: 280px; width: 250px; height: 300px;">
+			<h3>UPGRADES</h3>
+			<div id="upone">
+				<p class="smallp">cost: 100</p>
+				<button class="onebutton"><a herf="#" onClick="upgrade(1,100,1,1);">+ 1 Lizard per click</a></button>
+				<br><br>
+			</div>
+			<div id="uptwo">
+				<p class="smallp">cost: 250</p>
+				<button class="twobutton"><a herf="#" onClick="upgrade(2,250,5,2);">+ boost decrease time</a></button>
+				<br><br>
+			</div>
+			<div id="upthree">
+				<p class="smallp">cost: 500</p>
+				<button class="threebutton"><a herf="#" onClick="upgrade(3,500,0.05,3);">5% nps increase</a></button>
+				<br><br>
+			</div>
+			<div id="upfour">
+				<p class="smallp">cost: 1500</p>
+				<button class="onebutton"><a herf="#" onClick="upgrade(1,1500,1,4);">+ 1 Lizard per click</a></button>
+				<br><br>
+			</div>
+			<div id="upfive">
+				<p class="smallp">cost: 7000</p>
+				<button class="threebutton"><a herf="#" onClick="upgrade(3,7000,0.1,5);">10% nps increase</a></button>
+				<br><br>
+			</div>
+			<div id="upsix">
+				<p class="smallp">cost: 15000</p>
+				<button class="twobutton"><a herf="#" onClick="upgrade(2,15000,10,6);">+ boost decrease time</a></button>
+				<br><br>
+			</div>
+			<div id="upseven">
+				<p class="smallp">cost: 50000</p>
+				<button class="onebutton"><a herf="#" onClick="upgrade(1,50000,1,7);">+ 1 Lizard per click</a></button>
+				<br><br>
+			</div>
+			<div id="upeight">
+				<p class="smallp">cost: 100000</p>
+				<button class="threebutton"><a herf="#" onClick="upgrade(3,100000,0.05,8);">5% nps increase</a></button>
+				<br><br>
+			</div>
+			<div id="upnine">
+				<p class="smallp">cost: 500000</p>
+				<button class="onebutton"><a herf="#" onClick="upgrade(1,500000,1,9);">+ 1 Lizard per click</a></button>
+				<br><br>
+			</div>
+		</div>
+		
+		<div class="normaldiv" style="left: 270px; width:300px;">
+			<p style="color: #00ff15;">Lizards:</p>
+			<p style="color: #00ff15;" id="numbervalue"></p>
+			<p id="basenpsvalue"></p>
+			<p id="boostednpsvalue"></p>
+			<br>
+			<p style="color: #d1d1d1;" id="bstincrmnt"></p>
+			<p style="color: #d1d1d1;" id="bstdcrs"></p>
+			<p style="color: #d1d1d1;" id="npsbst"></p>
+		</div>
+		
+		
+		<div class="scrolldiv" style="left:600px; width:250px; height:400px;">
+			<h3>Lizards Per Second Increaser</h3>
+			<div id="npsone">
+				<p class="smallp" id="npsonecost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps1cost, 0.5, 1)">+ 0.5 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npstwo">
+				<p class="smallp" id="npstwocost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps2cost, 1, 2)">+ 1 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npsthree">
+				<p class="smallp" id="npsthreecost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps3cost, 5, 3)">+ 5 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npsfour">
+				<p class="smallp" id="npsfourcost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps4cost, 10, 4)">+ 10 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npsfive">
+				<p class="smallp" id="npsfivecost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps5cost, 25, 5)">+ 25 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npssix">
+				<p class="smallp" id="npssixcost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps6cost, 50, 6)">+ 50 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npsseven">
+				<p class="smallp" id="npssevencost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps7cost, 100, 7)">+ 100 lps</a></button>
+			</div>
+			<br><br>
+			<div id="npseight">
+				<p class="smallp" id="npseightcost"></p>
+				<button class="normalbutton"><a herf="#" onClick="npsupgrade(nps8cost, 10000, 8)">+ 10000 lps</a></button>
+			</div>
+			<br><br>
+		</div>
+		<script>
+			document.getElementById("numbervalue").innerHTML = number;
+			document.getElementById("basenpsvalue").innerHTML = "base lps: "+Math.round((nps * npsmulti) * 100) / 100;
+			document.getElementById("boostednpsvalue").innerHTML = "boosted lps: "+Math.round((nps * boost) * 100) / 100;
+			document.getElementById("bstincrmnt").innerHTML = "Lizards per click: " + boost;
+			document.getElementById("npsbst").innerHTML = "nps multiplier: " + Math.round((npsmulti - 1) * 100) + "%";
+			document.getElementById("npsonecost").innerHTML = "cost: "+nps1cost;
+			document.getElementById("npstwocost").innerHTML = "cost: "+nps2cost;
+			document.getElementById("npsthreecost").innerHTML = "cost: "+nps3cost;
+			document.getElementById("npsfourcost").innerHTML = "cost: "+nps4cost;
+			document.getElementById("npsfivecost").innerHTML = "cost: "+nps5cost;
+			document.getElementById("npssixcost").innerHTML = "cost: "+nps6cost;
+			document.getElementById("npssevencost").innerHTML = "cost: "+nps7cost;
+			document.getElementById("npseightcost").innerHTML = "cost: "+nps8cost;
+		
+			
+			document.getElementById("upone").style.display = 'none';
+			document.getElementById("uptwo").style.display = 'none';
+			document.getElementById("upthree").style.display = 'none';
+			document.getElementById("upfour").style.display = 'none';
+			document.getElementById("upfive").style.display = 'none';
+			document.getElementById("upsix").style.display = 'none';
+			document.getElementById("upseven").style.display = 'none';
+			document.getElementById("upeight").style.display = 'none';
+			document.getElementById("upnine").style.display = 'none';
+			document.getElementById("aboutp").style.display = 'none';
+			
+			
+			
+			function boostpush() {
+                number += 1 + boost;
+                document.getElementById("numbervalue").innerHTML = number;
+				
+			}
+			function boostdecrease(){ 
+				if(timevar > 0) {
+					timevar -= 1;
+				}
+				if(timevar == 0 && boost > 1) {
+					boost =	Math.round((boost -= 0.01) * 100) / 100;
+				}
+				document.getElementById("boostvalue").innerHTML = "×"+boost;
+			}
+			function update() {
+				number = Math.round((number + nps * boost * npsmulti) * 100) / 100;
+				document.getElementById("numbervalue").innerHTML = number;
+				document.getElementById("boostednpsvalue").innerHTML = "boosted nps: "+Math.round((nps * boost * npsmulti) * 100) / 100;
+			}
+			function upgrade(uptype,cst,increse,hid) {
+				if(number > cst) {
+					if(uptype == 1) {
+						number = Math.round((number - cst) * 100) / 100;
+						boost += increse;
+						document.getElementById("bstincrmnt").innerHTML = "lizards per click: " + (boost + 1);
+						cheack(hid);
+					}
+					if(uptype == 2) {
+						number = Math.round((number - cst) * 100) / 100;
+						boostdcrs += increse;
+						document.getElementById("bstdcrs").innerHTML = "seconds before boost decrease: " + Math.round(boostdcrs / 5);
+						cheack(hid);
+					}
+					if(uptype == 3) {
+						number = Math.round((number - cst) * 100) / 100;
+						npsmulti += increse;
+						document.getElementById("npsbst").innerHTML = "nps multiplier: " + Math.round((npsmulti - 1) * 100) + "%";
+						cheack(hid);
+						document.getElementById("basenpsvalue").innerHTML = "base nps: "+Math.round((nps * npsmulti) * 100) / 100;
+						
+					}
+				document.getElementById("numbervalue").innerHTML = number;
+				}
+			}
+			
+			function npsupgrade(cost,increase,u) {
+				if(number > cost) {
+					nps += increase;
+					number = Math.round((number - cost) * 100) / 100;
+					if(u == 1) {
+					nps1cost = Math.round(cost * 1.15);
+					document.getElementById("npsonecost").innerHTML = "cost: "+nps1cost;
+					}
+					if(u == 2) {
+					nps2cost = Math.round(cost * 1.15);
+					document.getElementById("npstwocost").innerHTML = "cost: "+nps2cost;
+					}
+					if(u == 3) {
+					nps3cost = Math.round(cost * 1.15);
+					document.getElementById("npsthreecost").innerHTML = "cost: "+nps3cost;
+					}
+					if(u == 4) {
+					nps4cost = Math.round(cost * 1.15);
+					document.getElementById("npsfourcost").innerHTML = "cost: "+nps4cost;
+					}
+					if(u == 5) {
+					nps5cost = Math.round(cost * 1.15);
+					document.getElementById("npsfivecost").innerHTML = "cost: "+nps5cost;
+					}
+					if(u == 6) {
+					nps6cost = Math.round(cost * 1.15);
+					document.getElementById("npssixcost").innerHTML = "cost: "+nps6cost;
+					}
+					if(u == 7) {
+					nps7cost = Math.round(cost * 1.15);
+					document.getElementById("npssevencost").innerHTML = "cost: "+nps7cost;
+					}
+					if(u == 8) {
+					nps8cost = Math.round(cost * 1.15);
+					document.getElementById("npseightcost").innerHTML = "cost: "+nps8cost;
+					}
+					document.getElementById("basenpsvalue").innerHTML = "base nps: "+Math.round((nps * npsmulti) * 100) / 100;
+					document.getElementById("numbervalue").innerHTML = number;
+				}
+			}
+			function cheack(u) {
+				if (u == 1) {
+					document.getElementById("upone").style.display = 'none';
+				}
+				if (u == 2) {
+					document.getElementById("uptwo").style.display = 'none';
+				}
+				if (u == 3) {
+					document.getElementById("upthree").style.display = 'none';
+				}
+				if (u == 4) {
+					document.getElementById("upfour").style.display = 'none';
+				}
+				if (u == 5) {
+					document.getElementById("upfive").style.display = 'none';
+				}
+				if (u == 6) {
+					document.getElementById("upsix").style.display = 'none';
+				}
+				if (u == 7) {
+					document.getElementById("upseven").style.display = 'none';
+				}
+				if (u == 8) {
+					document.getElementById("upeight").style.display = 'none';
+				}
+				if (u == 9) {
+					document.getElementById("upnine").style.display = 'none';
+				}
+			}
+			
+			function test() {
+				if(number > 50 && boostincrmt < 0.02) {
+					document.getElementById("upone").style.display = 'block';
+				}
+				if(number > 200 && boostdcrs < 25) {
+					document.getElementById("uptwo").style.display = 'block';
+				}
+				if(number > 400 && npsmulti < 1.05) {
+					document.getElementById("upthree").style.display = 'block';
+				}
+				if(number > 1100 && boostincrmt < 0.03) {
+					document.getElementById("upfour").style.display = 'block';
+				}
+				if(number > 5000 && npsmulti < 1.15) {
+					document.getElementById("upfive").style.display = 'block';
+				}
+				if(number > 10000 && boostdcrs < 35) {
+					document.getElementById("upsix").style.display = 'block';
+				}
+				if(number > 35000 && boostincrmt < 0.04) {
+					document.getElementById("upseven").style.display = 'block';
+				}
+				if(number > 75000 && npsmulti < 1.20) {
+					document.getElementById("upeight").style.display = 'block';
+				}
+				if(number > 250000 && boostincrmt < 0.05) {
+					document.getElementById("upnine").style.display = 'block';
+				}
+			}
+			
+			setInterval(update,1000);
+			setInterval(boostdecrease,250);
+			setInterval(test,1000);
+			
+			</script>
+	</body>
+</html>
