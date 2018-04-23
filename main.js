@@ -1,16 +1,16 @@
-var colors = ["blue","red","green","yellow","pink","orange"];
+var colors = ["blue","purple","green","yellow","pink","orange"];
 var muchmany = 25
 var particles = [];
 for(var i = 0;i<muchmany;i++){
     const x = randomNumber(30,400);
     const y = randomNumber(30,400);
     const angl = randomNumber(0,359);
-    const speed = 1//randomNumber(1,3,10);
-    particles.push(new circleExample(x,y,randomNumber(10,25),angl,speed,"blue"));
+    const speed = 3//randomNumber(1,3,10);
+    particles.push(new circleExample(x,y,randomNumber(15,20),angl,speed,colors[randomNumber(0,5)]));
 }
-particles.push(new circleExample(100,100,25,70,1,"red"));
-particles.push(new circleExample(200,200,20,45,1,"yellow"));
-/*
+//particles.push(new circleExample(250,250,25,70,1,"purple"));
+//particles.push(new circleExample(200,200,20,45,1,"yellow"));
+
 for(var j = 0; j <muchmany; j++) {
     for(var i = 0;i<muchmany;i++){
         if(particles[j] == particles[i]) {continue;}

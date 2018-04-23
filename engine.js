@@ -7,7 +7,7 @@ canvas.addEventListener('mousemove', function(evt) {
       }, false);
 
 
-var canvasUpdate = setInterval(updateCanvas,gameRefreashSpeed);
+//var canvasUpdate = setInterval(updateCanvas,gameRefreashSpeed);
 
 var secon = setInterval(secfun,1000);
 var framesg = 0;
@@ -22,7 +22,7 @@ function secfun() {
 
 
 
-
+requestAnimationFrame(updateCanvas);
 
 //-----------------------------------------------------main loop-----------------------------------------------------
 function updateCanvas() {
@@ -36,7 +36,7 @@ function updateCanvas() {
     };
     ctx.fillText(particles[5].ctype + particles[2].ctype, canvas.width/2, canvas.height/2);
     framesg+=1;
-
+    requestAnimationFrame(updateCanvas);
 }
 
 
@@ -113,6 +113,8 @@ function drawCircle(x,y,r,fillColor,lineColor,lineWidth) {
 }
 function drawBasicCircle(x,y,r,fillColor) {
     ctx.beginPath();
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = fillColor;
     ctx.arc(x, y, r, 0, 2 * Math.PI, false);
     ctx.fillStyle = fillColor;
     ctx.fill();
@@ -159,11 +161,11 @@ function circleBounce(object1,object2) {
         var stored1x = object1.velocity.x;
         var stored1y = object1.velocity.y;
         var stored1speed = object1.speed;
-        object1.velocity.x = object2.velocity.x;
-        object1.velocity.y = object2.velocity.y;
+        object1.velocity.x = object2.velocity.x * 0.99;
+        object1.velocity.y = object2.velocity.y * 0.99;
         object1.speed = object2.speed;
-        object2.velocity.x = stored1x;
-        object2.velocity.y = stored1y;
+        object2.velocity.x = stored1x * 0.99;
+        object2.velocity.y = stored1y * 0.99;
         object2.speed = stored1speed;
         return true;
 	} else {
@@ -345,6 +347,7 @@ function circleExample(x,y,r,angl,speed,colorr) {
         //this.x += 1;
         this.x += this.velocity.x * this.speed;
         this.y -= this.velocity.y * this.speed;
+        this.velocity.y -= 0.05;
     }
     this.update = function() {
         var asuhf = 0;
@@ -367,10 +370,10 @@ function circleExample(x,y,r,angl,speed,colorr) {
         } 
         if(asuhf == 1) {
             //drawRect(this.x,this.y,50,50,"green");
-            drawBasicCircle(this.x,this.y,this.r,this.colorr);
+            drawBasicCircle(this.x,this.y,this.r,"red");
         } else {
             //drawRect(this.x,this.y,50,50,this.colorr);
-            drawBasicCircle(this.x,this.y,this.r,"red");   
+            drawBasicCircle(this.x,this.y,this.r,this.colorr);   
         }
     }
     return this;
