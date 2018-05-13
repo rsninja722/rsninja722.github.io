@@ -1,13 +1,224 @@
-<!DOCTPYE HTML>
+<!DOCTYPE HTML>
 <html>
-    <head>
-        <title>test</title>
-    </head>
-    <body>
-          
-        <p id="asd" style="position:absolute; left:1250px;">hi</p>
-        <canvas id="myCanvas" width="500" height="500" style="border:1px solid grey; background-color: rgb(0, 0, 0); position:absolute; left:1px;"</canvas>
-        <script type="text/javascript" src="engine.js"></script> 
-        <script type="text/javascript" src="main.js"></script>
-    </body>
+	<head>
+		<title>space shooter</title>
+		<link rel="icon" type="image/gif" href="ship_icon.png" />
+	</head>
+	<body onLoad="keypresses()">
+	<div id="canvasid" style="position: absolute; left: 100px;">
+		<canvas id="myCanvas" width="800" height="600" style="border:1px solid grey; background-color: black;"</canvas>
+	</div>
+	<p style="position: absolute; top: 600px;">controls: arrow keys - move</p>
+	<p style="position: absolute; top: 615px;">          space - shoot</p>
+	<p style="position: absolute; top: 630px;">Keep the ships from reaching the bottem</p>
+	<img id="shipPic" src="ship.png" style="display: none">
+	<img id="enemy1pic" src="enemy1.png" style="display: none">
+	<img id="enemy2pic" src="enemy2.png" style="display: none">
+	<img id="enemy3pic" src="enemy3.png" style="display: none">
+	<img id="bullet1pic" src="bullet1.png" style="display: none">
+        
+	<script>
+    var canh = 600;
+    var canw = 800;
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	var img = document.getElementById("shipPic");
+	var enmypic1 = document.getElementById("enemy1pic");
+	var enmypic2 = document.getElementById("enemy2pic");
+	var enmypic3 = document.getElementById("enemy3pic");
+    var shipbullet1 = document.getElementById("bullet1pic");
+	var colors = ["green","yellow","red"];
+	var cordsX = [];
+	var cordsY = [];
+    var angls = [];
+    var cordsMoveX = [];
+    var cordsMoveY = [];
+	var enmyX = [];
+	var enmyY = [];
+	var enmyType = [];
+	var enmyHp = [];
+	var shipX = canw/2;
+	var shipY = canh-50;
+	var cooldown = 0;
+	var currentUpgrade = 27;
+	var	bposMove = [0,4,-4,0,0,8,-8,0,0,12,-12,0,0,16,-16,25,-25,35,-35,50,-50,0,0,60,-60,70,-70];
+	var	bpos = [0,12,-12,3,-3,15,-15,6,-6,18,-18,9,-9,21,-21,24,-24,27,-27,30,-30,39,-39,40,-40,41,-41];
+	var difficulty = 1;
+	var timer = 100;
+	var crntTime = 0;
+	var dmg = 1;
+	var bsize = 1;
+	var gmovrtime = 0;
+	function upgrade() {
+		if(currentUpgrade < bpos.length) {
+			currentUpgrade += 2;
+		} else {
+			dmg++;
+			if(bsize==1) {bsize=2;}
+		}
+	}
+	function keypresses() {
+		window.addEventListener('keydown', function (e) {
+            myCanvas.keys = (myCanvas.keys || []);
+            myCanvas.keys[e.keyCode] = true;
+        })
+        window.addEventListener('keyup', function (e) {
+            myCanvas.keys[e.keyCode] = false; 
+        })
+	}
+    function setAngle(angle) {
+        return angle * (Math.PI / 180);
+    }
+	
+	
+	center();
+	window.addEventListener('resize', function(event){
+		center();
+	});
+	function center() {
+		x = ((window.innerWidth / 2) - (document.getElementById("canvasid").clientWidth / 2)) + "px";
+		document.getElementById("canvasid").style.left = x;
+	}
+	function draw(x,y,w,h,color) {
+		ctx.fillStyle = color;
+		ctx.fillRect(x,y,w,h);
+	}
+    function drawRectRotate(x,y,w,h,color,angl) {
+        ctx.setTransform(1, 0, 0, 1, x, y);
+        ctx.rotate(angl);
+        ctx.fillStyle = color;
+        ctx.fillRect(-w / 2,-h / 2,w,h);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }   
+	function drawPicRotate(x,y,w,h,angl,pic) {
+		ctx.setTransform(bsize, 0, 0, bsize, x, y);
+        ctx.rotate(angl);
+        ctx.drawImage(pic,-w/2,-h/2);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    function randomNumber(min,max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }   
+	function spawnEnemy() {
+		if(crntTime == 0) {
+			var tempType = Math.floor((Math.random() * 3) + 1);
+			enmyX.push(Math.floor((Math.random() * (canw - 16)) + 1));
+			enmyY.push(0);
+			enmyType.push(tempType);
+			enmyHp.push(tempType * 5);
+                if(Math.floor((Math.random() * 100) + 1) == 57) {
+                    enmyX.push(Math.floor((Math.random() * (canw - 16)) + 1));
+                    enmyY.push(0);
+                    enmyType.push(4);
+                    enmyHp.push(150*(currentUpgrade/2)*(dmg/2));
+                }
+			crntTime = timer;
+		}
+		crntTime -= 1;
+	}
+	function refresh() {
+		draw(0,0,canw,canh,"black");
+		//enemy movement and collision
+		ctx.textAlign = "center";
+		ctx.font = "12px Arial";
+		//ctx.fillStyle = "white";
+		for(var i=0;i<enmyX.length;i++) {
+			if(enmyType[i]==1) {enmyY[i]+=3;};
+			if(enmyType[i]==2) {enmyY[i]+=2;};
+			if(enmyType[i]==3) {enmyY[i]+=1;};
+            if(enmyType[i]==4) {enmyY[i]+=0.25;};
+			var txtcolor = enmyType[i] / enmyHp[i];
+            if(enmyType[i]!=4){
+            if(txtcolor > 0) {draw(enmyX[i],enmyY[i]+16,enmyHp[i],3,"#04ff00");}
+			if(txtcolor > 0.3) {draw(enmyX[i],enmyY[i]+16,enmyHp[i],3,"#fffa00");}
+			if(txtcolor > 0.6) {draw(enmyX[i],enmyY[i]+16,enmyHp[i],3,"#ff1500");}
+            }
+            if(enmyType[i]==4){if(txtcolor > 0) {draw(enmyX[i],enmyY[i]+116,(enmyHp[i]/(currentUpgrade/2)/(dmg/2)),3,"#04ff00");}}
+			if(enmyHp[i]<1) {enmyX.splice(i,1);enmyY.splice(i,1);enmyType.splice(i,1);enmyHp.splice(i,1);if(Math.floor((Math.random() * 5) + 1) == 2) {upgrade();}i-=1;};
+			if(enmyY[i]>canh) {enmyX.splice(i,1);enmyY.splice(i,1);enmyType.splice(i,1);enmyHp.splice(i,1);reset();i-=1;};
+			if(enmyType[i]==1) {ctx.drawImage(enmypic1,enmyX[i],enmyY[i]);};
+			if(enmyType[i]==2) {ctx.drawImage(enmypic2,enmyX[i],enmyY[i]);};
+			if(enmyType[i]==3) {ctx.drawImage(enmypic3,enmyX[i],enmyY[i]);};
+            if(enmyType[i]==4) {draw(enmyX[i],enmyY[i],100,100,"#ffffff");};
+		}
+		//bullet movement and collision
+		for(var i=0;i<cordsX.length;i++) {
+				
+			cordsY[i] -= 10 * cordsMoveY[i];
+			cordsX[i] += 10 * cordsMoveX[i];
+			for(var q=0;q<enmyX.length;q++) {
+				var x = cordsX[i] - enmyX[q];
+				var y =	cordsY[i] - enmyY[q];
+				if(x<16&&x>-2&&y<16&&y>0) {enmyHp[q] -= dmg;cordsX.splice(i,1);cordsY.splice(i,1);cordsMoveX.splice(i,1);cordsMoveY.splice(i,1);angls.splice(i,1);i-=1;};
+                if(enmyType[q] == 4) {
+                    if(x<102&&x>-2&&y<100&&y>0) {enmyHp[q] -= dmg;cordsX.splice(i,1);cordsY.splice(i,1);cordsMoveX.splice(i,1);cordsMoveY.splice(i,1);angls.splice(i,1);i-=1;}; 
+                }
+			}
+			if(cordsX[i]>canw || cordsX[i]<0 || cordsY[i]<0) {cordsX.splice(i,1);cordsY.splice(i,1);cordsMoveX.splice(i,1);cordsMoveY.splice(i,1);angls.splice(i,1);i-=1;};
+			//drawRectRotate(cordsX[i],cordsY[i],bsize	,7,"#ffee00",angls[i]);
+			drawPicRotate(cordsX[i],cordsY[i],5,9,angls[i],shipbullet1);
+            //ctx.drawImage(shipbullet1,cordsX[i],cordsY[i]);
+		}
+		//movement and shooting
+		if (myCanvas.keys && myCanvas.keys[37]) {if(shipX>0){shipX -= 5;}}
+		if (myCanvas.keys && myCanvas.keys[39]) {if(shipX<(canw-32)){shipX += 5;}}
+		if (myCanvas.keys && myCanvas.keys[38]) {if(shipY>0){shipY -= 5;}}
+		if (myCanvas.keys && myCanvas.keys[40]) {if(shipY<(canh-25)){shipY += 5;}}
+		if (cooldown == 0) { 
+			if (myCanvas.keys && myCanvas.keys[32]) {
+				for(var i=0;i<currentUpgrade;i++) {
+					cordsY.push(shipY);
+					cordsX.push(shipX + 14 + bpos[i]);
+                    cordsMoveX.push(Math.sin(setAngle(bposMove[i])));
+                    cordsMoveY.push(Math.cos(setAngle(bposMove[i])));
+                    angls.push(setAngle(bposMove[i]));
+				}
+			cooldown = 5;
+			}
+		}
+		if(cooldown != 0) {cooldown -= 1};
+		ctx.drawImage(img,shipX,shipY);
+	}
+	function timerset() {
+		if(timer!=1){timer--;}
+	}
+	function reset() {
+		cordsX = [];
+		cordsY = [];
+        angls = [];
+		cordsMoveX = [];
+        cordsMoveY = [];
+		enmyX = [];
+		enmyY = [];
+		enmyType = [];
+		enmyHp = [];
+		shipX = canw/2;
+		shipY = canh-50;
+		cooldown = 0;
+		currentUpgrade = 1;
+		bsize = 1;
+		//bposMove = [0,0.5,-0.5,0,0,1,-1,0,0,1.5,-1.5,0,0,2,-2,2.5,-2.5,4,-4,6,-6];
+		//bpos = [0,12,-12,3,-3,15,-15,6,-6,18,-18,9,-9,21,-21,24,-24,27,-27,30,-30];
+		difficulty = 1;
+		timer = 1999;
+		crntTime = 0;
+		dmg = 1;
+		size = 2;
+		gmovrtime = 120;
+	}
+	function gameOver() {
+		if(gmovrtime > 0) {
+		ctx.font = "30px Arial Black";
+		ctx.fillStyle = "white";
+		ctx.textAlign = "center";
+		ctx.fillText("You Lose", canvas.width/2, canvas.height/2);
+		}
+		if(gmovrtime > 0) {gmovrtime -= 1;}
+	}
+	setInterval(refresh,16);
+	setInterval(spawnEnemy,1);
+	setInterval(timerset,50);
+	setInterval(gameOver,16); 
+	</script>
+	</body>
 </html>
