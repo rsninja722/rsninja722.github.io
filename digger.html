@@ -1,0 +1,272 @@
+<!DOCTPYE HTML>
+<html>
+    <head>
+        <title>digger</title>
+        <link rel="icon" type="image/gif" href="digger.png" />
+    </head>
+    <body>
+        <h4 id="hecc" style="font-family: Verdana;">Arrow Keys - movement<br>ctrl+Arrowkeys - fastmovement<br>1 - buy fuel at shop<br>2 - upgrade capacity at shop<br>3 - upgrade drill at shop<h5>The game can be physically expanded by going too far in one direction</h5></h4>
+        <canvas id="myCanvas2" width="400" height="600" style="border:1px solid grey; background-color: white;"></canvas>
+            <nav>
+                    <ul>
+                    <li>
+                    <a href="index.html">Space Shooter</a></li>
+                    <li><strong>Strategic Digger</strong></li>
+                    <li><a href="5number idle.html">crappy clicker game</a></li>
+                    </ul>
+                </nav>
+			  
+        <script>
+        var gameRefreashSpeed = 10;
+            var canvas2 = document.getElementById("myCanvas2");
+            var ctx2 = canvas2.getContext("2d");
+            //bounce if on edge
+            function ifOnEdgeBounce(object) {
+                if(object.x > canvas2.width - object.w || object.x < 0) {
+                    var direction =  object.angl / Math.PI * 180;
+                    object.angl = setAngle(direction * -1);
+                }
+                if(object.y > canvas2.height - object.h || object.y < 0) {
+                var direction =  object.angl / Math.PI * 180;
+                    object.angl = setAngle(180 - direction);
+                }
+            }
+            //set angle with degrees
+            function setAngle(number) {
+                return number * Math.PI / 180;
+            }
+            //box collition
+            function collideBox(object1,object2) {
+                if(object1.x + object1.w >= object2.x && 
+                   object1.x <= object2.x + object2.w &&
+                   object1.y + object1.h >= object2.y && 
+                   object1.y <= object2.y + object2.h) {
+                       return true;
+                   } else {
+                       return false;
+                   }
+            }
+            function randnum(min,max) {
+                if(arguments[2] == undefined) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                } else {
+                    return (Math.floor(((Math.random() * (max - min + 1)) + min) * arguments[2])) / arguments[2];
+                }
+            }
+            </script> 
+        <script>
+var kys = [],yep = false;
+for(var i=0;i<221;i++) {
+    kys.push(1);
+}
+function keypresses() {
+    window.addEventListener('keydown', function (e) {
+        e.preventDefault();
+        if(kys[e.keyCode] == 0) { kys[e.keyCode] = -1;}
+        if(kys[e.keyCode] == 1) {kys[e.keyCode] = 0;}
+        yep = true;
+    })
+    window.addEventListener('keyup', function (e) {
+        kys[e.keyCode] = 1;
+    })
+}
+keypresses();
+document.getElementById("hecc").style.position = "absolute";
+var world = [];
+var long = [];
+var wwidth = canvas2.width/10;
+var wheight = canvas2.height/10;
+for(var i=0;i<wheight;i++) {
+    world[i] = new Array();
+}
+for(var j=0;j<wheight;j++) {
+    for(var i=0;i<wwidth;i++) {
+        world[j].push(0);
+    }
+}
+generate(12,13,2,1);
+generate(13,32,1,1);
+generate(30,32,2,3);
+generate(32,60,1,3);
+generate(17,60,20,4);
+generate(35,60,35,5);
+generate(40,60,55,6);
+/*
+    0 = air
+    1 = dirt
+    2 = dirt wall
+    3 = stone
+    4 = coal
+    5 = iron
+    6 = diamonds
+    7 = stone wall
+*/
+var colors = ["#649ffc", "#a05120", "#51280e", "#9b928b", "#2b1507", "#dfe2ce", "#00f6ff", "#47433f"];
+var minealbe = [false,false,false,false,true,true,true,false]
+var player = new drill();
+var nope = true;
+var counter = 0;
+var buildingpos = 1;
+var shop = false,canbuy=false;
+var prices = {fuel:20,capacity:20,drill:30};
+requestAnimationFrame(update);
+function update() {
+    counter++;if(counter==15){counter=9;}
+    if(player.fuel<=0) {reset();}
+    var move = {x:0,y:0,lol:0};
+    for(var i=0;i<wheight;i++){
+        for(var j=0;j<wwidth;j++){
+            if(!(i<window.pageYOffset/10||j<window.pageXOffset/10||i>window.pageYOffset/10+window.innerHeight/10||j>window.pageXOffset/10+window.innerWidth/10)) {
+                draw(j*10,i*10,10,10,colors[world[i][j]]);
+            }
+        }
+    }
+    if(nope){
+        player.move();
+        
+        nope = false;
+    }
+    if(yep) {
+        canbuy=true;
+        nope = yep = false;
+        if(!nope) { nope = true;}
+    }
+    if(!move.x
+        &&!move.y
+        &&counter==14&&player.dy<wheight-1
+        &&(world[player.dy+1][player.dx]==2
+        ||world[player.dy+1][player.dx]==7)) 
+        {player.dy++;}
+    for(var i=0;i<player.fuel;i++) {
+        draw(i,10*Math.round(window.pageYOffset/10),1,10,"#0d7c2f");
+    }
+    for(var i=0;i<player.inv.length;i++) {
+        draw(i*10,10+10*Math.round(window.pageYOffset/10),10,10,colors[player.inv[i]])
+    }
+    draw(0,20+10*Math.round(window.pageYOffset/10),player.capacity*10,1,"#000000")
+    draw(player.capacity*10,10*Math.round(window.pageYOffset/10),1,21,"#000000")
+    draw(buildingpos*10,100,40,30,"grey");
+    ctx2.fillStyle = "#dee51b"
+    ctx2.font = "20px verdana";
+    ctx2.fillText(player.gold.toString(), 10+player.capacity*10, 20+10*Math.round(window.pageYOffset/10));
+    player.show();
+    if(player.dx>buildingpos-1&&player.dx<buildingpos+4&&player.dy<13) {shop = true;} else {shop=false}
+    if(shop) {
+        for(var i=0;i<player.inv.length;i++){if(player.inv[i]==4){player.gold+=2;}if(player.inv[i]==5){player.gold+=4;}if(player.inv[i]==6){player.gold+=7;}player.inv.splice(i,1);}
+        var fuelcost=Math.round(((player.capacity*10)-player.fuel)/prices.fuel),amountadd=player.capacity*10;if(fuelcost>player.gold){fuelcost=player.gold;amountadd=player.gold*prices.fuel}if(amountadd+player.fuel>player.capacity*10){amountadd=(player.capacity*10)-player.fuel}if(canbuy){
+        if(!kys[49]&&player.gold>=fuelcost) {player.fuel+=amountadd;player.gold-=fuelcost;}
+        if(!kys[50]&&player.gold>=prices.capacity) {player.capacity+=10;player.gold-=prices.capacity;}
+        if(!kys[51]&&player.gold>=prices.drill&&player.level>0) {player.level-=100;player.gold-=prices.drill;prices.drill+=20;}canbuy=false;}
+        draw(10,30,70,50,"grey");
+        draw(20,40,10,10,"#0d7c2f");draw(40,40,10,1,"#000000");draw(40,45,10,1,"#000000");draw(40,40,1,5,"#000000");draw(49,40,1,5,"#000000");if(player.level>0){draw(60,40,10,10,`rgb(${player.level-100}, 232, ${player.level-100})`);}
+        ctx2.fillStyle = "#dee51b";ctx2.font = "10px verdana";ctx2.fillText(fuelcost.toString(),20,60);ctx2.fillText(prices.capacity.toString(),40,60);ctx2.fillText(prices.drill.toString(),60,60);
+    }
+    document.getElementById("hecc").style.left =  `${canvas2.width+20}px`;
+    requestAnimationFrame(update);
+}
+function draw(x,y,w,h,color) {
+    ctx2.fillStyle = color;
+    ctx2.fillRect(x,y,w,h);
+}
+
+
+function drill() {
+    this.level = 200;
+    this.dx = 12;
+    this.dy = 12;
+    this.inv = [];
+    this.fuel = 100;
+    this.gold = 10;
+    this.capacity = 10;
+    this.show = function() {
+        draw(this.dx*10,this.dy*10,10,10,`rgb(${this.level}, 232, ${this.level})`)
+    }
+    this.move = function() {
+        if(!kys[69]) {this.level-=100;this.capacity+=10;}
+        var repeat = 1;
+        if(!kys[17]) { repeat = 5;}
+        for(var i=0;i<repeat;i++) {
+            move = {x:0,y:0,lol:0};
+            if( !kys[38]) {move.y=-1;window.scrollBy( 0, -10);player.fuel--;}
+            if( !kys[40]) {move.y=1;window.scrollBy( 0, 10);player.fuel--;}
+            if( !kys[37]) {move.x=-1;window.scrollBy( -10, 0);player.fuel--;}
+            if( !kys[39]) {move.x=1;window.scrollBy( 10, 0);player.fuel--;}
+            this.dx+=move.x;this.dy+=move.y;
+            if(this.dx<0) {canvas2.width+=10;wwidth+=1;this.dx=0;for(var i=0;i<wheight;i++){world[i].unshift(1);}block(0,12,1,0);block(30,32,2,3);block(32,wheight,1,3);block(17,60,20,4);block(35,wheight,35,5);block(40,wheight,55,6);buildingpos++;}
+            if(this.dx>wwidth-1) {canvas2.width+=10;this.dx=wwidth;wwidth+=1;for(var i=0;i<wheight;i++){world[i].push(1);}block(0,12,1,0,1);block(30,32,2,3,1);block(32,wheight,1,3,1);block(17,60,20,4,1);block(35,wheight,35,5,1);block(40,wheight,55,6,1);window.scrollBy( 10, 0);}
+            if(this.dy>wheight-1) {canvas2.height+=10;this.dy=wheight;wheight+=1;var longg = [];for(var i=0;i<wwidth;i++){longg.push(3);}world.push(longg);block(0,0,35,5,2);block(0,0,55,6,2);window.scrollBy( 0, 10);}
+            var tile = world[player.dy][player.dx];
+            if(this.dy<12) {this.dy = 12;}
+            if(minealbe[tile] && player.inv.length < player.capacity) {if(tile==4){player.inv.push(tile)}if(tile==5&&player.level<200){player.inv.push(tile)}if(tile==6&&player.level<100){player.inv.push(tile)}}
+            replace(1,2);
+            replace(4,2);
+            if(this.level<200){replace(3,7);replace(5,2);}else if(tile==3||tile==5){this.dx-=move.x;this.dy-=move.y;move.lol=1;player.fuel++;}
+            if(this.level<100){replace(6,2);}else if(tile==6){this.dx-=move.x;this.dy-=move.y;move.lol=1;player.fuel++;}
+            if(tile!=0&&tile!=2&&tile!=7&&!move.lol) {player.fuel--;}
+            if(move.x||move.y){counter=0;}
+        }
+    }
+}
+
+
+
+
+function replace(what,withwhat) {
+    if(world[player.dy][player.dx] == what) {
+        world[player.dy][player.dx] = withwhat;
+    }
+}
+function block(top,bottom,chance,block) {
+    if(arguments[4]==1){
+        for(var i=top;i<bottom;i++) {
+            if(randnum(1,chance)==chance) {
+                world[i][wwidth-1] = block;
+            }
+        }
+    } else if(arguments[4]==2) {
+        for(var i=0;i<wheight;i++) {
+            if(randnum(1,chance)==chance) {
+                world[wheight-1][i] = block;
+            }
+        }
+    } else {
+        for(var i=top;i<bottom;i++) {
+            if(randnum(1,chance)==chance) {
+                world[i][0] = block;
+            }
+        }
+    }
+}
+
+
+function generate(top,bottom,chance,block) {
+    for(var i=top;i<bottom;i++) {
+        for(var j=0;j<wwidth;j++) {
+            if(randnum(1,chance)==chance) {
+                world[i][j] = block;
+            }
+        }
+    }
+}
+
+
+function reset() {
+    generate(12,13,2,1);
+    generate(13,32,1,1);
+    generate(30,32,2,3);
+    generate(32,wheight,1,3);
+    generate(17,60,20,4);
+    generate(35,wheight,35,5);
+    generate(40,wheight,55,6);
+    player.level = 200;
+    player.dx = 10*Math.round((wwidth/2)/10);
+    player.dy = 12;
+    player.inv = [];
+    player.fuel = 100;
+    player.gold = 10;
+    player.capacity = 10;
+}
+        </script>  
+        
+    </body>
+</html>
