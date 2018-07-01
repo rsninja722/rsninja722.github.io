@@ -85,10 +85,11 @@
 				display:inline-block;
 				padding: 5px;
 			}
-			
+			ul{list-style-type: none;margin: 0;padding: 0;width: 150px;}li a {display: block;color: #000;background-color: rgba(255, 255, 255, 0.808); padding: 8px 8px;text-decoration: none;}li a:hover {background-color: rgba(160, 160, 160, 0.356);color: rgb(84, 74, 177);}
 		</style>
 	</head>
 	<body>
+			<div onclick="clck()" style="position: absolute; right: 1%; top: 1%"><img src="sidebar.png"></div><div id="haa" style="display: none; position: absolute; right: 1%; top: 50px"><ul><li><a href="index.html">Space shooter</a></li><li><a href="digger.html">Strategic digger</a></li><li><a href="5number idle.html">Crappy clicker game</a></li></ul></div><script>var onoff=false;function clck(){if(onoff){document.getElementById("haa").style.display = 'none';onoff=false;}else{document.getElementById("haa").style.display = 'block';onoff=true;}}</script> 
 		<script>
 		//nps costs
 			var nps1cost = 10;
@@ -231,17 +232,6 @@
 			<p>hi</p>
 		
 		</div>
-		<p style="position:fixed; top:580px; color: grey; cursor:pointer" href="#" onClick="abouths()">about</p>
-		<p style="position:fixed; top:580px; left:50px; color: grey;" id="aboutp">This is the first game I've made. It took about a month to make. I will be making better games soon. This was made from scratch with just HTML, CSS, and Javascript without any assets. For the source code just do control + u on google chrome.</p>
-		<nav style="position:fixed; left:75%;">
-				<ul>
-				<li>
-				<a href="index.html">Space Shooter</a></li>
-				<li><a href="digger.html">Strategic digger</a></li>
-				<li><strong>I told you it was bad</strong></li>
-				
-				</ul>
-			</nav>
 		<script>
 			document.getElementById("boostvalue").innerHTML = "×"+boost;
 			document.getElementById("numbervalue").innerHTML = number;
@@ -270,7 +260,6 @@
 			document.getElementById("upseven").style.display = 'none';
 			document.getElementById("upeight").style.display = 'none';
 			document.getElementById("upnine").style.display = 'none';
-			document.getElementById("aboutp").style.display = 'none';
 			
 			function abouths() {
 				var x = document.getElementById('aboutp');
