@@ -175,7 +175,6 @@ function drill() {
         draw(this.dx*10,this.dy*10,10,10,`rgb(${this.level}, 232, ${this.level})`)
     }
     this.move = function() {
-        if(!kys[69]) {this.level-=100;this.capacity+=10;}
         var repeat = 1;
         if(!kys[17]) { repeat = 5;}
         for(var i=0;i<repeat;i++) {
@@ -258,6 +257,7 @@ function reset() {
     player.fuel = 100;
     player.gold = 10;
     player.capacity = 10;
+    prices = {fuel:20,capacity:20,drill:30};
 }
         </script>  
         
