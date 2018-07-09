@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>hi</title>
+</head>
+<body>
+    <canvas id="cvs" width="600" height="400" style="background-color: blue; border: 2px solid black;"></canvas>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="input.js"></script>
+<script>
+var canvas = document.getElementById("cvs");
+var ctx = canvas.getContext("2d");
+var socket =  io();
+var shape = 40;
+socket.on("scrolled",moveshape);
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+});
+var loopLol = setInterval(intervalLol,10);
+function moveshape(data) {
+    shape += data.scroll;
+}
+addListenersTo(canvas);
+function intervalLol() {
+    ctx.clearRect(0,0,600,400);
+    if(scroll) {sendLol(scroll)}
+    ctx.fillStyle="red";
+    ctx.fillRect(shape,40,30,20);
+    resetInput();
+}
+
+function sendLol(a) {
+    var data = {
+        scroll:a
+    }
+    socket.emit("scrolled",data);//
+}
+
+
+
+</script>
+</body>
+</html>
