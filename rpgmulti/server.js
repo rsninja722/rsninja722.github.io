@@ -10,7 +10,7 @@ app.use(express.static("public"));//
 console.log("hi");
 
 var socket = require("socket.io");
-var io = socket("185.199.108.153:3000");//
+var io = socket("185.199.108.0 - 185.199.111.255:3000");//
 io.on("connection", newConnection);//
 
 function newConnection(socket) {
