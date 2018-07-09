@@ -17,6 +17,10 @@ var keyDown = [];
 var mousePress = [];
 var mouseDown = [];
 var scroll = 0;
+var mousePos = {
+    x:0,
+    y:0
+}
 var preventedEvents = [false,false,false];
 
 function addListenersTo(elementToListenTo) {
@@ -58,6 +62,8 @@ function kup(e) {
 }
 function mdown(e) {
     var h=e.button;
+    mousePos.x=e.offsetX;
+    mousePos.y=e.offsetY;    
     mousePress[h]=mousePress[h]==[][[]]?1:0;
     mouseDown[h]=1;
     if(preventedEvents[1]) {e.preventDefault()}

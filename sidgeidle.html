@@ -71,7 +71,6 @@ var gameloop = setInterval(frame,10);
 createallbuttons();
 
 
-
 function everyecond() {
      dologic()
      updateall()
@@ -79,7 +78,12 @@ function everyecond() {
 
 
 function frame() {
-    if(mousePress[0]) {data.money++;updateall()}
+    if(mousePress[0]) {
+        data.money++;
+        updateall();
+        ctx.fillStyle = "red"
+        ctx.fillRect(mousePos.x,mousePos.y,10,10);
+    }
     resetInput();
 }
 
