@@ -107,7 +107,7 @@ function createallbuttons() {
     for(var i=0;i<100;i++) {
         var val = Math.round(Math.random()*(i*16)*100);
         var cost = val*10 + Math.round(Math.random()*(i*16)*100);
-        createbutton(`+ ${val} mps`, `buystuff('boost',${cost},${val}`, ` cost: ${cost}`);
+        createbutton(`+ ${val} mps`, `buystuff('mps',${cost},${val}`, ` cost: ${cost}`);
     }
 }
 
