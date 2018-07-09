@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>siege idle</title>
+<style>
+.statsmoney { grid-area: cmoney; }
+.statsmoneyps { grid-area: cmoneyps; }
+.statsboost{ grid-area: cboost; }
+.statsshop{ grid-area: cshop; }
+.statsgame{ grid-area: cgame; }
+.statsbutton { grid-area: cbut; background-color: goldenrod; }
+.gridlol {
+    display: grid;
+    grid-template-areas:
+        "cmoney cmoney cmoneyps cboost"
+        "cshop cshop cgame cgame"
+        "cshop cshop cgame cgame";
+        grid-gap: 5px;
+        padding: 5px;
+}
+.grid2 {
+    display: grid;
+    grid-template-areas:
+        "cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut""cbut cbut";
+        grid-gap: 2px;
+        padding: 2px;
+}
+.gridlol > p {
+  background-color: rgb(177, 177, 177);
+  border: 2px outset grey;
+  text-align: center;
+  padding: 5px 0;
+  font-size: 30px;
+}
+.gridlol > div {
+  background-color: rgb(177, 177, 177);
+  border: 2px outset grey;
+  text-align: center;
+  padding: 5px 0;
+  font-size: 30px;
+}
+</style>
+</head>
+<body>
+<div class="gridlol">
+<p id="1" class="statsmoney">2$</p>
+<p id="2" class="statsmoneyps">1$</p>
+<p id="3" class="statsboost">2%</p>
+<div class="statsshop">Shop
+    <div  id="4">
+        <button class="statsbutton">help</button>
+    </div>
+</div>
+<canvas class="statsgame" id="fightcvs" width="400" height="400" style="background-color: rgb(75, 75, 75); border: 2px outset grey;"></canvas>
+</div>
+<script>
+
+var data = {
+    money:0,
+    moneyps:1,
+    boost:0
+}
+createbutton("buy 1", frame(1));createbutton("buy 2", frame(1));
+var canvas = document.getElementById("fightcvs");
+var ctx = canvas.getContext("2d");
+var secondtimer = setInterval(everyecond,1000);
+var gameloop = setInterval(frame,10);
+
+
+function everyecond() {
+     dologic()
+     updateall()
+}
+
+
+function frame(one) {
+
+}
+
+
+
+
+
+
+
+
+function createbutton(name,func) {
+    var btn = document.createElement("input");
+    btn.setAttribute("type", "button"); // input element of type button
+    btn.setAttribute("value", name);
+    btn.setAttribute("class", "statsbutton");
+    btn.onclick = func;
+    document.getElementById("4").appendChild(document.createElement("br"));
+    document.getElementById("4").appendChild(btn);
+};
+function update(what, value) {
+    document.getElementById(`${what}`).innerHTML = value;
+}
+function dologic() {
+    data.money+=data.moneyps*data.boost;
+
+}
+function updateall() {
+    update(1,"$: "+data.money);
+    update(2,"$ps: "+data.moneyps);
+    update(3,"boost: "+data.boost*100+"%");
+}
+
+</script>    
+</body>
+</html>
