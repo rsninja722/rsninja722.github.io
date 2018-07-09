@@ -6,9 +6,10 @@
 .statsmoney { grid-area: cmoney; }
 .statsmoneyps { grid-area: cmoneyps; }
 .statsboost{ grid-area: cboost; }
-.statsshop{ grid-area: cshop; }
+.statsshop{ grid-area: cshop;}
 .statsgame{ grid-area: cgame; }
 .statsbutton { grid-area: cbut; background-color: goldenrod; }
+.statsbutton:hover {background-color: rgb(190, 138, 4); }
 .gridlol {
     display: grid;
     grid-template-areas:
@@ -47,8 +48,8 @@
 <p id="2" class="statsmoneyps">1$</p>
 <p id="3" class="statsboost">2%</p>
 <div class="statsshop">Shop
-    <div  id="4">
-        <button class="statsbutton">help</button>
+    <div  id="4" style="text-align: left; font-size: 15px;">
+        
     </div>
 </div>
 <canvas class="statsgame" id="fightcvs" width="400" height="400" style="background-color: rgb(75, 75, 75); border: 2px outset grey;"></canvas>
@@ -60,7 +61,12 @@ var data = {
     moneyps:1,
     boost:0
 }
-createbutton("buy 1", frame(1));createbutton("buy 2", frame(1));
+var buttons = [0];
+createbutton("buy 1", frame(1), "cool");createbutton("buy 2", frame(1), "and good");
+
+for(var i=0;i<25;i++) {
+    createbutton(Math.random().toString(),frame(1),Math.random().toString());
+}
 var canvas = document.getElementById("fightcvs");
 var ctx = canvas.getContext("2d");
 var secondtimer = setInterval(everyecond,1000);
@@ -84,20 +90,26 @@ function frame(one) {
 
 
 
-function createbutton(name,func) {
+function createbutton(name,func,text) {
     var btn = document.createElement("input");
-    btn.setAttribute("type", "button"); // input element of type button
+    btn.setAttribute("type", "button");
     btn.setAttribute("value", name);
     btn.setAttribute("class", "statsbutton");
     btn.onclick = func;
-    document.getElementById("4").appendChild(document.createElement("br"));
-    document.getElementById("4").appendChild(btn);
+    var dv = document.createElement("div");
+    var txt = document.createTextNode(text);
+    dv.setAttribute("id", `b${buttons[buttons.length-1]+1}`);
+    //document.getElementById("4").appendChild(document.createElement("br"));
+    dv.appendChild(btn);
+    dv.appendChild(txt);
+    document.getElementById("4").appendChild(dv);
+    buttons.push(buttons[buttons.length-1]+1);
 };
 function update(what, value) {
     document.getElementById(`${what}`).innerHTML = value;
 }
 function dologic() {
-    data.money+=data.moneyps*data.boost;
+    data.money+=data.boost?data.moneyps*data.boost:data.moneyps;
 
 }
 function updateall() {
