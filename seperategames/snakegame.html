@@ -1,0 +1,75 @@
+<!DOCTPYE HTML>
+<html>
+<body>
+<canvas id="c" width="800" height="600" style="background-color: blue;"></canvas><button onclick="sped()">gamespeed</button>
+<div id="a83n7"><div onclick="clck()"style="position:absolute;right:1%;top:1%"><img src="assets/sidebar.png"></div></div><script src="nav.js"></script>
+<script>
+var gsped = 100;
+var xd = setInterval(update,gsped);
+var sx=4;
+var sy=4;
+var angle=90
+var world=[];
+var k=[];
+var slength = 7;
+var food = [40,40];
+var canvas = document.getElementById("c");
+var ctx = canvas.getContext("2d");
+window.addEventListener("keydown",function(e){var h=e.keyCode;k[h]=k[h]==[][[]]?1:0;});
+window.addEventListener("keyup",function(e){var h=e.keyCode;delete k[h];});
+for(var i=0;i<80;i++) {
+    world[i] = new Array();
+}
+for(var j=0;j<80;j++) {
+    for(var i=0;i<60;i++) {
+        world[j].push(0);
+    }
+}
+function update() {
+    ctx.clearRect(0,0,800,600);
+    if(k[37]&&angle!=90) {angle=270}
+    if(k[39]&&angle!=270) {angle=90}
+    if(k[38]&&angle!=180) {angle=0}
+    if(k[40]&&angle!=0) {angle=180}
+    if(angle==0){sy--}
+    if(angle==90){sx++}
+    if(angle==180){sy++}
+    if(angle==270){sx--}
+    if(sx<0||sx>79||sy<0||sy>60||world[sx][sy]!=0) {gameover()}
+    if(sx==food[0]&&sy==food[1]){slength+=7;food[0]=rndNbr(0,80);food[1]=rndNbr(0,60);for(var i=0,l=world.length;i<l;i++){for(var h=0,q=world[0].length;h<q;h++){if(world[i][h]!=0) {world[i][h]+=7;}}}}
+    ctx.fillStyle = "yellow";
+    for(var i=0,l=world.length;i<l;i++) {
+        for(var h=0,q=world[0].length;h<q;h++) {
+            if(world[i][h]!=0) {world[i][h]--;ctx.fillRect(i*10,h*10,10,10);}
+        }
+    }
+    world[sx][sy] = slength;
+    ctx.fillStyle = "orange";
+    ctx.fillRect(sx*10,sy*10,10,10);
+    ctx.fillStyle = "red";
+    ctx.fillRect(food[0]*10,food[1]*10,10,10);
+    for(var i=0;i<k.length;i++){if(k[i]){k[i]=0}}
+}
+function gameover() {
+    delete world;
+    sx=4;
+    sy=4;
+    angle=90
+    var world=[];
+    k=[];
+    for(var i=0;i<80;i++) {
+        world[i] = new Array();
+    }
+    for(var j=0;j<80;j++) {
+        for(var i=0;i<60;i++) {
+            world[j].push(0);
+        }
+    }
+}
+function rndNbr(min,max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function sped(){gsped=gsped==100?1:100;clearInterval(xd);xd=setInterval(update,gsped)}
+</script>
+</body>
+</html>
