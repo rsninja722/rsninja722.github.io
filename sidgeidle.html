@@ -3,13 +3,16 @@
 <head>
 <title>siege idle</title>
 <style>
+html {
+    font-family: Arial, Helvetica, sans-serif;
+}
 .statsmoney { grid-area: cmoney; }
 .statsmoneyps { grid-area: cmoneyps; }
 .statsboost{ grid-area: cboost; }
 .statsshop{ grid-area: cshop;}
 .statsgame{ grid-area: cgame; }
 .statsstats{ grid-area: cstats; }
-.statsbutton { grid-area: cbut; background-color: goldenrod; }
+.statsbutton {grid-area: cbut; background-color: goldenrod;}
 .statsbutton:hover {background-color: rgb(190, 138, 4); }
 .gridlol {
     display: grid;
@@ -29,16 +32,16 @@
 }
 .gridlol > p {
   background-color: rgb(177, 177, 177);
-  border: 2px outset grey;
+  border: 3px outset grey;
   text-align: center;
   padding: 5px 0;
   font-size: 30px;
 }
 .gridlol > div {
   background-color: rgb(177, 177, 177);
-  border: 2px outset grey;
+  border: 4px outset grey;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px 5px;
   font-size: 30px;
 }
 </style>
@@ -65,7 +68,7 @@
         <p style="font-size: 15px; color:dimgrey;">turrets automate clicking</p>
     </div>
 </div>
-<canvas class="statsgame" id="fightcvs" width="400" height="400" style="background-color: rgb(75, 75, 75); border: 2px outset grey;"></canvas>
+<canvas class="statsgame" id="fightcvs" width="400" height="400" style="background-color: rgb(75, 75, 75); border: 4px outset grey;"></canvas>
 </div>
 <script src="https://rsninja722.github.io/input.js"></script>
 <script>
@@ -266,6 +269,7 @@ function createbutton(name,func,text) {
     //document.getElementById("4").appendChild(document.createElement("br"));
     dv.appendChild(btn);
     dv.appendChild(txt);
+    dv.setAttribute("style", "padding: 1px 0;");
     document.getElementById("4").appendChild(dv);
     buttons.push(buttons.length);
 };
