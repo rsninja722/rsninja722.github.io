@@ -97,7 +97,7 @@ function frame() {
     ctx.clearRect(0,0,400,400);
     draw(350,0,50,400,"#6d2a00");
     if(mousePress[0]&&mousePos.x>=350) {
-        data.money++;
+        data.money+=Math.round(1*data.boost*100)/100;
         updateall();
         clickdust(7,mousePos.x,mousePos.y,false);
     }
@@ -113,6 +113,8 @@ function frame() {
         lasers[i].counter--;
         if(lasers[i].x>320) {
             clickdust(50,lasers[i].x+15,lasers[i].y,true);
+            data.boost+=1;
+            updateall();
             lasers.splice(i,1);
         }
     }
