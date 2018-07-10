@@ -1,3 +1,4 @@
+
 var navlist = [
     {name:"Space Shooter",link:"index.html"},
     {name:"Strategic Digger",link:"seperategames/digger.html"},
@@ -5,6 +6,15 @@ var navlist = [
     {name:"Snake Game",link:"seperategames/snakegame.html"},
     {name:"Crappy Clicker Game",link:"seperategames/5number idle.html"}
 ]
+if(window.location.href!="https://rsninja722.github.io/") {
+    navlist = [
+        {name:"Space Shooter",link:"../index.html"},
+        {name:"Strategic Digger",link:"../seperategames/digger.html"},
+        {name:"Seige Idle",link:"../seperategames/sidgeidle.html"},
+        {name:"Snake Game",link:"../seperategames/snakegame.html"},
+        {name:"Crappy Clicker Game",link:"../seperategames/5number idle.html"}
+    ]
+}
 //style
 var sty = document.createElement("style");
 sty.innerHTML = `
