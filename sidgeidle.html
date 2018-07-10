@@ -8,14 +8,15 @@
 .statsboost{ grid-area: cboost; }
 .statsshop{ grid-area: cshop;}
 .statsgame{ grid-area: cgame; }
+.statsstats{ grid-area: cstats; }
 .statsbutton { grid-area: cbut; background-color: goldenrod; }
 .statsbutton:hover {background-color: rgb(190, 138, 4); }
 .gridlol {
     display: grid;
     grid-template-areas:
-        "cmoney cmoney cmoneyps cboost"
-        "cshop cshop cgame cgame"
-        "cshop cshop cgame cgame";
+        "cmoney cmoneyps cboost"
+        "cshop cstats cgame"
+        "cshop cstats cgame";
         grid-gap: 5px;
         padding: 5px;
 }
@@ -52,6 +53,18 @@
             <!--<input type="button" value="+ 1 mps" class="statsbutton" onclick="buy('mps',20,1)">-->
     </div>
 </div>
+<div class="statsstats">Stats
+    <div style="text-align: left; font-size: 20px; padding: 0px 10px;">
+        <p  id="5" >mpc</p>
+        <p  id="6" >boosted mpc</p>
+        <p  id="7" >boosted mps</p>
+        <p  id="8" >turret interval</p>
+        <p style="font-size: 15px; color:dimgrey;">$pc = $ per click</p>
+        <p style="font-size: 15px; color:dimgrey;">$ps = $ per second</p>
+        <p style="font-size: 15px; color:dimgrey;">click the wall to gain money and boost</p>
+        <p style="font-size: 15px; color:dimgrey;">turrets automate clicking</p>
+    </div>
+</div>
 <canvas class="statsgame" id="fightcvs" width="400" height="400" style="background-color: rgb(75, 75, 75); border: 2px outset grey;"></canvas>
 </div>
 <script src="https://rsninja722.github.io/input.js"></script>
@@ -61,7 +74,8 @@ var data = {
     moneyps:1,
     boost:1,
     turrets:0,
-    turretspeed:100
+    turretspeed:100,
+    mpc:1
 }
 var tdata = 100;
 var dust = [];
@@ -70,15 +84,30 @@ var buttons = [0];
 var canvas = document.getElementById("fightcvs");
 var ctx = canvas.getContext("2d");
 var binfo = {
-    0:{n:"+ 1 mps", f:"buystuff('mps',20,1,5", c:" cost: 25"},
-    1:{n:"+ 1 mps", f:"buystuff('mps',100,1,6", c:" cost: 100"},
-    2:{n:"+ 3 mps", f:"buystuff('mps',450,3,0", c:" cost: 450"},
-    3:{n:"+ 5% boost", f:"buystuff('boost',250,0.05,0", c:" cost: 250"},
-    4:{n:"+ 10% boost", f:"buystuff('boost',1000,0.1,0", c:" cost: 1000"},
-    5:{n:"+ turret", f:"buystuff('turret',2,1,7", c:" cost: 2"},
-    6:{n:"- turret cooldown", f:"buystuff('turretspeed',3,-50,8", c:" cost: 3"},
-    7:{n:"+ 4 turrets", f:"buystuff('turret',2,4,0", c:" cost: 2"},
-    8:{n:"- turret cooldown", f:"buystuff('turretspeed',3,-40,0", c:" cost: 3"}
+    0:{n:"+ 1 $ps", f:"buystuff('mps',20,1,0", c:" cost: 20"},
+    1:{n:"+ 1 $ps", f:"buystuff('mps',50,1,0", c:" cost: 50"},
+    2:{n:"+ 3 $ps", f:"buystuff('mps',150,3,[5]", c:" cost: 150"},
+    3:{n:"+ 10% boost", f:"buystuff('boost',250,0.1,0", c:" cost: 250"},
+    4:{n:"+ 25% boost", f:"buystuff('boost',750,0.25,[0,12]", c:" cost: 750"},
+    5:{n:"+ 5 $ps", f:"buystuff('mps',150,5,[6,7,0]", c:" cost: 150"},
+    6:{n:"+ 6 $ps", f:"buystuff('mps',200,6,[8,9,0]", c:" cost: 200"},
+    7:{n:"+ turret", f:"buystuff('turret',2000,1,[11,13]", c:" cost: 2000"},
+    8:{n:"- turret cooldown", f:"buystuff('turretspeed',300,-10,0", c:" cost: 300"},
+    9:{n:"+ 1 $pc", f:"buystuff('mpc',350,1,[10,1]", c:" cost: 350"},
+    10:{n:"+ 2 $pc", f:"buystuff('mpc',1000,2,[15]", c:" cost: 1000"},
+    11:{n:"+ turret", f:"buystuff('turret',3500,1,0", c:" cost: 3500"},
+    12:{n:"+ 10 $ps", f:"buystuff('mps',1500,10,[21]", c:" cost: 1500"},
+    13:{n:"+ 25 $ps", f:"buystuff('mps',4000,25,[14,19]", c:" cost: 4000"},
+    14:{n:"+ 100,000 $ps!", f:"buystuff('mps',1,-11,[16,21]", c:" cost: FREE"},
+    15:{n:"- turret cooldown", f:"buystuff('turretspeed',1300,-20,[17,0,1,21]", c:" cost: 1300"},
+    16:{n:"+ 11 $ps", f:"buystuff('mps',11,11,0", c:" lol get trolled, oh you want your 11$ps back? ok fine here: cost: 11"},
+    17:{n:"+ 6 $pc", f:"buystuff('mpc',6000,6,[18]", c:" cost: 6000"},
+    18:{n:"re-unlock $ps upgrades", f:"buystuff('mps',15000,0,[0,1,21,22,12,23]", c:" cost: 15000"},
+    19:{n:"+ 100% boost", f:"buystuff('boost',5000,1,[20]", c:" cost: 5000"},
+    20:{n:"+ 250% boost", f:"buystuff('boost',7500,2.5,0", c:" cost: 7500"},
+    21:{n:"+ 3 $ps", f:"buystuff('mps',150,3,0", c:" cost: 150"},
+    22:{n:"+ 5 $ps", f:"buystuff('mps',150,5,0", c:" cost: 150"},
+    23:{n:"+ 25 $ps", f:"buystuff('mps',4000,25,0", c:" cost: 4000"}
 }
 addListenersTo(canvas);
 preventedEvents[1] = true;
@@ -97,7 +126,8 @@ function frame() {
     ctx.clearRect(0,0,400,400);
     draw(350,0,50,400,"#6d2a00");
     if(mousePress[0]&&mousePos.x>=350) {
-        data.money+=Math.round(1*data.boost*100)/100;
+        data.money+=Math.round(data.mpc*data.boost*100)/100;
+        data.boost+=Math.round(data.mpc)/1000;
         updateall();
         clickdust(7,mousePos.x,mousePos.y,false);
     }
@@ -113,7 +143,8 @@ function frame() {
         lasers[i].counter--;
         if(lasers[i].x>320) {
             clickdust(50,lasers[i].x+15,lasers[i].y,true);
-            data.boost+=1;
+            data.money+=Math.round(data.mpc*data.boost*100)/100;
+            data.boost+=Math.round(data.mpc)/1000;
             updateall();
             lasers.splice(i,1);
         }
@@ -185,8 +216,13 @@ function buystuff(type,price,action,other,id) {
         if(type=="turretspeed") {
             data.turretspeed+=action;
         }
+        if(type=="mpc") {
+            data.mpc+=action;
+        }
         if(other) {
-            createbutton(binfo[other].n,binfo[other].f,binfo[other].c);
+            for(var i=0;i<other.length;i++) {
+                createbutton(binfo[other[i]].n,binfo[other[i]].f,binfo[other[i]].c);
+            }
         }
         data.money-=price;
         updateall();
@@ -241,9 +277,13 @@ function dologic() {
 
 }
 function updateall() {
-    update(1,"$: "+Math.round(data.money*1000)/1000);
+    update(1,"$: "+Math.round(data.money*10)/10);
     update(2,"$ps: "+data.moneyps);
     update(3,"boost: "+Math.round(data.boost*100*100)/100+"%");
+    update(5,"$pc: "+Math.round(data.mpc*100)/100);
+    update(6,"boosted $pc: "+Math.round(data.mpc*data.boost*100)/100);
+    update(7,"boosted $ps: "+Math.round(data.moneyps*data.boost*100)/100);
+    update(8,"turret interval: "+Math.round(data.turretspeed*100)/100);
 }
 function randomNumber(min,max) {
     if(arguments[2] == undefined) {
