@@ -28,6 +28,7 @@ function addListenersTo(elementToListenTo) {
     window.addEventListener("keyup",kup);
     elementToListenTo.addEventListener("mousedown",mdown);
     elementToListenTo.addEventListener("mouseup",mup);
+    elementToListenTo.addEventListener("mousemove",mmove);
     elementToListenTo.addEventListener("contextmenu",cmenu);
     elementToListenTo.addEventListener("wheel",scrl);
 }
@@ -37,6 +38,7 @@ function removeListenersFrom(elementToListenTo) {
     window.removeEventListener("keyup",kup);
     elementToListenTo.removeEventListener("mousedown",mdown);
     elementToListenTo.removeEventListener("mouseup",mup);
+    elementToListenTo.removeEventListener("mousemove",mmove);
     elementToListenTo.removeEventListener("contextmenu",cmenu);
     elementToListenTo.removeEventListener("wheel",scrl);
 }
@@ -62,8 +64,6 @@ function kup(e) {
 }
 function mdown(e) {
     var h=e.button;
-    mousePos.x=e.offsetX;
-    mousePos.y=e.offsetY;    
     mousePress[h]=mousePress[h]==[][[]]?1:0;
     mouseDown[h]=1;
     if(preventedEvents[1]) {e.preventDefault()}
@@ -72,6 +72,10 @@ function mup(e) {
     var h=e.button;
     delete mousePress[h];
     delete mouseDown[h];
+}
+function mmove(e) {
+    mousePos.x=e.offsetX;
+    mousePos.y=e.offsetY;    
 }
 function cmenu(e) {
     if(preventedEvents[1]) {e.preventDefault()}
