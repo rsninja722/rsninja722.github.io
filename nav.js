@@ -1,20 +1,12 @@
 
 var navlist = [
-    {name:"Space Shooter",link:"index.html"},
-    {name:"Strategic Digger",link:"seperategames/digger.html"},
-    {name:"Seige Idle",link:"seperategames/sidgeidle.html"},
-    {name:"Snake Game",link:"seperategames/snakegame.html"},
-    {name:"Crappy Clicker Game",link:"seperategames/5number idle.html"}
+    {name:"Circle TD",link:"https://rsninja722.github.io/index.html"},
+    {name:"Space Shooter",link:"https://rsninja722.github.io/seperategames/indexspace.html"},
+    {name:"Strategic Digger",link:"https://rsninja722.github.io/"},
+    {name:"Seige Idle",link:"https://rsninja722.github.io/seperategames/sidgeidle.html"},
+    {name:"Snake Game",link:"https://rsninja722.github.io/seperategames/snakegame.html"},
+    {name:"Crappy Clicker Game",link:"https://rsninja722.github.io/seperategames/5number idle.html"}
 ]
-if(window.location.href!="https://rsninja722.github.io/") {
-    navlist = [
-        {name:"Space Shooter",link:"../index.html"},
-        {name:"Strategic Digger",link:"../seperategames/digger.html"},
-        {name:"Seige Idle",link:"../seperategames/sidgeidle.html"},
-        {name:"Snake Game",link:"../seperategames/snakegame.html"},
-        {name:"Crappy Clicker Game",link:"../seperategames/5number idle.html"}
-    ]
-}
 //style
 var sty = document.createElement("style");
 sty.innerHTML = `
