@@ -168,7 +168,7 @@ function update() {
         } else {popup.message="not enough space ediot";popup.timer=1000;}
   }
   if(keyPress[71]) { //pierce tower
-        var temp = new tower(mousePos.x,mousePos.y,20,20,"blue",2,"normal",1500,150,3,55,"sounds/snip.wav");
+        var temp = new tower(mousePos.x,mousePos.y,20,20,"blue",3,"normal",1500,150,4,55,"sounds/snip.wav");
        if(!check(temp)) {
             if(cash>=55) {
                 cash-=55;
