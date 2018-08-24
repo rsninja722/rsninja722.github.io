@@ -1,4 +1,3 @@
-(function() {  
 var canvas = document.getElementById("mYcAnVaS");
 var ctx = canvas.getContext("2d");
 
@@ -134,6 +133,49 @@ var waves = [
     ]
 ]
 var waveData = {curwave:0,curtype:0,curamount:0,time:0}
+
+if(localStorage.towers!=undefined) {
+    let temp = JSON.parse(localStorage.towers);
+    for(var i=0;i<temp.length;i++) {
+        towers.push(new tower(temp[i].x,temp[i].y,temp[i].w,temp[i].h,temp[i].color,temp[i].damage,temp[i].damageType,temp[i].speed,temp[i].range,temp[i].penetration,temp[i].price,temp[i].sound));
+    }
+} else {localStorage.towers=JSON.stringify([]);}
+if(localStorage.enemies!=undefined) {
+    let temp = JSON.parse(localStorage.enemies);
+    for(var i=0;i<temp.length;i++) {
+        enemies.push(new enemy(temp[i].r,temp[i].fillColor,temp[i].lineColor,temp[i].health,temp[i].armour,temp[i].speed,temp[i].name,temp[i].rang,temp[i].rang2,temp[i].danger));
+        enemies[i].x=temp[i].x;
+        enemies[i].y=temp[i].y;
+    }
+} else {localStorage.enemies=JSON.stringify([]);}
+//r,fillColor,lineColor,health,armour,speed,name,rang,rang2,danger
+if(localStorage.cash!=undefined) {cash=JSON.parse(localStorage.cash);} else {localStorage.cash=100;}
+if(localStorage.lives!=undefined) {lives=JSON.parse(localStorage.lives);} else {localStorage.lives=30;}
+if(localStorage.gamestate!=undefined) {gamestate=JSON.parse(localStorage.gamestate);} else {localStorage.gamestate=0;}
+if(localStorage.dcounter!=undefined) {dcounter=JSON.parse(localStorage.dcounter);} else {localStorage.dcounter=0;}
+if(localStorage.diffiulty!=undefined) {diffiulty=JSON.parse(localStorage.diffiulty);} else {localStorage.diffiulty=1;}
+if(localStorage.waveData!=undefined) {waveData=JSON.parse(localStorage.waveData);} else {localStorage.waveData=JSON.stringify({curwave:0,curtype:0,curamount:0,time:0});}
+//if(localStorage.!=undefined) {=localStorage.;} else {localStorage.=30;}
+
+function savedata() {
+    localStorage.towers=JSON.stringify(towers);
+    localStorage.enemies=JSON.stringify(enemies);
+    localStorage.cash=JSON.stringify(cash);
+    localStorage.lives=JSON.stringify(lives);
+    localStorage.gamestate=JSON.stringify(gamestate);
+    localStorage.dcounter=JSON.stringify(dcounter);
+    localStorage.diffiulty=JSON.stringify(diffiulty);
+    localStorage.waveData=JSON.stringify(waveData);
+    popup.message="SUCCesfully saved";
+    popup.timer=1000;
+}
+
+function cleardata() {
+    localStorage.clear();
+    popup.message="cleared the data";
+    popup.timer=1000;
+}
+
 
 preventedEvents = [false,true,false];
 addListenersTo(canvas);
@@ -609,4 +651,3 @@ function reset() {
     diffiulty = 1;
   	waveData = {curwave:0,curtype:0,curamount:0,time:0};
 }
-})();
