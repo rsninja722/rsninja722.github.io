@@ -1,3 +1,4 @@
+"use strict";
 var canvas = document.getElementById("mYcAnVaS");
 var ctx = canvas.getContext("2d");
 
@@ -15,9 +16,17 @@ var enemyTypes = [
   {name:"big circle",health:7,armour:0.7,color:"yellow",linecolor:"black",speed:2.5,radius:20,rang:1,rang2:4,danger:3},
   {name:"metal circle",health:6,armour:2,color:"gray",linecolor:"gray",speed:1.3,radius:17,rang:1,rang2:5,danger:5},
   {name:"zoom circle",health:4,armour:0,color:"green",linecolor:"yellow",speed:4,radius:12,rang:1,rang2:6,danger:1},
-  {name:"ultra huge circle",health:50,armour:4,color:"blue",linecolor:"black",speed:1,radius:60,rang:7,rang2:10,danger:10},
-  {name:"gigant sphere",health:600,armour:0,color:"purple",linecolor:"black",speed:0.5,radius:80,rang:8,rang2:12,danger:10}
+  {name:"ultra huge circle",health:50,armour:4,color:"blue",linecolor:"black",speed:1,radius:60,rang:10,rang2:20,danger:10},
+  {name:"gigant sphere",health:600,armour:0,color:"purple",linecolor:"black",speed:0.5,radius:80,rang:80,rang2:120,danger:10},
+  {name:"elite circle",health:20,armour:6,color:"black",linecolor:"white",speed:1.5,radius:18,rang:7,rang2:12,danger:4},
+  {name:"sand circle",health:5,armour:0.7,color:"#c1af6e",linecolor:"#b7a668",speed:1,radius:14,rang:4,rang2:7,danger:2},
+  {name:"god killer hyper sphere",health:1000,armour:2,color:"#00faff",linecolor:"#0004ff",speed:0.25,radius:120,rang:100,rang2:250,danger:100},
+  {name:"Titanium Circle",health:25,armour:8,color:"#deefee",linecolor:"#9aa8a7",speed:2,radius:20,rang:5,rang2:10,danger:20},
+  {name:"Flash Circle",health:10,armour:1,color:"orange",linecolor:"yellow",speed:7,radius:20,rang:3,rang2:12,danger:5}
 ]
+
+
+
 var modes = [
   {name:"newb",num:1},
   {name:"normal",num:0.8},
@@ -28,6 +37,7 @@ var modes = [
 var gamestate=0;
 var dcounter=0;
 var diffiulty = 1;
+var statsShow=true;
 var waves = [
     [
         {type:0,amount:8,delay:1000}, //wave 1
@@ -107,37 +117,64 @@ var waves = [
       	{type:-1,amount:1,delay:2000}
     ],
     [
-      	{type:0,amount:100,delay:50}, 
+      	{type:0,amount:100,delay:50},
       	{type:-1,amount:1,delay:2000}
     ],
     [
-      	{type:4,amount:20,delay:1000}, 
-      	{type:1,amount:12,delay:2000}, 
+      	{type:4,amount:20,delay:1000},
+      	{type:1,amount:12,delay:2000},
       	{type:4,amount:20,delay:1000},
       	{type:-1,amount:1,delay:2000}
     ],
     [
-      	{type:3,amount:10,delay:800}, 
-      	{type:2,amount:10,delay:800}, 
-      	{type:3,amount:10,delay:800}, 
-      	{type:2,amount:10,delay:800}, 
+      	{type:3,amount:10,delay:800},
+      	{type:2,amount:10,delay:800},
+      	{type:3,amount:10,delay:800},
+      	{type:2,amount:10,delay:800},
       	{type:-1,amount:1,delay:2000}
     ],
     [
-      	{type:5,amount:1,delay:3000}, 
-      	{type:3,amount:20,delay:1000}, 
+      	{type:5,amount:1,delay:3000},
+      	{type:3,amount:20,delay:1000},
       	{type:-1,amount:1,delay:2000}
     ],
+    [
+      	{type:6,amount:1,delay:10000}, //wave 20
+      	{type:-1,amount:1,delay:2000}
+    ],
+    [
+        {type:7,amount:8,delay:1500},
+	    {type:3,amount:4,delay:1000},
+	    {type:-1,amount:1,delay:2000}
+    ],
+ 	[
+        {type:8,amount:1,delay:1000},
+	    {type:7,amount:10,delay:800},
+	    {type:-1,amount:1,delay:2000}
+    ],
+ 	[
+        {type:5,amount:1,delay:3500},
+	    {type:3,amount:8,delay:500},
+	    {type:-1,amount:1,delay:2000}
+    ],
   	[
-      	{type:6,amount:1,delay:10000} //wave 20
+        {type:4,amount:8,delay:800},
+	    {type:8,amount:4,delay:800},
+      	{type:4,amount:8,delay:800},
+	    {type:8,amount:4,delay:800},
+	    {type:-1,amount:1,delay:2000}
+    ],
+  	[
+        {type:9,amount:1,delay:5000}, //wave 25
+	    {type:-1,amount:1,delay:5000}
     ]
 ]
 var waveData = {curwave:0,curtype:0,curamount:0,time:0}
-
+var pathRect = {x:canvas.width/2,y:canvas.height/2,w:canvas.width,h:40}
 if(localStorage.towers!=undefined) {
     let temp = JSON.parse(localStorage.towers);
     for(var i=0;i<temp.length;i++) {
-        towers.push(new tower(temp[i].x,temp[i].y,temp[i].w,temp[i].h,temp[i].color,temp[i].damage,temp[i].damageType,temp[i].speed,temp[i].range,temp[i].penetration,temp[i].price,temp[i].sound));
+        towers.unshift(new tower(temp[i].x,temp[i].y,temp[i].w,temp[i].h,temp[i].color,temp[i].damage,temp[i].damageType,temp[i].speed,temp[i].range,temp[i].penetration,temp[i].price,temp[i].sound));
     }
 } else {localStorage.towers=JSON.stringify([]);}
 if(localStorage.enemies!=undefined) {
@@ -194,7 +231,7 @@ function update() {
        if(!check(temp)) {
             if(cash>=10) {
                 cash-=10;
-                towers.push(temp);
+                towers.unshift(temp);
               	play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -204,7 +241,7 @@ function update() {
        if(!check(temp)) {
             if(cash>=30) {
                 cash-=30;
-                towers.push(temp);
+                towers.unshift(temp);
                 play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -214,7 +251,7 @@ function update() {
        if(!check(temp)) {
             if(cash>=55) {
                 cash-=55;
-                towers.push(temp);
+                towers.unshift(temp);
                 play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -224,7 +261,7 @@ function update() {
        if(!check(temp)) {
             if(cash>=40) {
                 cash-=40;
-                towers.push(temp);
+                towers.unshift(temp);
                 play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -234,7 +271,7 @@ function update() {
        if(!check(temp)) {
             if(cash>=35) {
                 cash-=35;
-                towers.push(temp);
+                towers.unshift(temp);
                 play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -244,7 +281,17 @@ function update() {
        if(!check(temp)) {
             if(cash>=80) {
                 cash-=80;
-                towers.push(temp);
+                towers.unshift(temp);
+                play("sounds/place.wav");
+          } else {popup.message="not enough cash dummy";popup.timer=2000;}
+        } else {popup.message="not enough space ediot";popup.timer=1000;}
+    }
+  if(keyPress[88]) { //boost tower
+        var temp = new specialTower(mousePos.x,mousePos.y,32,32,150,"Buff","#00ff2a")
+       if(!check(temp)) {
+            if(cash>=150) {
+                cash-=150;
+                towers.unshift(temp);
                 play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -254,7 +301,17 @@ function update() {
        if(!check(temp)) {
             if(cash>=2000) {
                 cash-=2000;
-                towers.push(temp);
+                towers.unshift(temp);
+                play("sounds/place.wav");
+          } else {popup.message="not enough cash dummy";popup.timer=2000;}
+        } else {popup.message="not enough space ediot";popup.timer=1000;}
+    }
+    if(keyPress[90]) { //magic machine gun
+        var temp = new tower(mousePos.x,mousePos.y,30,30,"#00ff87",3,"magic",300,200,1,500,"sounds/magic.wav");
+       if(!check(temp)) {
+            if(cash>=500) {
+                cash-=500;
+                towers.unshift(temp);
                 play("sounds/place.wav");
           } else {popup.message="not enough cash dummy";popup.timer=2000;}
         } else {popup.message="not enough space ediot";popup.timer=1000;}
@@ -306,6 +363,8 @@ function update() {
   	text("G - pierce tower | cost: 55",0,58,"black",10);
   	text("H - generator tower | cost: 80",0,70,"black",10);
   	text("J - mega tower | cost: 2000",0,82,"black",10);
+  	text("Z - magic machine gun | cost: 500",0,94,"black",10);
+ 	text("X - Boost Tower | cost: 150",0,106,"black",10);
   	text("Q - change mode",170,10,"black",10);
   	text("W - sell tower being hovered over",170,22,"black",10);
   	text(`mode: ${modes[dcounter].name}`,170,34,"black",10);
@@ -318,7 +377,7 @@ function update() {
       	text("YOU LOSE",canvas.width/2,canvas.height/2,"red",30);
       	gamestate--;
     }
-	resetInput();	
+	resetInput();
 }
 function bullet(x,y,r,damage,damageType,color,lineColor,speed,penetration,no) {
     this.x = x;
@@ -380,9 +439,13 @@ function enemy(r,fillColor,lineColor,health,armour,speed,name,rang,rang2,danger)
   	this.danger = danger;
     this.update = function() {
         this.x += speed;
-        drawCircle(this.x,this.y,this.r,this.fillColor,this.lineColor,this.r/10); 
-      	drawFancyn(this.x-this.r,this.y+this.r+4,this.maxHealth*5,8,"#0083ff","black");
-      	drawn(1+this.x-this.r,this.y+this.r+5,this.health*5-2,6,"#fc7a00");
+        var hblm = this.maxHealth*5;
+        var hblh = this.health*5-2;
+        hblh=hblm>75?Math.round((this.health/this.maxHealth*75)-2):hblh;
+        hblm=hblm>75?75:hblm;
+        drawCircle(this.x,this.y,this.r,this.fillColor,this.lineColor,this.r/10);
+      	drawFancyn(this.x-this.r,this.y+this.r+4,hblm,8,"#0048ff","black");
+      	drawn(1+this.x-this.r,this.y+this.r+5,hblh,6,"#fc7a00");
         if(collideCirclePoint(this,mousePos)&&statsShow) {
             text(`max health: ${this.maxHealth}`,this.x-this.r,this.y-this.r-10,"black",10);
             text(`armour: ${this.armour}`,this.x-this.r,this.y-this.r-22,"black",10);
@@ -393,7 +456,7 @@ function enemy(r,fillColor,lineColor,health,armour,speed,name,rang,rang2,danger)
       	if(this.x > canvas.width) {
           lives-=this.danger;
           return true;
-        }     
+        }
     }
     this.dead = function() {
       cash += rand(this.rang,this.rang2);
@@ -410,28 +473,46 @@ function specialTower(x,y,w,h,price,type,color) {
   this.price = price;
   this.type = type;
   this.color = color;
+  this.speed = 500;
   this.timer = 0;
   this.update = function() {
     drawFancy(this.x,this.y,this.w,this.h,this.color,"black");
     if(type == "Generator") {
       this.timer++;
       if(this.timer<=33) {text("+$10",this.x,this.y,"#2afc00",13);}
-      if(this.timer >= 500) {
+      if(this.timer >= this.speed) {
         play("sounds/money.wav");
         cash += 10;
       this.timer = 0;
       drawFancy(this.x,this.y,this.w,this.h,"white","black");
-	  
       }
     }
+      if(type == "Buff") {
+        drawFancy(this.x,this.y,this.w,this.h,this.color,"black");
+        if(collideBoxPoint(this,mousePos)){
+        	drawCircleOutline(this.x,this.y,100,this.color,"black",1);
+        }
+          for(let i=0;i<towers.length;i++) {
+              if(twoPointsDistance(this,towers[i])<100) {
+					towers[i].damage*=1.25;
+                	towers[i].speed*=0.75;
+                 	towers[i].range*=1.25;
+                
+              }
+          }
+      }
+    
+    
     if(collideBoxPoint(this,mousePos)){
         text(`type: ${this.type}`,this.x-this.w/2,this.y+this.h+10,"black",10);
+        text(`type: ${this.speed}`,this.x-this.w/2,this.y+this.h+22,"black",10);
         if(keyPress[87]) {
             play("sounds/place.wav");
             cash+=Math.round(this.price*diffiulty);
             return true;
         }
     }
+    this.speed = 500;
   }
 }
 function tower(x,y,w,h,color,damage,damageType,speed,range,pen,price,sound) {
@@ -449,11 +530,12 @@ function tower(x,y,w,h,color,damage,damageType,speed,range,pen,price,sound) {
     this.timer = this.speed;
     this.penetration = pen;
     this.sound = sound;
+  	this.base = [this.damage,this.speed,this.range];
     this.update = function() {
       	var ligma=[];
         drawFancy(this.x,this.y,this.w,this.h,this.color,"black");
       	for(var j=0;j<enemies.length;j++) {
-          	if(twoPointsDistance(this,enemies[j])<=range) {
+          	if(twoPointsDistance(this,enemies[j])<=this.range) {
               	ligma.push(j);
             }
         }
@@ -489,6 +571,9 @@ function tower(x,y,w,h,color,damage,damageType,speed,range,pen,price,sound) {
               	return true;
             }
         }
+      	this.damage = this.base[0];
+      	this.speed = this.base[1];
+      	this.range = this.base[2];
     }
     return this;
 }
@@ -502,8 +587,9 @@ function tower(x,y,w,h,color,damage,damageType,speed,range,pen,price,sound) {
 function check(kek) {
 	for(var i=0;i<towers.length;i++) {
 		if(kek==towers[i]) {continue;}
-      	if(collideBox(kek,towers[i])) {return true;}
+        if(collideBox(kek,towers[i])) {return true;}
     }
+    if(collideBox(kek,pathRect)) {return true;}
   	return false;
 }
 
@@ -556,7 +642,7 @@ function drawRectRotate(x,y,w,h,color,angl) {
     ctx.rect((-w / 2)+w/3,-h / 2,w-w/4,h);
     ctx.stroke();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-}   
+}
 function drawCircle(x,y,r,fillColor,lineColor,lineWidth) {
     ctx.beginPath();
     ctx.arc(x, y, r, 0, 2 * Math.PI, false);
@@ -591,7 +677,7 @@ function twoPointsDistance(object1,object2) {
     var one = (object2.x - object1.x);
     var two = (object2.y - object1.y);
     return Math.sqrt((one*one)+(two*two));
-}		
+}
 function collideCircle(object1,object2) {
     if( twoPointsDistance(object1,object2) < (object1.r + object2.r)) {
 		return true;
@@ -600,9 +686,9 @@ function collideCircle(object1,object2) {
     }
 }
 function collideBox(object1,object2) {
-    if(object1.x + object1.w/2 >= object2.x - object2.w/2 && 
+    if(object1.x + object1.w/2 >= object2.x - object2.w/2 &&
        object1.x - object1.w/2 <= object2.x + object2.w/2 &&
-       object1.y + object1.h/2 >= object2.y - object2.h/2 && 
+       object1.y + object1.h/2 >= object2.y - object2.h/2 &&
        object1.y - object1.h/2 <= object2.y + object2.h/2) {
            return true;
        }
@@ -622,9 +708,9 @@ function rand(min,max) {
     
 }
 function collideBoxPoint(box,point) {
-     if(box.x + box.w/2 >= point.x && 
+     if(box.x + box.w/2 >= point.x &&
         box.x - box.w/2 <= point.x &&
-        box.y + box.h/2 >= point.y && 
+        box.y + box.h/2 >= point.y &&
         box.y - box.h/2 <= point.y ) {
            return true;
        }
