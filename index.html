@@ -2,45 +2,20 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>CircleTD.io</title>
     <style>
-        html {
-            background-color: #000000;
-            color: white;
-        }
-        p {
-            font-family: Verdana;
-        }
         canvas {
-            padding-left: 0;
-            padding-right: 0;
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-            width: 800px;
-        }
-        button {
-            background-color: #535353;
-            color: #c5c5c5;
-            border: 2px solid #707070;
+            background-color: darkolivegreen;
+            image-rendering: pixelated;
         }
     </style>
 </head>
 <body>
-    <script src="input.js"></script>
-    <canvas id="mYcAnVaS" width="800" height="600" style="border: 1px solid grey"></canvas>
+    <canvas id="myIdLol" width="400" height="400"></canvas>
+    
+    <script src="loadImages.js"></script>
+    <script src="levels.js"></script>
+    <script src="graphics.js"></script>
+    <script src="mechanics.js"></script>
     <script src="main.js"></script>
-    <button onclick="savedata()">save</button>
-    <button onclick="cleardata()">reset save</button>
-    <br><br><br><br><br><br><br><br><br><br><br>
-    <p>Welcome to the html5 game circle td. Use the keys stated in the top left to place towers where your mouse is. Hover over a tower and press w to sell it. Press q to change the mode. The mode affects the spawning speed and the sell price. Hovering over enemies and towers shows stats. Can you get to round 20?</p>
-    <p>Towers</p>
-    <p>plain tower - it's normal</p>
-    <p>magic tower - penetrates armour</p>
-    <p>speed tower - effective against low armour enemies</p>
-    <p>ranger tower - shoots far</p>
-    <p>pierce tower - can shoot through muiltiple enemies</p>
-    <p>generator tower - slowly generates cash</p>
-    <p>mega tower - is cool</p>
 </body>
 </html>
