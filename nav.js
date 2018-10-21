@@ -1,7 +1,7 @@
 
 var navlist = [
-    {name:"Ouro-fill-us",link:"https://rsninja722.github.io/ouro/index.html"},
-    {name:"Circle TD",link:"https://rsninja722.github.io/circletd/index.html"},
+    {name:"Ouro-fill-us",link:"https://rsninja722.github.io/ouro/indexo.html"},
+    {name:"Circle TD",link:"https://rsninja722.github.io/circletd/indexr.html"},
     {name:"Space Shooter",link:"https://rsninja722.github.io/seperategames/indexspace.html"},
     {name:"Strategic Digger",link:"https://rsninja722.github.io/digger.html"},
     {name:"Seige Idle",link:"https://rsninja722.github.io/seperategames/sidgeidle.html"},
