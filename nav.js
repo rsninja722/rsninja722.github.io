@@ -1,19 +1,20 @@
 
 var navlist = [
-    {name:"Ouro-fill-us",link:"https://rsninja722.github.io/ouro/indexo.html"},
-    {name:"Circle TD",link:"https://rsninja722.github.io/circletd/indexr.html"},
+    {name:"Ouro-fill-us",link:"https://rsninja722.github.io/seperategames/ouro/indexo.html"},
+    {name:"Circle TD",link:"https://rsninja722.github.io/seperategames/circletd/indexr.html"},
     {name:"Space Shooter",link:"https://rsninja722.github.io/seperategames/indexspace.html"},
     {name:"Strategic Digger",link:"https://rsninja722.github.io/seperategames/digger.html"},
     {name:"Seige Idle",link:"https://rsninja722.github.io/seperategames/sidgeidle.html"},
     {name:"Snake Game",link:"https://rsninja722.github.io/seperategames/snakegame.html"},
     {name:"Crappy Clicker Game",link:"https://rsninja722.github.io/seperategames/5number idle.html"},
+    {name:"Stuipid JS things",link:"https://rsninja722.github.io/seperategames/stuipid.html"},
     {name:"Home",link:"https://rsninja722.github.io/index.html"}
 ]
 //style
 var sty = document.createElement("style");
 sty.innerHTML = `
 ul{list-style-type: none;margin: 0;padding: 0;width: 150px;}
-li a {display: block;color: #000;padding: 8px 8px;text-decoration: none;}
+li a {display: block;background-color: rgba(160, 160, 160, 0.5);color: #000;padding: 8px 8px;text-decoration: none;}
 li a:hover {background-color: rgba(160, 160, 160, 1);color: rgb(84, 74, 177);}
 `
 document.getElementById("a83n7").appendChild(sty);
