@@ -1,0 +1,52 @@
+p {
+    text-align: center; 
+    font-family: Comic Sans MS;
+}
+html {
+    background-image: repeating-linear-gradient( red 10%,orange 10%,yellow 10%,green 10%,blue 10%,indigo 10%,violet 10%); 
+}
+.rainbow {
+    background: #ff00ff;
+background: -moz-linear-gradient(top, #ff00ff 21%, #0026ff 33%, #10ff00 49%, #fff200 65%, #ff9400 85%, #ff0000 100%);
+background: -webkit-linear-gradient(top, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);
+background: linear-gradient(to bottom, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff00ff', endColorstr='#ff0000',GradientType=0 );
+}
+.head {
+    background-image: radial-gradient(#fdb60d,#ff9200); 
+    height:40%; 
+    width: 100%; 
+    top:0px; 
+    position: absolute;
+}
+.article {
+    background-color: #f3e7d9;
+    width: 75%;
+    margin: auto;
+    border: 5px solid #ffba00;
+    font-size: 125%;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ff9200;
+    font-family: Comic Sans MS;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #c77100
+}
