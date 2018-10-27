@@ -1,16 +1,45 @@
+
+
 p {
     text-align: center; 
     font-family: Comic Sans MS;
 }
 html {
-    background-image: repeating-linear-gradient( red 10%,orange 10%,yellow 10%,green 10%,blue 10%,indigo 10%,violet 10%); 
-}
-.rainbow {
+
+
+    
     background: #ff00ff;
-background: -moz-linear-gradient(top, #ff00ff 21%, #0026ff 33%, #10ff00 49%, #fff200 65%, #ff9400 85%, #ff0000 100%);
-background: -webkit-linear-gradient(top, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);
-background: linear-gradient(to bottom, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff00ff', endColorstr='#ff0000',GradientType=0 );
+    background: -moz-linear-gradient(top, #ff00ff 21%, #0026ff 33%, #10ff00 49%, #fff200 65%, #ff9400 85%, #ff0000 100%);
+    background: -webkit-linear-gradient(top, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);
+    background: linear-gradient(to bottom, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff00ff', endColorstr='#ff0000',GradientType=0 );
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    animation: rainbow 3s linear infinite;
+}
+@keyframes rainbow { 
+    0%{background: linear-gradient(to bottom, #ff00ff 21%,#0026ff 33%,#10ff00 49%,#fff200 65%,#ff9400 85%,#ff0000 100%);margin: 0;
+        background-repeat: no-repeat;
+        background-attachment: fixed;}
+    20%{background: linear-gradient(to bottom, #0026ff 21%,  #10ff00 33%,#fff200 49%,#ff9400 65%,#ff0000 85%, #ff00ff 100%);margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;}
+    40%{background: linear-gradient(to bottom,   #10ff00 21%,#fff200 33%,#ff9400 49%,#ff0000 65%, #ff00ff 85%, #0026ff 100%);margin: 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;}
+    60%{background: linear-gradient(to bottom,  #fff200 21%,#ff9400 33%,#ff0000 49%, #ff00ff 65%, #0026ff 85%,  #10ff00 100%);margin: 0;
+        background-repeat: no-repeat;
+        background-attachment: fixed;}
+    80%{background: linear-gradient(to bottom,  #ff9400 21%,#ff0000 33%, #ff00ff 49%, #0026ff 65%,  #10ff00 85%, #fff200 100%);margin: 0;
+        background-repeat: no-repeat;
+        background-attachment: fixed;}
+    100%{background: linear-gradient(to bottom,  #ff0000 21%, #ff00ff 33%, #0026ff 49%,  #10ff00 65%, #fff200 85%, #ff9400 100%);margin: 0;
+        background-repeat: no-repeat;
+        background-attachment: fixed;}
+}
+.rainboww {
+    background-image: repeating-linear-gradient( red 10%,orange 10%,yellow 10%,green 10%,blue 10%,indigo 10%,violet 10%); 
 }
 .head {
     background-image: radial-gradient(#fdb60d,#ff9200); 
