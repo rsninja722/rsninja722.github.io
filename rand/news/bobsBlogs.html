@@ -5,6 +5,10 @@
     <title>Page Title</title>
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script>
+        function change(emotion) {
+            document.getElementById("a").src = `gif/${emotion}.gif`;
+        }
+        
     </script>
 </head>
 <body>
@@ -37,15 +41,15 @@
                         The following diagram, provided by Open AI, includes all the actions the arm is able to perform if the user is:</p>
                         <div>
                             
-                            <button style="width:23%;">sad</button>
-                            <button style="width:23%;">happy</button>
-                            <button style="width:23%;">fuming</button>
-                            <button style="width:23%;">cantankerous</button><br>
-                            <button style="width:23%;">angry</button>
-                            <button style="width:23%;">depressed</button>
-                            <button style="width:23%;">euphoric</button>
-                            <button style="width:23%;">bliss</button>
-                            <img src="gif/Untitled.png" style="position:inherit; left:10%; top:130%;width:100%;height: auto;">
+                            <button style="width:23%;" onclick="change('sad')">sad</button>
+                            <button style="width:23%;" onclick="change('happy')">happy</button>
+                            <button style="width:23%;" onclick="change('fuming')">fuming</button>
+                            <button style="width:23%;" onclick="change('cantankerous')">cantankerous</button><br>
+                            <button style="width:23%;" onclick="change('angry')">angry</button>
+                            <button style="width:23%;" onclick="change('depressed')">depressed</button>
+                            <button style="width:23%;" onclick="change('euphoric')">euphoric</button>
+                            <button style="width:23%;" onclick="change('bliss')">bliss</button>
+                            <img id="a"src="gif/Untitled.png" style="position:inherit; left:10%; top:130%;width:100%;height: auto;">
                         </div>
                         
                         <p style="text-align:justify;">
