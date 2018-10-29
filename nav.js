@@ -3,13 +3,14 @@ var navlist = [
     {name:"Ouro-fill-us",link:"https://rsninja722.github.io/seperategames/ouro/indexo.html"},
     {name:"Circle TD",link:"https://rsninja722.github.io/seperategames/circletd/indexr.html"},
     {name:"Space Shooter",link:"https://rsninja722.github.io/seperategames/indexspace.html"},
+    {name:"Space Shooter V2 (ALPHA)",link:"https://rsninja722.github.io/seperategames/indexspace.html"},
     {name:"Strategic Digger",link:"https://rsninja722.github.io/seperategames/digger.html"},
     {name:"Seige Idle",link:"https://rsninja722.github.io/seperategames/sidgeidle.html"},
     {name:"Snake Game",link:"https://rsninja722.github.io/seperategames/snakegame.html"},
     {name:"Crappy Clicker Game",link:"https://rsninja722.github.io/seperategames/5number idle.html"},
     {name:"Stuipid JS things",link:"https://rsninja722.github.io/seperategames/stuipid.html"},
     {name:"Home",link:"https://rsninja722.github.io/index.html"}
-]
+]spaceShooterV2
 //style
 var sty = document.createElement("style");
 sty.innerHTML = `
