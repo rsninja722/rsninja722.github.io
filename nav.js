@@ -10,7 +10,7 @@ var navlist = [
     {name:"Crappy Clicker Game",link:"https://rsninja722.github.io/seperategames/5number idle.html"},
     {name:"Stuipid JS things",link:"https://rsninja722.github.io/seperategames/stuipid.html"},
     {name:"Home",link:"https://rsninja722.github.io/index.html"}
-]spaceShooterV2
+]
 //style
 var sty = document.createElement("style");
 sty.innerHTML = `
