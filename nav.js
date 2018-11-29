@@ -1,7 +1,8 @@
 
 var navlist = [
-    {name:"Zombies",link:"https://rsninja722.github.io/seperategames/zombies/index.html"},
+    
     {name:"Ouro-fill-us",link:"https://rsninja722.github.io/seperategames/ouro/indexo.html"},
+    {name:"Zombies",link:"https://rsninja722.github.io/seperategames/zombies/index.html"},
     {name:"Circle TD",link:"https://rsninja722.github.io/seperategames/circletd/indexr.html"},
     {name:"Space Shooter",link:"https://rsninja722.github.io/seperategames/indexspace.html"},
     {name:"Space Shooter V2 (ALPHA)",link:"https://rsninja722.github.io/seperategames/spaceShooterV2/index.html"},
