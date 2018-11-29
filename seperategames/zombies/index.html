@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shooter</title>
+  <style>
+    canvas{
+      image-rendering: pixelated;
+    }
+    img {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <img src="images/p1.png" id="p1">
+  <img src="images/p2.png" id="p2">
+  <img src="images/p3.png" id="p3">
+  <img src="images/p4.png" id="p4">
+  <img src="images/p5.png" id="p5">
+  <img src="images/z1.png" id="z1">
+  <img src="images/gun0.png" id="gun0">
+  <img src="images/gun1.png" id="gun1">
+  <img src="images/gun2.png" id="gun2">
+  <img src="images/inv.png" id="inv">
+  <img src="images/select.png" id="select">
+  <img src="images/target.png" id="target">
+  <img src="images/pows1.png" id="pows1">
+  <img src="images/powp1.png" id="powp1">
+	<canvas id="backgroundCvs" width="600" height="400" style="border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
+  <canvas id="cvs" width="600" height="400" style="border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
+  <div id="a83n7"><div onclick="clck()"style="position:absolute;right:1%;top:1%"><img src="https://rsninja722.github.io/assets/sidebar.png"></div></div><script src="https://rsninja722.github.io/nav.js"></script>
+    <script src="https://rsninja722.github.io/input.js"></script>
+<script>
+
+//todo
+//melee
+
+  "use strict";
+  //------------------------------------------------------ vars ------------------------------------------------------
+	var canvas = document.getElementById("cvs");
+  var ctx = canvas.getContext("2d");
+  var canvasBack = document.getElementById("backgroundCvs");
+  var ctxBack = canvasBack.getContext("2d");
+  var bullets = [];
+  var enemies = [];
+  var particles = [];
+  var items = [];
+  var map = [];
+  var texts = [];
+  var score = 0;
+  var gameOn = false;
+  var powcount = 10;
+	var pdat = {
+    x:300,
+    y:200,
+    vx:0,
+    vy:0,
+    w:10,
+    h:10,
+    angle:0,
+    speed:1,
+    counter:0,
+    animationCounter:0,
+	health:10,
+	healthCooldown:0,
+	gold:0,
+	gun:0,
+  pspeed:1,
+  damage:0,
+  powtime:0
+
+  }
+  var weapons = [
+    { //pistol
+      speed: 25,
+      velocity: 4,
+      damage: 2
+    },
+    { //rifle
+      speed: 10,
+      velocity: 6,
+      damage: 1
+    },
+    { //sniper
+      speed: 80,
+      velocity: 8,
+      damage: 10
+    }
+  ]
+  var images = {};
+  const walkSequence = [0,1,2,1,0,3,4,3];
+  var walkCounter=0;
+  var humanImage;
+  var enemyCounter = 10;
+  
+  //------------------------------------------------------ other setup ------------------------------------------------------
+  preventedEvents = [true,true,true];
+  images.p=[];
+  images.p.push(getpic("p1"));
+  images.p.push(getpic("p2"));
+  images.p.push(getpic("p3"));
+  images.p.push(getpic("p4"));
+  images.p.push(getpic("p5"));
+  images.gun0=getpic("gun0");
+  images.gun1=getpic("gun1");
+  images.gun2=getpic("gun2");
+  images.inv=getpic("inv");
+  images.pows1=getpic("pows1");
+  images.powp1=getpic("powp1");
+  images.select=getpic("select");
+  images.z=[];
+  images.z.push(getpic("z1"));
+  var targetPic = getpic("target");
+  
+  ctxBack.fillStyle = "#00ba0c";
+  ctxBack.fillRect(0,0,600,400);
+  for(var i=0;i<100;i++) {
+	ctxBack.fillStyle = "#179101";
+	ctxBack.fillRect(rand(0,600),rand(0,400),3,10);
+	
+  }
+  
+  addListenersTo(canvas);
+  //enemies.push(new enemy(150,150,10,10,0.8,1,1,1));
+  setUpMap();
+  setTimeout(start,1000);
+  function start() {
+    spawnEnemies();
+    animatePlayer();
+    movePlayer();
+    updateObjects();
+    drawObjects();
+    requestAnimationFrame(mainLoop);
+  }
+  //------------------------------------------------------ main loop ------------------------------------------------------
+function mainLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if(gameOn) {
+    spawnEnemies();
+    //drawRectRotate(pdat.x,pdat.y,10,10,"black",pdat.angle);
+    
+    animatePlayer();
+    //spawn(1);
+    //----------- update -----------
+    movePlayer();
+    
+    updateObjects();
+    
+    drawObjects();
+    } else {
+      drawObjects();
+      menuUpdate();
+      menuDraw();
+      drawPicRotate(mousePos.x,mousePos.y,21,21,0,targetPic);
+    }
+	  
+  	//----------- draw -----------
+  	
+  	
+  	resetInput();
+    requestAnimationFrame(mainLoop);
+}
+  
+  
+  //------------------------------------------------------ classish declerations ------------------------------------------------------
+  function mapPiece(x,y,w,h,color) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.color = color;
+    this.draw = function() {
+      draw(this.x,this.y,this.w,this.h,this.color);
+    }
+  }
+  function bullet(x,y,angle,speed) {
+    this.x = x;
+    this.y = y;
+    this.w = 4;
+    this.h = 4;
+    this.angle = angle;
+    this.speed = speed;
+    this.vel = {
+        x:Math.sin(this.angle),
+        y:Math.cos(this.angle)
+    }
+    this.update = function() {
+        this.x += this.vel.x * this.speed;
+        this.y -= this.vel.y * this.speed;
+        particles.push(new particle(this.x-2,this.y-2,0,rand(5,10),"color","red"));
+    }
+	this.draw = function() {
+    if(pdat.damage!=0) {
+      draw(this.x,this.y,4,4,"black");
+    } else if(pdat.pspeed!=1) {
+      draw(this.x,this.y,4,4,"yellow");
+    } else {
+      draw(this.x,this.y,4,4,"white");
+    }
+		
+	}
+  }
+function enemy(x,y,w,h,speed,health,damage,image) {
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	this.speed = speed;
+	this.health = health;
+	this.damage = damage;
+	this.image = image;
+	this.angle = 0;
+	this.health = 6;
+	this.update = function() {
+	  this.angle = pointTo(this,pdat) - setAngle(90);
+    var xang = Math.sin(this.angle);
+    var yang = Math.cos(this.angle);
+	  this.x += xang * this.speed; if(hittingMap(this,xang,"x")||hittingEnemies(this,xang,"x")) { this.x -= xang * this.speed;}
+    this.y -= yang * this.speed; if(hittingMap(this,yang,"y")||hittingEnemies(this,yang,"y")) { this.y += yang * this.speed;}
+    //this.move();
+	}
+	this.move= function(dir) {
+	  var xang = Math.sin(this.angle);
+    var yang = Math.cos(this.angle);
+	  this.x += xang * this.speed * dir; //if(hittingMap(this,xang,"x")||hittingEnemies(this,xang,"x")) { this.x -= xang * this.speed;}
+    this.y -= yang * this.speed * dir; //if(hittingMap(this,yang,"y")||hittingEnemies(this,yang,"y")) { this.y += yang * this.speed;}
+	}
+	this.draw = function() {
+    this.angle = pointTo(this,pdat) - setAngle(90) + setAngle(rand(-10,10));
+      drawPicRotate(this.x,this.y,12,8,this.angle,images.z[0]);
+		  //draw(this.x,this.y,10,10,"#007701");
+	}
+}
+function particle(x,y,speed,time,type,graphic,angle="random") {
+    this.x=x;
+    this.y=y;
+    this.speed=speed;
+    this.type=type;
+    this.graphic=graphic;
+    this.angle=angle;
+    if(angle=="random") {
+      this.angle=setAngle(rand(0,359));
+    }
+    this.vel = {
+        y:Math.cos(this.angle)*this.speed,
+        x:Math.sin(this.angle)*this.speed
+    }
+    this.size=5;
+    if(this.type=="color") {this.size=rand(1,4);}
+    this.timer=time;
+}
+
+particle.prototype.move = function() {
+    this.y-=this.vel.y;
+    this.x+=this.vel.x;
+    for(let i=0;i<map.length;i++) {
+        if(collideBox(this,map[i])) {
+            this.y+=this.vel.y;
+            this.x-=this.vel.x;
+        }
+    }
+    if(this.vel.y>-0.06&&this.vel.y<0.06) {
+      this.vel.y = 0;
+    } else {
+      this.vel.y -= (this.vel.y>0) ? 0.06 : -0.06;
+    }
+
+    if(this.vel.x>-0.06&&this.vel.x<0.06) {
+      this.vel.x = 0;
+    } else {
+    this.vel.x -= (this.vel.x>0) ? 0.06 : -0.06;
+    }
+
+    this.timer--;
+    if(this.timer==5) { this.size--; }
+    if(this.timer<0) {return true;}
+}
+
+particle.prototype.draw = function() {
+    if(this.type=="color") {
+        ctx.fillStyle = this.graphic;
+        ctx.fillRect(Math.round(this.x+this.size/2),Math.round(this.y+this.size/2),this.size,this.size);
+    } else {
+        //pic(this.x,this.y,this.graphic.width,this.graphic.height,this.graphic);
+        drawPicRotate(this.x,this.y,this.graphic.width,this.graphic.height,this.angle,this.graphic);
+    }
+}
+function item(x,y,speed,value,type,graphic) {
+    this.x=x;
+    this.y=y;
+    this.w=0;
+    this.h=0;
+    this.range = 30;
+    this.rot=0;
+    this.speed=speed;
+    this.type=type;
+    this.value=value;
+    this.angle=setAngle(rand(0,359));
+    this.vel = {
+        y:Math.cos(this.angle)*this.speed,
+        x:Math.sin(this.angle)*this.speed
+    }
+    this.graphic="";
+    this.timer=0;
+    switch(this.type) {
+        case "gold":
+            this.graphic="yellow";
+            this.w=4;
+            this.h=4;
+            break;
+        case "power":
+            this.graphic=graphic;
+            this.w=20;
+            this.h=20;
+            break;
+    }
+}
+item.prototype.move = function() {
+    this.y-=this.vel.y;
+    this.x+=this.vel.x;
+    this.vel.y -= (this.vel.y>0) ? 0.06 : -0.06;
+    this.vel.x -= (this.vel.x>0) ? 0.06 : -0.06;
+    if(twoPointsDistance(this,pdat)<this.range) {
+        this.angle = pointTo(this,pdat)-setAngle(90);
+        this.speed+=0.02;
+        this.vel = {
+            y:Math.cos(this.angle)*this.speed*2,
+            x:Math.sin(this.angle)*this.speed*2
+        }
+    }
+    if(twoPointsDistance(this,pdat)<10) {
+      switch(this.type) {
+        case "gold":
+          pdat.gold++;
+          texts.push([pdat.x,pdat.y,50]);
+          return 1;
+          break;
+        case "power":
+          if(this.value==1) {
+            pdat.pspeed+=1;
+            pdat.powtime=600;
+          } else {
+            pdat.damage+=2;
+            pdat.powtime=600;
+          }
+          return 1;
+          break;
+      }
+    }
+    this.rot+=0.01;
+}
+
+item.prototype.draw = function() {
+    switch(this.type) {
+      case "gold":
+        draw(this.x,this.y,this.w,this.h,this.graphic);
+        break;
+      case "power":
+      drawPicRotate(this.x,this.y,this.w,this.h,this.rot,this.graphic);
+      
+        break;
+    }
+}
+// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+
+//-------------------------------------------------------------------------------------
+//-------------------------------------------player---------------------------------------
+//-------------------------------------------------------------------------------------
+function movePlayer() {
+	pdat.vx=0;
+    pdat.vy=0;
+    if(keyDown[87]) {pdat.vy-=pdat.speed*pdat.pspeed}//up
+    if(keyDown[83]) {pdat.vy+=pdat.speed*pdat.pspeed}//down
+    if(keyDown[65]) {pdat.vx-=pdat.speed*pdat.pspeed}//left
+    if(keyDown[68]) {pdat.vx+=pdat.speed*pdat.pspeed}//right
+    if(keyDown[49]) {pdat.gun=0;}
+    if(keyDown[50]) {pdat.gun=1;}
+    if(keyDown[51]) {pdat.gun=2;}
+    pdat.gun+=scroll*-1;pdat.gun=Math.abs(pdat.gun%3);
+    if(pdat.counter<=0&&(mouseDown[0]||keyDown[32])) {
+      bullets.push(new bullet(pdat.x,pdat.y,pdat.angle,weapons[pdat.gun].velocity));//shoot
+      pdat.counter=weapons[pdat.gun].speed;
+      for(var g=0;g<20;g++) {
+          particles.push(new particle(pdat.x,pdat.y,rand(3,4,10),rand(10,20),"color",`rgb(${rand(150,200)},${rand(0,255)},0)`,pdat.angle+setAngle(rand(-45,45))));
+        }
+    } else {
+      pdat.counter-=1*pdat.pspeed;
+    }
+	if(keyDown[16]) {pdat.gold++;}
+  if(pdat.powtime>0) {
+    pdat.powtime--;
+    if(pdat.powtime<2) {
+      pdat.damage=0;
+      pdat.pspeed=1;
+    }
+  }
+    if(pdat.vx&&pdat.vy) {
+      pdat.vx/=1.5;
+      pdat.vy/=1.5;
+    }
+    pdat.x+=pdat.vx; if(hittingMap(pdat)) {pdat.x-=pdat.vx;};
+    pdat.y+=pdat.vy; if(hittingMap(pdat)) {pdat.y-=pdat.vy;};
+	if(pdat.x<0) {pdat.x=0;}
+	if(pdat.x>canvas.width) {pdat.x=canvas.width;}
+	if(pdat.y<0) {pdat.y=0;}
+	if(pdat.y>canvas.height) {pdat.y=canvas.height;}
+    
+    pdat.angle = pointTo(pdat,mousePos) - setAngle(90);
+	if(pdat.healthCooldown>0) {pdat.healthCooldown--;}
+	if(pdat.healthCooldown==0) {
+    pdat.w=12;
+    pdat.h=12;
+		for(let i=0;i<enemies.length;i++) {
+			if(collideBox(pdat,enemies[i])) {
+        for(var g=0;g<40;g++) {
+          particles.push(new particle(pdat.x,pdat.y,rand(1,2,10),rand(40,60),"color",`#${rand(55,99)}0000`));
+        }
+				
+				pdat.health--;
+				pdat.healthCooldown=30;
+				if(pdat.health<=0) {lose();}
+			}
+		}
+    pdat.w=10;
+    pdat.h=10;
+	}
+}
+function animatePlayer() {
+	walkCounter--;
+    if(walkCounter<=0) {
+      pdat.animationCounter++;
+      if(pdat.animationCounter>=walkSequence.length-1) {
+        pdat.animationCounter=0;
+      }
+      walkCounter=5;
+    }
+    if(pdat.vx||pdat.vy) {
+      humanImage = images.p[walkSequence[pdat.animationCounter]];
+    } else {
+      humanImage = images.p[0];
+    }
+}
+//-------------------------------------------------------------------------------------
+//-------------------------------------------spawn---------------------------------------
+//-------------------------------------------------------------------------------------
+function spawnEnemies() {
+  enemyCounter--;
+  if(enemyCounter<=0) {
+    //enemies.push(new enemy(100,100,10,10,0.6,1,1,1));
+    var side = rand(1,4);
+	if(rand(0,10)==3) {
+		switch(side) {
+		  case 1:
+			enemies.push(new enemy(rand(0,canvas.width),0,10,10,1.5,3,1,1));
+			break;
+		  case 2:
+			enemies.push(new enemy(rand(0,canvas.width),canvas.height,10,10,1.5,3,1,1));
+			break;
+		  case 3:
+			enemies.push(new enemy(0,rand(0,canvas.height),10,10,1.5,3,1,1));
+			break;
+		  case 4:
+			enemies.push(new enemy(canvas.width,rand(0,canvas.height),10,10,1.5,3,1,1));
+			break;
+		}
+	} else {
+		switch(side) {
+		  case 1:
+			enemies.push(new enemy(rand(0,canvas.width),0,10,10,0.6,6,1,1));
+			break;
+		  case 2:
+			enemies.push(new enemy(rand(0,canvas.width),canvas.height,10,10,0.6,6,1,1));
+			break;
+		  case 3:
+			enemies.push(new enemy(0,rand(0,canvas.height),10,10,0.6,6,1,1));
+			break;
+		  case 4:
+			enemies.push(new enemy(canvas.width,rand(0,canvas.height),10,10,0.6,6,1,1));
+			break;
+		}
+	}
+    enemyCounter = 66;
+  }
+}
+//-------------------------------------------------------------------------------------
+//-------------------------------------------update---------------------------------------
+//-------------------------------------------------------------------------------------
+function updateObjects() {
+  for(var i=0;i<bullets.length;i++) {
+      bullets[i].update();
+      if(onEdge(bullets[i])||hittingMap(bullets[i])) {
+        bullets.splice(i,1);
+        i--;
+        continue;
+      }
+      for(var j=0;j<enemies.length;j++) {
+            if(collideBox(bullets[i],enemies[j])) {
+              enemies[j].health-=weapons[pdat.gun].damage+pdat.damage;
+              enemies[j].speed-=(weapons[pdat.gun].damage+pdat.damage)/10;
+              
+                for(var g=0;g<20;g++) {
+                  particles.push(new particle(enemies[j].x,enemies[j].y,rand(1,2,10),rand(40,60),"color",`#00${rand(55,99)}00`));
+                }
+                //(x,y,speed,value,type,graphic)
+                
+                
+                
+                bullets.splice(i,1);
+  			        
+  			        
+                i--;
+                
+                if(enemies[j].health<=0) {
+                  let rng = rand(1,5);
+                  for(var g=0;g<rng;g++) {
+                    items.push(new item(enemies[j].x,enemies[j].y,1.2,1,"gold","yellow"));
+                  }
+                  powcount++;
+                  if(powcount==20) {
+                    var tempPic;
+                    var tempVal = 0;
+                    if(rand(1,2)==1) {
+                      tempPic = images.pows1;
+                      tempVal = 1;
+                    } else {
+                      tempPic = images.powp1;
+                      tempVal = 2;
+                    }
+                    items.push(new item(enemies[j].x,enemies[j].y,3,tempVal,"power",tempPic));
+                    powcount=0;
+                  }
+                  texts.push([enemies[j].x,enemies[j].y,50]);
+                  enemies.splice(j,1);
+                  pdat.gold++;
+                  
+                }
+                break;
+            }
+        }
+      
+    }
+	  for(var i=0;i<enemies.length;i++) {
+      enemies[i].update();
+      if(onEdge(enemies[i])) {
+        enemies.splice(i,1);
+        i--;
+      }
+    }
+	for(var i=0;i<particles.length;i++) {
+      if(particles[i].move()) {
+        particles.splice(i,1);
+        i--;
+      }
+    }
+    for(var i=0;i<items.length;i++) {
+      if(items[i].move()) {
+        items.splice(i,1);
+        i--;
+      }
+    }
+    for(var i=0;i<texts.length;i++) {
+      texts[i][2]--;
+      texts[i][1]--;
+      if(texts[i][2]<1) {
+        texts.splice(i,1);
+        i--;
+      }
+    }
+}
+
+
+
+
+function menuUpdate() {
+  if(collideBox({x:300,y:200,w:100,h:40},{x:mousePos.x,y:mousePos.y,w:1,h:1})&&mousePress[0]) {
+    gameOn = true;
+  }
+}
+//-------------------------------------------------------------------------------------
+//-------------------------------------------draw---------------------------------------
+//-------------------------------------------------------------------------------------
+function drawObjects() {
+    for(var i=0;i<particles.length;i++) {
+      particles[i].draw();
+    }
+  for(var i=0;i<bullets.length;i++) {
+      bullets[i].draw();
+    }
+    for(var i=0;i<items.length;i++) {
+      items[i].draw();
+    }
+    for(var i=0;i<texts.length;i++) {
+      text("+1",texts[i][0],texts[i][1],"yellow",16);
+    }
+	drawPicRotate(pdat.x,pdat.y,12,8,pdat.angle,humanImage);
+    for(var i=0;i<enemies.length;i++) {
+      enemies[i].draw();
+    }
+    for(var i=0;i<map.length;i++) {
+      map[i].draw();
+    }
+	
+	drawPicRotate(mousePos.x,mousePos.y,21,21,0,targetPic);
+	drawFancy(2,2,pdat.health*10,10,"red","black");
+  text(pdat.gold,0,30,"yellow",20);
+  ctx.drawImage(images.inv,110,2);
+  ctx.drawImage(images.gun0,110,2);
+  ctx.drawImage(images.gun1,110,2);
+  ctx.drawImage(images.gun2,110,2);
+  ctx.drawImage(images.select,110+pdat.gun*24,2);
+}
+
+function menuDraw() {
+  draw(300,200,100,40,"black");
+  text("start",260,210,"white",40);
+  if(score==0) {
+    text("Press start to play.",210,300,"white",16);
+    text("WASD - move",210,320,"white",16);
+    text("Space - shoot",210,340,"white",16);
+    text("1,2,3 OR Scroll - select weapon",210,360,"white",16);
+  } else {
+    text("Your score was: "+score,200,300,"white",20);
+  }
+}
+
+
+
+
+function hittingMap(object) {
+	if(arguments[2]) {
+		for(let i=0;i<map.length;i++) {
+		if(collideBox(object,map[i])) {
+			if(arguments[2]="y") {
+				//enemies[i].y-=vel/2;
+				if(object.x>map[i].x) {
+					object.x+=object.speed*2;
+				} else {
+					object.x-=object.speed*2;
+				}
+			  } else {
+				//enemies[i].x+=vel/2;
+				if(object.y>map[i].y) {
+					object.y+=object.speed*2;
+				} else {
+					object.y-=object.speed*2;
+				}
+			  }
+		  return true;
+		}
+	  }
+	  return false;
+	} else {
+	  for(let i=0;i<map.length;i++) {
+		if(collideBox(object,map[i])) {
+		  return true;
+		}
+	  }
+	  return false;
+	}
+}
+function hittingEnemies(object,vel,xy) {
+  enemies.push(pdat);
+  for(let i=0;i<enemies.length;i++) {
+    if(enemies[i]==object) {continue;}
+    if(collideBox(object,enemies[i])) {
+      if(xy="y") {
+        //enemies[i].y-=vel/2;
+        if(object.x>enemies[i].x) {
+            object.x+=object.speed;
+        } else {
+            object.x-=object.speed;
+        }
+      } else {
+        //enemies[i].x+=vel/2;
+        if(object.y>enemies[i].y) {
+            object.y+=object.speed;
+        } else {
+            object.y-=object.speed;
+        }
+      }
+      object.angle = pointTo(object,enemies[i]) + setAngle(90);
+      object.move(1);
+      if(hittingMap(object)){
+        object.move(-1);
+      }
+      enemies.pop();
+      return true;
+    }
+  }
+  enemies.pop();
+  return false;
+}
+function setUpMap() {
+  map.push(new mapPiece(300,125,150,15,"#6d3300"));
+  map.push(new mapPiece(300,275,150,15,"#6d3300"));
+  //map.push(new mapPiece(375,200,15,165,"#6d3300"));
+  map.push(new mapPiece(375,152.5,15,70,"#6d3300"));
+  map.push(new mapPiece(375,152.5,15,70,"#6d3300"));
+  map.push(new mapPiece(375,248.5,15,70,"#6d3300"));
+  map.push(new mapPiece(225,152.5,15,70,"#6d3300"));
+  map.push(new mapPiece(225,249,15,70,"#6d3300"));
+  map.push(new mapPiece(100,300,40,50,"#6d3300"));
+}
+
+
+function lose() {
+	bullets = [];
+ 	enemies = [];
+  particles = [];
+  items = [];
+  texts = [];
+  score=pdat.gold;
+	pdat = {
+    x:300,
+    y:200,
+    vx:0,
+    vy:0,
+    w:10,
+    h:10,
+    angle:0,
+    speed:1,
+    counter:0,
+    animationCounter:0,
+	health:10,
+	healthCooldown:0,
+	gold:0,
+	gun:0,
+  pspeed:1,
+  damage:0,
+  powtime:0
+  };
+  powcount = 0;
+  walkCounter=0;
+  enemyCounter = 10;
+  gameOn = false;
+}
+//------------------------------------------------------ low level stuff ------------------------------------------------------
+function drawRectRotate(x,y,w,h,color,angl) {ctx.setTransform(1, 0, 0, 1, x, y);ctx.rotate(angl);ctx.fillStyle = color;ctx.fillRect(-w / 2,-h / 2,w,h);ctx.setTransform(1, 0, 0, 1, 0, 0)}
+function draw(x,y,w,h,color) {ctx.fillStyle = color;ctx.fillRect(x-(w/2),y-(h/2),w,h);}
+function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);var h = Math.atan2(opposite, adjacent);return h;}
+function rand(min,max) {if(arguments[2] == undefined) {return Math.floor(Math.random() * (max - min + 1)) + min;} else {return (Math.floor(((Math.random() * (max - min + 1)) + min) * arguments[2])) / arguments[2];}}
+function setAngle(number) {return number * Math.PI / 180;}
+function onEdge(object){if(object.x > canvas.width || object.x < 0 || object.y > canvas.height || object.y < 0) {return true;}}
+function drawPicRotate(x,y,w,h,angl,pic) {ctx.setTransform(1, 0, 0, 1, x, y);ctx.rotate(angl);ctx.drawImage(pic,-w/2,-h/2);ctx.setTransform(1, 0, 0, 1, 0, 0);}
+function getpic(picid) {return document.getElementById(picid);}
+function collideBox(object1,object2) {if(object1.x + object1.w/2 >= object2.x - object2.w/2 && object1.x - object1.w/2 <= object2.x + object2.w/2 &&object1.y + object1.h/2 >= object2.y - object2.h/2 && object1.y - object1.h/2 <= object2.y + object2.h/2) {return true;}}
+function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);var h = Math.atan2(opposite, adjacent);return h;}
+function drawFancy(x,y,w,h,color,lineColor) {ctx.fillStyle = color;ctx.fillRect(x,y,w,h);ctx.beginPath();ctx.setLineDash([]);ctx.strokeStyle = lineColor;ctx.lineWidth = 2;ctx.rect(x,y,w,h);ctx.stroke();}
+function text(txt,x,y,color,size) {ctx.font=`${size}px Arial`;ctx.fillStyle = color;ctx.fillText(txt,x,y);}
+function twoPointsDistance(object1,object2) {var one = (object2.x - object1.x);var two = (object2.y - object1.y);return Math.sqrt((one*one)+(two*two));}
+//function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);return Math.atan2(opposite, adjacent)-1.5707963267948966;}
+</script>
+</body>
+</html>
