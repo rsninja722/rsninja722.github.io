@@ -132,6 +132,8 @@
   
   //ctxBack.fillStyle = "#00ba0c";
   //ctxBack.fillRect(0,0,600,400);
+  setTimeout(setBack,900);
+  function setBack() {
   for(var y=0;y<canvas.height;y+=10) {
       for(var x=0;x<canvas.width;x+=10) {
         ctxBack.drawImage(images.grass,x,y);
@@ -165,6 +167,7 @@
           ctxBack.drawImage(images[`block${rand(1,4)}`],374,f);
   }
   ctxBack.drawImage(images.back1,0,0);
+  }
   addListenersTo(canvas);
   //enemies.push(new enemy(150,150,10,10,0.8,1,1,1));
   setUpMap();
