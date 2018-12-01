@@ -26,9 +26,18 @@
   <img src="images/target.png" id="target">
   <img src="images/pows1.png" id="pows1">
   <img src="images/powp1.png" id="powp1">
+  <img src="images/grass.png" id="grass">
+  <img src="images/block1.png" id="block1">
+  <img src="images/block2.png" id="block2">
+  <img src="images/block3.png" id="block3">
+  <img src="images/block4.png" id="block4">
+  <img src="images/back1.png" id="back1">
+  <img src="images/g0.png" id="g0">
+  <img src="images/g1.png" id="g1">
+  <img src="images/g2.png" id="g2">
 	<canvas id="backgroundCvs" width="600" height="400" style="border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
   <canvas id="cvs" width="600" height="400" style="border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
-  <div id="a83n7"><div onclick="clck()"style="position:absolute;right:1%;top:1%"><img src="https://rsninja722.github.io/assets/sidebar.png"></div></div><script src="https://rsninja722.github.io/nav.js"></script>
+  <div id="a83n7"><div onclick="clck()"style="position:absolute;right:1%;top:1%"><img src="https://rsninja722.github.io/assets/sidebar.png" style="display:block;"></div></div><script src="https://rsninja722.github.io/nav.js"></script>
     <script src="https://rsninja722.github.io/input.js"></script>
 <script>
 
@@ -108,18 +117,54 @@
   images.pows1=getpic("pows1");
   images.powp1=getpic("powp1");
   images.select=getpic("select");
+  images.grass=getpic("grass");
+  images.block1=getpic("block1");
+  images.block2=getpic("block2");
+  images.block3=getpic("block3");
+  images.block4=getpic("block4");
+  images.back1=getpic("back1");
+  images.g0=getpic("g0");
+  images.g1=getpic("g1");
+  images.g2=getpic("g2");
   images.z=[];
   images.z.push(getpic("z1"));
   var targetPic = getpic("target");
   
-  ctxBack.fillStyle = "#00ba0c";
-  ctxBack.fillRect(0,0,600,400);
-  for(var i=0;i<100;i++) {
+  //ctxBack.fillStyle = "#00ba0c";
+  //ctxBack.fillRect(0,0,600,400);
+  for(var y=0;y<canvas.height;y+=10) {
+      for(var x=0;x<canvas.width;x+=10) {
+        ctxBack.drawImage(images.grass,x,y);
+      }
+  }
+  for(var i=0;i<400;i++) {
 	ctxBack.fillStyle = "#179101";
-	ctxBack.fillRect(rand(0,600),rand(0,400),3,10);
+	ctxBack.fillRect(rand(0,600),rand(0,400),2,4);
 	
   }
-  
+  for(var f=266;f<276;f+=9) {
+      for(var r=214;r<390;r+=16) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],r,f);
+      }
+  }
+  for(var f=116;f<126;f+=9) {
+      for(var r=214;r<390;r+=16) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],r,f);
+      }
+  }
+  for(var f=212;f<266;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],214,f);
+  }
+  for(var f=134;f<188;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],214,f);
+  }
+  for(var f=134;f<188;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],374,f);
+  }
+  for(var f=212;f<266;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],374,f);
+  }
+  ctxBack.drawImage(images.back1,0,0);
   addListenersTo(canvas);
   //enemies.push(new enemy(150,150,10,10,0.8,1,1,1));
   setUpMap();
@@ -156,7 +201,6 @@ function mainLoop() {
     }
 	  
   	//----------- draw -----------
-  	
   	
   	resetInput();
     requestAnimationFrame(mainLoop);
@@ -595,13 +639,14 @@ function drawObjects() {
     for(var i=0;i<texts.length;i++) {
       text("+1",texts[i][0],texts[i][1],"yellow",16);
     }
+    drawPicRotate(pdat.x,pdat.y,12,14,pdat.angle,images[`g${pdat.gun}`]);
 	drawPicRotate(pdat.x,pdat.y,12,8,pdat.angle,humanImage);
     for(var i=0;i<enemies.length;i++) {
       enemies[i].draw();
     }
-    for(var i=0;i<map.length;i++) {
+    /*for(var i=0;i<map.length;i++) {
       map[i].draw();
-    }
+    }*/
 	
 	drawPicRotate(mousePos.x,mousePos.y,21,21,0,targetPic);
 	drawFancy(2,2,pdat.health*10,10,"red","black");
@@ -617,12 +662,12 @@ function menuDraw() {
   draw(300,200,100,40,"black");
   text("start",260,210,"white",40);
   if(score==0) {
-    text("Press start to play.",210,300,"white",16);
-    text("WASD - move",210,320,"white",16);
-    text("Space - shoot",210,340,"white",16);
-    text("1,2,3 OR Scroll - select weapon",210,360,"white",16);
+    text("Press start to play.",210,310,"white",16);
+    text("WASD - move",210,330,"white",16);
+    text("Space - shoot",210,350,"white",16);
+    text("1,2,3 OR Scroll - select weapon",210,370,"white",16);
   } else {
-    text("Your score was: "+score,200,300,"white",20);
+    text("Your score was: "+score,200,310,"white",20);
   }
 }
 
@@ -697,11 +742,10 @@ function setUpMap() {
   map.push(new mapPiece(300,125,150,15,"#6d3300"));
   map.push(new mapPiece(300,275,150,15,"#6d3300"));
   //map.push(new mapPiece(375,200,15,165,"#6d3300"));
-  map.push(new mapPiece(375,152.5,15,70,"#6d3300"));
-  map.push(new mapPiece(375,152.5,15,70,"#6d3300"));
-  map.push(new mapPiece(375,248.5,15,70,"#6d3300"));
-  map.push(new mapPiece(225,152.5,15,70,"#6d3300"));
-  map.push(new mapPiece(225,249,15,70,"#6d3300"));
+  map.push(new mapPiece(380,152.5,13,70,"#6d3300"));
+  map.push(new mapPiece(380,248,15,70,"#6d3300"));
+  map.push(new mapPiece(223,152.5,13,70,"#6d3300"));
+  map.push(new mapPiece(223,248,13,70,"#6d3300"));
   map.push(new mapPiece(100,300,40,50,"#6d3300"));
 }
 
