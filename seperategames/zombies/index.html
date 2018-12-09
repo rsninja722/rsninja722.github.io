@@ -62,8 +62,8 @@
   var bck = [];
   var powcount = 10;
 	var pdat = {
-    x:300,
-    y:200,
+    x:600,
+    y:400,
     vx:0,
     vy:0,
     w:10,
@@ -188,7 +188,7 @@
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    ctx.putImageData(bck,cam.x-300,cam.y-200);
+    ctx.putImageData(bck,cam.x,cam.y);
     if(gameOn) {
     spawnEnemies();
     //drawRectRotate(pdat.x,pdat.y,10,10,"black",pdat.angle);
@@ -205,7 +205,7 @@ function mainLoop() {
       drawObjects();
       menuUpdate();
       menuDraw();
-      drawPicRotate(mousePos.x,mousePos.y,21,21,0,targetPic);
+      drawPicRotate(mousePos.x+cam.x,mousePos.y+cam.y,21,21,0,targetPic);
     }
 	  
   	//----------- draw -----------
@@ -456,11 +456,11 @@ function movePlayer() {
     pdat.x+=pdat.vx; if(hittingMap(pdat)) {pdat.x-=pdat.vx;};
     pdat.y+=pdat.vy; if(hittingMap(pdat)) {pdat.y-=pdat.vy;};
 	if(pdat.x<0) {pdat.x=0;}
-	if(pdat.x>canvas.width) {pdat.x=canvas.width;}
+	if(pdat.x>canvasBack.width) {pdat.x=canvasBack.width;}
 	if(pdat.y<0) {pdat.y=0;}
-	if(pdat.y>canvas.height) {pdat.y=canvas.height;}
+	if(pdat.y>canvasBack.height) {pdat.y=canvasBack.height;}
     
-    pdat.angle = pointTo(pdat,mousePos) - setAngle(90);
+    pdat.angle = pointTo({x:300,y:200},mousePos) - setAngle(90);
 	if(pdat.healthCooldown>0) {pdat.healthCooldown--;}
 	if(pdat.healthCooldown==0) {
     pdat.w=12;
@@ -481,6 +481,10 @@ function movePlayer() {
   }
   cam.x = -pdat.x +(canvas.width/2);
   cam.y = -pdat.y +(canvas.height/2);
+  if(cam.x>0) {cam.x=0;}
+  if(cam.y>0) {cam.y=0;}
+  if(cam.x<-600) {cam.x=-600;}
+  if(cam.y<-400) {cam.y=-400;}
 }
 function animatePlayer() {
 	walkCounter--;
@@ -508,31 +512,31 @@ function spawnEnemies() {
 	if(rand(0,10)==3) {
 		switch(side) {
 		  case 1:
-			enemies.push(new enemy(rand(0,canvas.width),0,10,10,1.5,3,1,1));
+			enemies.push(new enemy(rand(0,canvasBack.width),0,10,10,1.5,3,1,1));
 			break;
 		  case 2:
-			enemies.push(new enemy(rand(0,canvas.width),canvas.height,10,10,1.5,3,1,1));
+			enemies.push(new enemy(rand(0,canvasBack.width),canvasBack.height,10,10,1.5,3,1,1));
 			break;
 		  case 3:
-			enemies.push(new enemy(0,rand(0,canvas.height),10,10,1.5,3,1,1));
+			enemies.push(new enemy(0,rand(0,canvasBack.height),10,10,1.5,3,1,1));
 			break;
 		  case 4:
-			enemies.push(new enemy(canvas.width,rand(0,canvas.height),10,10,1.5,3,1,1));
+			enemies.push(new enemy(canvasBack.width,rand(0,canvasBack.height),10,10,1.5,3,1,1));
 			break;
 		}
 	} else {
 		switch(side) {
 		  case 1:
-			enemies.push(new enemy(rand(0,canvas.width),0,10,10,0.6,6,1,1));
+			enemies.push(new enemy(rand(0,canvasBack.width),0,10,10,0.6,6,1,1));
 			break;
 		  case 2:
-			enemies.push(new enemy(rand(0,canvas.width),canvas.height,10,10,0.6,6,1,1));
+			enemies.push(new enemy(rand(0,canvasBack.width),canvasBack.height,10,10,0.6,6,1,1));
 			break;
 		  case 3:
-			enemies.push(new enemy(0,rand(0,canvas.height),10,10,0.6,6,1,1));
+			enemies.push(new enemy(0,rand(0,canvasBack.height),10,10,0.6,6,1,1));
 			break;
 		  case 4:
-			enemies.push(new enemy(canvas.width,rand(0,canvas.height),10,10,0.6,6,1,1));
+			enemies.push(new enemy(canvasBack.width,rand(0,canvasBack.height),10,10,0.6,6,1,1));
 			break;
 		}
 	}
@@ -658,9 +662,9 @@ function drawObjects() {
       map[i].draw();
     }*/
 	
-	drawPicRotate(mousePos.x,mousePos.y,21,21,0,targetPic);
-	drawFancy(2,2,pdat.health*10,10,"red","black");
-  text(pdat.gold,0,30,"yellow",20);
+	drawPicRotate(mousePos.x-cam.x,mousePos.y-cam.y,21,21,0,targetPic);
+	drawFancy(2-cam.x,2-cam.y,pdat.health*10,10,"red","black");
+  text(pdat.gold,0-cam.x,30-cam.y,"yellow",20);
   ctx.drawImage(images.inv,110,2);
   ctx.drawImage(images.gun0,110,2);
   ctx.drawImage(images.gun1,110,2);
@@ -669,15 +673,15 @@ function drawObjects() {
 }
 
 function menuDraw() {
-  draw(300,200,100,40,"black");
-  text("start",260,210,"white",40);
+  draw(600,400,100,40,"black");
+  text("start",560,410,"white",40);
   if(score==0) {
-    text("Press start to play.",210,310,"white",16);
-    text("WASD - move",210,330,"white",16);
-    text("Space - shoot",210,350,"white",16);
-    text("1,2,3 OR Scroll - select weapon",210,370,"white",16);
+    text("Press start to play.",510,510,"white",16);
+    text("WASD - move",510,530,"white",16);
+    text("Space - shoot",510,550,"white",16);
+    text("1,2,3 OR Scroll - select weapon",510,570,"white",16);
   } else {
-    text("Your score was: "+score,200,310,"white",20);
+    text("Your score was: "+score,500,510,"white",20);
   }
 }
 
@@ -749,14 +753,14 @@ function hittingEnemies(object,vel,xy) {
   return false;
 }
 function setUpMap() {
-  map.push(new mapPiece(300,125,150,15,"#6d3300"));
-  map.push(new mapPiece(300,275,150,15,"#6d3300"));
+  map.push(new mapPiece(600,325,150,15,"#6d3300"));
+  map.push(new mapPiece(600,475,150,15,"#6d3300"));
   //map.push(new mapPiece(375,200,15,165,"#6d3300"));
-  map.push(new mapPiece(380,152.5,13,70,"#6d3300"));
-  map.push(new mapPiece(380,248,15,70,"#6d3300"));
-  map.push(new mapPiece(223,152.5,13,70,"#6d3300"));
-  map.push(new mapPiece(223,248,13,70,"#6d3300"));
-  map.push(new mapPiece(100,300,40,50,"#6d3300"));
+  map.push(new mapPiece(680,352.5,13,70,"#6d3300"));
+  map.push(new mapPiece(680,448,15,70,"#6d3300"));
+  map.push(new mapPiece(523,352.5,13,70,"#6d3300"));
+  map.push(new mapPiece(523,448,13,70,"#6d3300"));
+  map.push(new mapPiece(400,500,40,50,"#6d3300"));
 }
 
 
@@ -768,8 +772,8 @@ function lose() {
   texts = [];
   score=pdat.gold;
 	pdat = {
-    x:300,
-    y:200,
+    x:600,
+    y:400,
     vx:0,
     vy:0,
     w:10,
@@ -797,7 +801,7 @@ function draw(x,y,w,h,color) {ctx.fillStyle = color;ctx.fillRect(x+cam.x-(w/2),y
 function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);var h = Math.atan2(opposite, adjacent);return h;}
 function rand(min,max) {if(arguments[2] == undefined) {return Math.floor(Math.random() * (max - min + 1)) + min;} else {return (Math.floor(((Math.random() * (max - min + 1)) + min) * arguments[2])) / arguments[2];}}
 function setAngle(number) {return number * Math.PI / 180;}
-function onEdge(object){if(object.x > canvas.width || object.x < 0 || object.y > canvas.height || object.y < 0) {return true;}}
+function onEdge(object){if(object.x > canvasBack.width || object.x < 0 || object.y > canvasBack.height || object.y < 0) {return true;}}
 function drawPicRotate(x,y,w,h,angl,pic) {ctx.setTransform(1, 0, 0, 1, x+cam.x, y+cam.y);ctx.rotate(angl);ctx.drawImage(pic,-w/2,-h/2);ctx.setTransform(1, 0, 0, 1, 0, 0);}
 function getpic(picid) {return document.getElementById(picid);}
 function collideBox(object1,object2) {if(object1.x + object1.w/2 >= object2.x - object2.w/2 && object1.x - object1.w/2 <= object2.x + object2.w/2 &&object1.y + object1.h/2 >= object2.y - object2.h/2 && object1.y - object1.h/2 <= object2.y + object2.h/2) {return true;}}
