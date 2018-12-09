@@ -35,7 +35,7 @@
   <img src="images/g0.png" id="g0">
   <img src="images/g1.png" id="g1">
   <img src="images/g2.png" id="g2">
-	<canvas id="backgroundCvs" width="600" height="400" style="border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
+	<canvas id="backgroundCvs" width="1200" height="800" style="display: none;border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
   <canvas id="cvs" width="600" height="400" style="border: 1px solid black;cursor: none;position:absolute;top:10;left:10;"></canvas>
   <div id="a83n7"><div onclick="clck()"style="position:absolute;right:1%;top:1%"><img src="https://rsninja722.github.io/assets/sidebar.png" style="display:block;"></div></div><script src="https://rsninja722.github.io/nav.js"></script>
     <script src="https://rsninja722.github.io/input.js"></script>
@@ -58,6 +58,8 @@
   var texts = [];
   var score = 0;
   var gameOn = false;
+  var cam = {x:0,y:0};
+  var bck = [];
   var powcount = 10;
 	var pdat = {
     x:300,
@@ -134,39 +136,39 @@
   //ctxBack.fillRect(0,0,600,400);
   setTimeout(setBack,900);
   function setBack() {
-  for(var y=0;y<canvas.height;y+=10) {
-      for(var x=0;x<canvas.width;x+=10) {
+  for(var y=0;y<canvasBack.height;y+=10) {
+      for(var x=0;x<canvasBack.width;x+=10) {
         ctxBack.drawImage(images.grass,x,y);
       }
   }
-  for(var i=0;i<400;i++) {
+  for(var i=0;i<1600;i++) {
 	ctxBack.fillStyle = "#179101";
-	ctxBack.fillRect(rand(0,600),rand(0,400),2,4);
+	ctxBack.fillRect(rand(0,1200),rand(0,800),2,4);
 	
   }
-  for(var f=266;f<276;f+=9) {
-      for(var r=214;r<390;r+=16) {
+  for(var f=466;f<476;f+=9) {
+      for(var r=514;r<690;r+=16) {
           ctxBack.drawImage(images[`block${rand(1,4)}`],r,f);
       }
   }
-  for(var f=116;f<126;f+=9) {
-      for(var r=214;r<390;r+=16) {
+  for(var f=316;f<326;f+=9) {
+      for(var r=514;r<690;r+=16) {
           ctxBack.drawImage(images[`block${rand(1,4)}`],r,f);
       }
   }
-  for(var f=212;f<266;f+=9) {
-          ctxBack.drawImage(images[`block${rand(1,4)}`],214,f);
+  for(var f=412;f<466;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],514,f);
   }
-  for(var f=134;f<188;f+=9) {
-          ctxBack.drawImage(images[`block${rand(1,4)}`],214,f);
+  for(var f=334;f<388;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],514,f);
   }
-  for(var f=134;f<188;f+=9) {
-          ctxBack.drawImage(images[`block${rand(1,4)}`],374,f);
+  for(var f=334;f<388;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],674,f);
   }
-  for(var f=212;f<266;f+=9) {
-          ctxBack.drawImage(images[`block${rand(1,4)}`],374,f);
+  for(var f=412;f<466;f+=9) {
+          ctxBack.drawImage(images[`block${rand(1,4)}`],674,f);
   }
-  ctxBack.drawImage(images.back1,0,0);
+  ctxBack.drawImage(images.back1,300,200);
   }
   addListenersTo(canvas);
   //enemies.push(new enemy(150,150,10,10,0.8,1,1,1));
@@ -178,12 +180,15 @@
     movePlayer();
     updateObjects();
     drawObjects();
+
+    bck = ctxBack.getImageData(0,0,canvasBack.width,canvasBack.height);
     requestAnimationFrame(mainLoop);
   }
   //------------------------------------------------------ main loop ------------------------------------------------------
 function mainLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    ctx.putImageData(bck,cam.x-300,cam.y-200);
     if(gameOn) {
     spawnEnemies();
     //drawRectRotate(pdat.x,pdat.y,10,10,"black",pdat.angle);
@@ -327,7 +332,7 @@ particle.prototype.move = function() {
 particle.prototype.draw = function() {
     if(this.type=="color") {
         ctx.fillStyle = this.graphic;
-        ctx.fillRect(Math.round(this.x+this.size/2),Math.round(this.y+this.size/2),this.size,this.size);
+        ctx.fillRect(Math.round(this.x+cam.x+this.size/2),Math.round(this.y+cam.y+this.size/2),this.size,this.size);
     } else {
         //pic(this.x,this.y,this.graphic.width,this.graphic.height,this.graphic);
         drawPicRotate(this.x,this.y,this.graphic.width,this.graphic.height,this.angle,this.graphic);
@@ -473,7 +478,9 @@ function movePlayer() {
 		}
     pdat.w=10;
     pdat.h=10;
-	}
+  }
+  cam.x = -pdat.x +(canvas.width/2);
+  cam.y = -pdat.y +(canvas.height/2);
 }
 function animatePlayer() {
 	walkCounter--;
@@ -785,18 +792,18 @@ function lose() {
   gameOn = false;
 }
 //------------------------------------------------------ low level stuff ------------------------------------------------------
-function drawRectRotate(x,y,w,h,color,angl) {ctx.setTransform(1, 0, 0, 1, x, y);ctx.rotate(angl);ctx.fillStyle = color;ctx.fillRect(-w / 2,-h / 2,w,h);ctx.setTransform(1, 0, 0, 1, 0, 0)}
-function draw(x,y,w,h,color) {ctx.fillStyle = color;ctx.fillRect(x-(w/2),y-(h/2),w,h);}
+function drawRectRotate(x,y,w,h,color,angl) {ctx.setTransform(1, 0, 0, 1, x+cam.x, y+cam.y);ctx.rotate(angl);ctx.fillStyle = color;ctx.fillRect(-w / 2,-h / 2,w,h);ctx.setTransform(1, 0, 0, 1, 0, 0)}
+function draw(x,y,w,h,color) {ctx.fillStyle = color;ctx.fillRect(x+cam.x-(w/2),y+cam.y-(h/2),w,h);}
 function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);var h = Math.atan2(opposite, adjacent);return h;}
 function rand(min,max) {if(arguments[2] == undefined) {return Math.floor(Math.random() * (max - min + 1)) + min;} else {return (Math.floor(((Math.random() * (max - min + 1)) + min) * arguments[2])) / arguments[2];}}
 function setAngle(number) {return number * Math.PI / 180;}
 function onEdge(object){if(object.x > canvas.width || object.x < 0 || object.y > canvas.height || object.y < 0) {return true;}}
-function drawPicRotate(x,y,w,h,angl,pic) {ctx.setTransform(1, 0, 0, 1, x, y);ctx.rotate(angl);ctx.drawImage(pic,-w/2,-h/2);ctx.setTransform(1, 0, 0, 1, 0, 0);}
+function drawPicRotate(x,y,w,h,angl,pic) {ctx.setTransform(1, 0, 0, 1, x+cam.x, y+cam.y);ctx.rotate(angl);ctx.drawImage(pic,-w/2,-h/2);ctx.setTransform(1, 0, 0, 1, 0, 0);}
 function getpic(picid) {return document.getElementById(picid);}
 function collideBox(object1,object2) {if(object1.x + object1.w/2 >= object2.x - object2.w/2 && object1.x - object1.w/2 <= object2.x + object2.w/2 &&object1.y + object1.h/2 >= object2.y - object2.h/2 && object1.y - object1.h/2 <= object2.y + object2.h/2) {return true;}}
 function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);var h = Math.atan2(opposite, adjacent);return h;}
-function drawFancy(x,y,w,h,color,lineColor) {ctx.fillStyle = color;ctx.fillRect(x,y,w,h);ctx.beginPath();ctx.setLineDash([]);ctx.strokeStyle = lineColor;ctx.lineWidth = 2;ctx.rect(x,y,w,h);ctx.stroke();}
-function text(txt,x,y,color,size) {ctx.font=`${size}px Arial`;ctx.fillStyle = color;ctx.fillText(txt,x,y);}
+function drawFancy(x,y,w,h,color,lineColor) {ctx.fillStyle = color;ctx.fillRect(x+cam.x,y+cam.y,w,h);ctx.beginPath();ctx.setLineDash([]);ctx.strokeStyle = lineColor;ctx.lineWidth = 2;ctx.rect(x+cam.x,y+cam.y,w,h);ctx.stroke();}
+function text(txt,x,y,color,size) {ctx.font=`${size}px Arial`;ctx.fillStyle = color;ctx.fillText(txt,x+cam.x,y+cam.y);}
 function twoPointsDistance(object1,object2) {var one = (object2.x - object1.x);var two = (object2.y - object1.y);return Math.sqrt((one*one)+(two*two));}
 //function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);return Math.atan2(opposite, adjacent)-1.5707963267948966;}
 </script>
