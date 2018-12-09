@@ -3,8 +3,14 @@
 <head>
   <title>Shooter</title>
   <style>
+    html {
+      background-color: #212121;
+    }
     canvas{
       image-rendering: pixelated;
+      position:absolute;
+      top:0;bottom:0;right:0;left:0;
+      margin:auto;
     }
     img {
       display: none;
@@ -460,7 +466,7 @@ function movePlayer() {
 	if(pdat.y<0) {pdat.y=0;}
 	if(pdat.y>canvasBack.height) {pdat.y=canvasBack.height;}
     
-    pdat.angle = pointTo({x:300,y:200},mousePos) - setAngle(90);
+    pdat.angle = pointTo({x:pdat.x,y:pdat.y},{x:mousePos.x-cam.x,y:mousePos.y-cam.y}) - setAngle(90);
 	if(pdat.healthCooldown>0) {pdat.healthCooldown--;}
 	if(pdat.healthCooldown==0) {
     pdat.w=12;
