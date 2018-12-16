@@ -7,14 +7,70 @@
     <style>
         html {
             font-family: Arial, Helvetica, sans-serif;
-            background-color: black;
-            color: rgb(255, 168, 168)
+            background-color: #212121;
+            color: rgb(255, 0, 0)
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to rsninja's site</h1>
-    <h4>click the button in the top right to check out my games</h4>
+    <h1 style="position: absolute; top: 35%; left: 37%;">welcome to rsninja's site</h1>
+    <h5 style="position: absolute; top: 45%; left: 39%;">Use the menu in the top right to see my games</h5>
+    <canvas id="cvs"style="position:absolute;top:0;left:0;"></canvas>
+    <script src="input.js"></script>
+    <script>
+        var canvas = document.getElementById("cvs");
+        var ctx = canvas.getContext("2d");
+        addListenersTo(canvas);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        var cw = canvas.width;
+        var ch = canvas.height;
+        var oldx = mousePos.x;
+        var oldy = mousePos.y;
+        var p=[];
+        var i=0;
+        while(i<3000) {
+            var temp = Math.random()*Math.PI*2;
+            p.push({x:cw/2,y:ch/2,vx:Math.sin(temp)*1.5,vy:Math.cos(temp)*1.5,s:2});
+            i++;
+        }
+        requestAnimationFrame(u);
+        function u() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            var cw = canvas.width;
+            var ch = canvas.height;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "red";
+            if(mousePress[0]) {
+                i=0;
+                while(i<200) {
+                    var temp = Math.random()*Math.PI*2;
+                    p.push({x:mousePos.x,y:mousePos.y,vx:Math.sin(temp)*1.5,vy:Math.cos(temp)*1.5,s:1});
+                    i++;
+                }
+            }
+            if(mousePos.x!=oldx||mousePos.y!=oldy) {
+                var temp = pointTo({x:oldx,y:oldy},{x:mousePos.x,y:mousePos.y})-Math.PI/2;
+                p.push({x:mousePos.x,y:mousePos.y,vx:Math.sin(temp)*1.5,vy:Math.cos(temp)*1.5,s:1});
+                oldx=mousePos.x;
+                oldy=mousePos.y;
+            }
+            for(let i=0;i<p.length;i++) {
+                p[i].x += p[i].vx;
+                p[i].y -= p[i].vy;
+                ctx.fillRect(p[i].x,p[i].y,p[i].s,p[i].s);
+                if(p[i].x>cw||p[i].x<0) {p[i].vx*=-1;}
+                if(p[i].y>ch||p[i].y<0) {p[i].vy*=-1;}
+                if(p[i].y>ch) {p[i].y=ch;}
+                if(p[i].x>cw) {p[i].x=cw;}
+            }
+            resetInput();
+            requestAnimationFrame(u);
+        }
+        function pointTo(obj1,obj2) {var adjacent = (obj1.x - obj2.x);var opposite = (obj1.y - obj2.y);var h = Math.atan2(opposite, adjacent);return h;}
+        function rand(min,max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
+    </script>
     <div id="a83n7"><div onclick="clck()"style="position:absolute;right:1%;top:1%"><img src="https://rsninja722.github.io/assets/sidebar.png"></div></div><script src="https://rsninja722.github.io/nav.js"></script>
 </body>
 </html>
