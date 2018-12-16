@@ -10,9 +10,9 @@ var navlist = [
     {name:"Seige Idle",link:"https://rsninja722.github.io/seperategames/sidgeidle.html"},
     {name:"Snake Game",link:"https://rsninja722.github.io/seperategames/snakegame.html"},
     {name:"Crappy Clicker Game",link:"https://rsninja722.github.io/seperategames/5number idle.html"},
-    {name:"Stuipid JS things",link:"https://rsninja722.github.io/seperategames/stuipid.html"},
-    {name:"Home",link:"https://rsninja722.github.io/index.html"},
-    {name:"the game",link:"https://rsninja722.github.io/RPGBLITZ.html"}
+    //{name:"Stuipid JS things",link:"https://rsninja722.github.io/seperategames/stuipid.html"},
+    {name:"the game",link:"https://rsninja722.github.io/RPGBLITZ.html"},
+    {name:"Home",link:"https://rsninja722.github.io/index.html"}
 ]
 //style
 var sty = document.createElement("style");
