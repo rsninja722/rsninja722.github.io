@@ -1,9 +1,11 @@
 var imageList = [
-    "test.png",
+    "ui/p1.png",
     "text/small1.png",
     "text/small2.png",
     "text/small3.png",
-    "text/medium1.png"
+    "text/medium1.png",
+    "text/large1.png", //5
+    
 ]
 var totalLoaded = 0;
 
@@ -19,7 +21,7 @@ function startLoad() {
 function loadImages() {
     for(var i=0;i<imageSources.length;i++) {
         if(imageSources[i].complete) {
-            images[imageList[i].substr(0,imageList[i].indexOf("."))] = getImage(imageSources[i]);
+            images[imageList[i].slice((imageList[i].indexOf("/"))+1,imageList[i].indexOf("."))] = getImage(imageSources[i]);
             totalLoaded++;
         }
     }
@@ -69,6 +71,10 @@ function startTextLoading() {
     parseFont("small1",imageSources[1],3,5,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9",".","!","?"," "]);
     parseFont("small2",imageSources[2],3,5,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9",".","!","?"," "]);
     parseFont("small3",imageSources[3],3,5,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9",".","!","?"," "]);
-    parseFont("medium1",imageSources[4],7,9,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9",".",",",":","!","?"," "]);
+    parseFont("medium1",imageSources[4],7,9,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9",".",",",":","!","?","/","<","^",">"," "]);
+    parseFont("large1",imageSources[5],11,17,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9",".",",",":","!","?"," "]);
+    text.small1["0"] = text.small1.o;
+    text.small2["0"] = text.small2.o;
+    text.small3["0"] = text.small3.o;
     setTimeout(start,100);
 }

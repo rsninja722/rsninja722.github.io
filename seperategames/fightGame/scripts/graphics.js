@@ -36,14 +36,14 @@ function drawScaled(img,x,y,scale) {
             var p=ox*4;
             
             
-            //if(d[v+3]==255) {
+            if(d[v+3]==255) {
                 for(var t =0;t<scale*4;t+=4) {
                     g[p+t] = d[v];
                     g[p+1+t] = d[v+1];
                     g[p+2+t] = d[v+2];
                     g[p+3+t] = d[v+3];
                 }
-            //}
+            }
             v+=4;
         }
         f++;
@@ -71,7 +71,7 @@ function rectFancy(x,y,w,h,color,outLineColor,thickness) {
         for(var ox=a;ox<b;ox++) {
             var p=ox*4;
             
-            
+            //if((p>(y+1)*yoffset)) {
             if(color[3]==255) {
             g[p] = color[0];
             g[p+1] = color[1];
@@ -98,21 +98,18 @@ function rectFancy(x,y,w,h,color,outLineColor,thickness) {
                     g[p+3] = outLineColor[3];
                 }
             }
-            
+            //}
             vv++;
         }
         v++;
     }
 }
 
-
-
-function drawButton({x,y,w,h,text}) {
+function drawButton({x,y,w,h}) {
     rectFancy(x-w/2,y-h/2,w,h,[155,155,155,255],[50,50,50,255],2);
-    for(var j=0;j<text.length;j++) {
-        //text(text[j])
-    }
 }
+
+
 
 function drawText(font,string,x,y,color,space) {
     var sw = screen.width

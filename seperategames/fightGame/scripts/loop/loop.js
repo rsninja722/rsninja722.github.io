@@ -1,7 +1,7 @@
 
 function draw() {  //########### draw ########### 
     ctx.clearRect(0,0,cw,ch);
-    for(var i=0;i<screen.data.length;i++) {
+    for(var i=0;i<(screen.data).length;i++) {
         screen.data[i] = 0;
     }
     switch(gameState) {
@@ -27,5 +27,15 @@ function update() {  //########### update ###########
         case 1:
             updateMainMenu();
             break;
+        case 2:
+            updateCharacterSelect();
+            break;
+        case 3:
+            updateMapSelect();
+            break;
+        case 4:
+            updateMain();
+            break;
     }
+    resetInput();
 }
