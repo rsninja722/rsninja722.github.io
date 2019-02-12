@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>project</title>
+    <style>
+    canvas {
+        border: 1px solid black;
+    }
+    </style>
+</head>
+<body>
+    <script src="game.js"></script>
+    <script>
+        xlol=100;
+        ylol=100;
+        images = [
+            "../tabthing.png",
+            "7.2.19.png",
+            "8.2.19.png"
+        ];
+        loadSprites();
+        function start() {
+            requestAnimationFrame(u);
+        }
+        function u() {
+            for(var egg=0;egg<600;egg++) {
+                for(var egg2=0;egg2<600;egg2++) {
+                    screenGrid[egg][egg2]=0;
+                }
+            }
+            ylol+=keyDown[k.DOWN]?3:(keyDown[k.UP]?-3:0);
+            xlol+=keyDown[k.RIGHT]?3:(keyDown[k.LEFT]?-3:0);
+            for(let xd=0;xd<800;xd+=65) {
+                for(let yd=0;yd<600;yd+=65) {
+                    //drawTransformedSprite(s["tabthing"],xlol+xd,ylol+yd);
+                }
+            }
+            drawTransformedSprite(s["tabthing"],100,100);
+            drawScreen();
+            requestAnimationFrame(u);
+        }
+        createCanvas(800,600);
+    </script>
+</body>
+</html>

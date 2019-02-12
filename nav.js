@@ -13,6 +13,7 @@ var navlist = [
     {name:"Crappy Clicker Game",link:"https://rsninja722.github.io/seperategames/5number idle.html"},
     //{name:"Stuipid JS things",link:"https://rsninja722.github.io/seperategames/stuipid.html"},
     {name:"the game",link:"https://rsninja722.github.io/RPGBLITZ.html"},
+    {name:"game.js really early demo",link:"https://rsninja722.github.io/test.html"},
     {name:"Home",link:"https://rsninja722.github.io/index.html"}
 ]
 //style
