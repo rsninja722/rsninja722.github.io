@@ -17,7 +17,7 @@
 */
 //Thank you to Javidx9 for affine transformation code
 var counter=0;
-setInterval(lok,30);
+setInterval(lok,3);
 function lok() {counter+=0.03;}
 var canvas,
 ctx,
@@ -43,7 +43,7 @@ tx=0,
 ty=0,
 preventedEvents = [false,false,false],
 k={a:65,b:66,c:67,d:68,e:69,f:70,g:71,h:72,i:73,j:74,k:75,l:76,m:77,n:78,o:79,p:80,q:81,r:82,s:83,t:84,u:85,v:86,w:87,x:88,y:89,z:90,0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,BACKTICK:192,MINUS:189,EQUALS:187,OPENSQUARE:219,ENDSQUARE:221,SEMICOLON:186,SINGLEQUOTE:222,BACKSLASH:220,COMMA:188,PERIOD:190,SLASH:191,ENTER:13,BACKSPACE:8,TAB:9,CAPSLOCK:20,SHIFT:16,CONTROL:17,ALT:18,META:91,LEFTBACKSLASH:226,ESCAPE:27,HOME:36,END:35,PAGEUP:33,PAGEDOWN:34,DELETE:46,INSERT:45,PAUSE:19,UP:38,DOWN:40,LEFT:37,RIGHT:39,CONTEXT:93,F1:112,F2:113,F3:114,F4:115,F5:116,F6:117,F7:118,F8:119,F9:120,F10:121,F11:122,F12:123};
-acceptableChars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890_-. ";
+acceptableChars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890_-. ";//for image names
 //---IO
 function addListenersTo(elementToListenTo) {window.addEventListener("keydown",kdown);window.addEventListener("keyup",kup);elementToListenTo.addEventListener("mousedown",mdown);elementToListenTo.addEventListener("mouseup",mup);elementToListenTo.addEventListener("mousemove",mmove);elementToListenTo.addEventListener("contextmenu",cmenu);elementToListenTo.addEventListener("wheel",scrl);}
 function removeListenersFrom(elementToListenTo) {window.removeEventListener("keydown",kdown);window.removeEventListener("keyup",kup);elementToListenTo.removeEventListener("mousedown",mdown);elementToListenTo.removeEventListener("mouseup",mup);elementToListenTo.removeEventListener("mousemove",mmove);elementToListenTo.removeEventListener("contextmenu",cmenu);elementToListenTo.removeEventListener("wheel",scrl);}
@@ -130,17 +130,18 @@ function getImage(source) {
             f+=4;
         }
     }
-    return sprite;
+    return {data:sprite,w:sprite[0].length,h:sprite.length};
 }
 //drawing
 function drawSprite(sprite,xpos,ypos) {
+    var spriteCache = sprite.data;
     xpos=xpos<0?0:xpos;
     ypos=ypos<0?0:ypos;
     xposChache=xpos;
-    for(let y=0;y<sprite.length&&ypos<600;y++) {
+    for(let y=0;y<sprite.h&&ypos<600;y++) {
         xpos=xposChache;
-        for(let x=0;x<sprite[0].length&&xpos<800;x++) {
-            screenGrid[ypos][xpos]=sprite[y][x];
+        for(let x=0;x<sprite.w&&xpos<800;x++) {
+            screenGrid[ypos][xpos]=spriteCache[y][x];
             xpos++;
         }
         ypos++;
@@ -148,13 +149,14 @@ function drawSprite(sprite,xpos,ypos) {
 }
 
 function drawScreen() {
+    ctx.fillstyle = "black";
+    ctx.rect(0,0,800,600);
     dtaPntr = screenData.data;
     var dindx=0;
     for(var dy=0,lw=screenData.height;dy<lw;dy++) {
         for(var dx=0,lh=screenData.width;dx<lh;dx++) {
             var tmpvl;
             if(screenGrid[dy][dx]!==0) {
-                
                 tmpvl= sc[screenGrid[dy][dx]];
                 dtaPntr[dindx] = tmpvl[0];
                 dtaPntr[dindx+1] = tmpvl[1];
@@ -169,9 +171,12 @@ function drawScreen() {
 
 //affine transformation
 function drawTransformedSprite(sprite,xpos,ypos) {
-    var mat = [[0,0,0],[0,0,0],[0,0,0]];
+    var mat = [[1,0,0],[0,1,0],[0,0,1]];
     Rotate(mat,counter);
-    var mat2 = [[0,0,0],[0,0,0],[0,0,0]];
+    var mat2 = [[1,0,0],[0,1,0],[0,0,1]];
+    Translate(mat2,-16,-16);
+    MatrixMultiply(mat,mat,mat2);
+
     Scale(mat2,2,2);
     MatrixMultiply(mat,mat2,mat);
     
@@ -201,15 +206,15 @@ function drawTransformedSprite(sprite,xpos,ypos) {
     sx = tx; sy = ty;
     ex = tx; ey = ty;
 
-    Forward(mat, sprite[0].length, sprite.length);
+    Forward(mat, sprite.w, sprite.h);
     sx = Math.min(sx, tx); sy = Math.min(sy, ty);
     ex = Math.max(ex, tx); ey = Math.max(ey, ty);
 
-    Forward(mat, 0, sprite.length);
+    Forward(mat, 0, sprite.h);
     sx = Math.min(sx, tx); sy = Math.min(sy, ty);
     ex = Math.max(ex, tx); ey = Math.max(ey, ty);
 
-    Forward(mat, sprite[0].length, 0);
+    Forward(mat, sprite.w, 0);
     sx = Math.min(sx, tx); sy = Math.min(sy, ty);
     ex = Math.max(ex, tx); ey = Math.max(ey, ty);
     
@@ -217,7 +222,7 @@ function drawTransformedSprite(sprite,xpos,ypos) {
 
     // Use transformed corner locations in screen space to establish
     // region of pixels to fill, using inverse transform to sample
-    // sprite at suitable locations.
+    // sprite.data at suitable locations.
 
     for(let x = ~~sx; x < ex&&x<800; x++)
     {
@@ -228,25 +233,16 @@ function drawTransformedSprite(sprite,xpos,ypos) {
             nx=tx;ny=ty;
             /*olc::Pixel p = sprCar->GetPixel((int32_t)(nx + 0.5f), (int32_t)(ny + 0.5f));
             Draw(x, y, p);*/
-            if(y>0&&x>0&&ny<sprite.length&&nx<sprite[0].length&&nx>0&&ny>0) {
-                screenGrid[y][x]=sprite[~~ny][~~nx];
+            
+            if(y>0&&x>0&&ny<sprite.h&&nx<sprite.w&&nx>0&&ny>0) {
+                screenGrid[y][x]=sprite.data[~~ny][~~nx];
             }
         }
     }
 }
-
-    function Identity(mat)
-	{
-		mat[0][0] = 1.0; mat[1][0] = 0.0; mat[2][0] = 0.0;
-		mat[0][1] = 0.0; mat[1][1] = 1.0; mat[2][1] = 0.0;
-		mat[0][2] = 0.0; mat[1][2] = 0.0; mat[2][2] = 1.0;
-	}
-
-	function Translate(mat,  ox,  oy)
-	{
-		mat[0][0] = 1.0; mat[1][0] = 0.0; mat[2][0] = ox;
-		mat[0][1] = 0.0; mat[1][1] = 1.0; mat[2][1] = oy;
-		mat[0][2] = 0.0; mat[1][2] = 0.0; mat[2][2] = 1.0;
+	function Translate(mat,ox,oy) {
+		mat[2][0] = ox;
+		mat[2][1] = oy;
 	}
 
 	function Rotate(mat,theta)
@@ -262,23 +258,10 @@ function drawTransformedSprite(sprite,xpos,ypos) {
 		mat[0][1] = 0.0;  mat[1][1] = sy;  mat[2][1] = 0.0;
 		mat[0][2] = 0.0;  mat[1][2] = 0.0; mat[2][2] = 1.0;
 	}
-
-	function Shear(mat,sx,sy)
-	{	
-		mat[0][0] = 1.0; mat[1][0] = sx;   mat[2][0] = 0.0;
-		mat[0][1] = sy;  mat[1][1] = 1.0;  mat[2][1] = 0.0;
-		mat[0][2] = 0.0; mat[1][2] = 0.0;  mat[2][2] = 1.0;
-	}
-
-	function MatrixMultiply(matResult,matA,matB)
-	{
-		for (let c = 0; c < 3; c++)
-		{
-			for (let r = 0; r < 3; r++)
-			{
-				matResult[c][r] = matA[0][r] * matB[c][0] +
-					                matA[1][r] * matB[c][1] +
-					                matA[2][r] * matB[c][2];
+	function MatrixMultiply(matResult,matA,matB){
+		for (let c=0;c<3;c++){
+			for (let r=0;r<3;r++){
+				matResult[c][r] = matA[0][r] * matB[c][0] + matA[1][r] * matB[c][1] + matA[2][r] * matB[c][2];
 			}
 		}
 	}
@@ -307,6 +290,11 @@ function drawTransformedSprite(sprite,xpos,ypos) {
         return tempMat;
 	}
 
+
+
+function drawSpriteRotated(sprite,xpos,ypos,rot) {
+
+}
 
 //utility
 function rand(min,max) {return Math.floor(Math.random() * (max - min + 1)) + min;}

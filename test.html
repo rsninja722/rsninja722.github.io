@@ -23,6 +23,7 @@
             requestAnimationFrame(u);
         }
         function u() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
             for(var egg=0;egg<600;egg++) {
                 for(var egg2=0;egg2<600;egg2++) {
                     screenGrid[egg][egg2]=0;
@@ -32,10 +33,10 @@
             xlol+=keyDown[k.RIGHT]?3:(keyDown[k.LEFT]?-3:0);
             for(let xd=0;xd<800;xd+=65) {
                 for(let yd=0;yd<600;yd+=65) {
-                    //drawTransformedSprite(s["tabthing"],xlol+xd,ylol+yd);
+                    //drawSprite(s["tabthing"],xlol+xd,ylol+yd);
                 }
             }
-            drawTransformedSprite(s["tabthing"],100,100);
+            drawTransformedSprite(s["7.2.19"],100+xlol,100+ylol);
             drawScreen();
             requestAnimationFrame(u);
         }
