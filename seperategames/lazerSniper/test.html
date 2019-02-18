@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>project</title>
+    <style>
+    canvas {
+        border: 1px solid black;
+        image-rendering: pixelated;
+    }
+    </style>
+</head>
+<body>
+        <canvas id="cvs" width="800" height="600"></canvas>
+    <script src="game.js"></script>
+    <script>
+        createCanvas(800,600);
+        anaframe = 1;
+        xlol=100;
+        ylol=100;
+        images = [
+            "images/gun1.png",
+            "images/gun2.png",
+            "images/gun3.png",
+            "images/gun4.png",
+            "images/gun5.png",
+            "images/gun6.png",
+            "images/gun7.png",
+            "images/gun8.png",
+            "images/gun9.png",
+            "images/gun10.png",
+            "images/gun11.png",
+            "images/gun12.png",
+            "images/gun13.png",
+            "images/gun14.png",
+            "images/lazer.png"
+        ];
+        var lazers = [];
+        loadSprites();
+        function start() {
+            requestAnimationFrame(u);
+        }
+        function u() {
+            clearScreen();
+            for(var i=0;i<lazers.length;i++) {
+                drawTransformedSprite(s.lazer,lazers[i][0],lazers[i][1],lazers[i][2],false);
+                lazers[i][0] += Math.cos(lazers[i][2]) * 30;
+                lazers[i][1] -= Math.sin(lazers[i][2]) * 30;
+            }
+            drawTransformedSprite(s[`gun${anaframe|0}`],200,200,-1*pointTO(200,200,mousePos.x,mousePos.y),true);
+            drawScreen();
+            if(anaframe>11&&anaframe<12) {if(keyDown[k.SPACE]||mouseDown[0]){lazers.push([200,200,-1*pointTO(200,200,mousePos.x,mousePos.y)]);anaframe++;}} else {
+            anaframe+=0.33;
+            }
+            if(anaframe>=14) {anaframe=1;}
+            requestAnimationFrame(u);
+        }
+        
+    </script>
+</body>
+</html>
