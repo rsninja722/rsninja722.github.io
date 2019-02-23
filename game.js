@@ -3,6 +3,8 @@
 
 /*
     TODO
+        !-fix bounding box being rarted
+        !-fix forward function to not return partial numbers 
         -turn normal arrays into uints
         -optimization
         -mode (data/norm)
@@ -16,13 +18,16 @@
         -documentation
 */
 //Thank you to Javidx9 for affine transformation code
-var counter=0;
+var counter=0.1;
 setInterval(lok,3);
-function lok() {counter+=0.03;}
+function lok() {counter+=0.06;}
 var canvas,
 ctx,
 screenGrid=[],
 screenData,
+clearScreenCache,
+cw,
+ch,
 
 images,
 s={},
@@ -55,8 +60,15 @@ function mup(e) {var h=e.button;delete mousePress[h];delete mouseDown[h];}
 function mmove(e) {mousePos.x=e.offsetX;mousePos.y=e.offsetY;}
 function cmenu(e) {if(preventedEvents[1]) {e.preventDefault();}}
 function scrl(e) {scroll+=-1*(e.deltaY/100);if(preventedEvents[2]) {e.preventDefault();}}
+function endOfLoop() {
+    resetInput();
+    drawScreen();
+}
+function startOfLoop() {
+    clearScreen();
+}
 //---canvas creation
-function createCanvas(width,height) {
+/*function createCanvas(width,height) {
     let tempCanvas=document.createElement("canvas");
     tempCanvas.id="cvs";
     tempCanvas.width=`${width}`;
@@ -66,14 +78,30 @@ function createCanvas(width,height) {
     ctx=canvas.getContext("2d");
     addListenersTo(canvas);
     screenData=ctx.getImageData(0,0,width,height);
+    clearScreenCache=ctx.getImageData(0,0,width,height);
     let a=[];
     for(let i=0;i<width;i++){a.push(0);}
     for(let i=0;i<height;i++){screenGrid.push(a.slice());}
     for(let i=3;i<screenData.data.length;i+=4) {screenData.data[i]=255;}
-}
+    for(let i=3;i<clearScreenCache.data.length;i+=4) {clearScreenCache.data[i]=255;}
+    cw=canvas.width;
+    ch=canvas.height;
+}*/
 // image loading
 
-function loadSprites() {
+function loadImages() {
+    canvas=document.getElementById("game");
+    ctx=canvas.getContext("2d");
+    addListenersTo(canvas);
+    screenData=ctx.getImageData(0,0,canvas.width,canvas.height);
+    clearScreenCache=ctx.getImageData(0,0,canvas.width,canvas.height);
+    let a=[];
+    for(let i=0;i<canvas.width;i++){a.push(0);}
+    for(let i=0;i<canvas.height;i++){screenGrid.push(a.slice());}
+    for(let i=3;i<screenData.data.length;i+=4) {screenData.data[i]=255;}
+    for(let i=3;i<clearScreenCache.data.length;i+=4) {clearScreenCache.data[i]=255;}
+    cw=canvas.width;
+    ch=canvas.height;
     for(var i=0;i<images.length;i++) {
         let temp = new Image();
         temp.src = images[i];
@@ -133,24 +161,7 @@ function getImage(source) {
     return {data:sprite,w:sprite[0].length,h:sprite.length};
 }
 //drawing
-function drawSprite(sprite,xpos,ypos) {
-    var spriteCache = sprite.data;
-    xpos=xpos<0?0:xpos;
-    ypos=ypos<0?0:ypos;
-    xposChache=xpos;
-    for(let y=0;y<sprite.h&&ypos<600;y++) {
-        xpos=xposChache;
-        for(let x=0;x<sprite.w&&xpos<800;x++) {
-            screenGrid[ypos][xpos]=spriteCache[y][x];
-            xpos++;
-        }
-        ypos++;
-    }
-}
-
 function drawScreen() {
-    ctx.fillstyle = "black";
-    ctx.rect(0,0,800,600);
     dtaPntr = screenData.data;
     var dindx=0;
     for(var dy=0,lw=screenData.height;dy<lw;dy++) {
@@ -168,131 +179,178 @@ function drawScreen() {
     ctx.putImageData(screenData,0,0);
 }
 
+function clearScreen() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(var egg=0;egg<600;egg++) {
+        for(var egg2=0;egg2<800;egg2++) {
+            screenGrid[egg][egg2]=0;
+        }
+    }
+    for(var dpos=0,l=screenData.data.length;dpos<l;dpos++) {
+        screenData.data[dpos]=dpos%4==3?255:0;
+    }
+}
 
-//affine transformation
-function drawTransformedSprite(sprite,xpos,ypos) {
-    var mat = [[1,0,0],[0,1,0],[0,0,1]];
-    Rotate(mat,counter);
-    var mat2 = [[1,0,0],[0,1,0],[0,0,1]];
-    Translate(mat2,-16,-16);
-    MatrixMultiply(mat,mat,mat2);
-
-    Scale(mat2,2,2);
-    MatrixMultiply(mat,mat2,mat);
-    
-    Translate(mat2,xpos,ypos);
-    MatrixMultiply(mat,mat2,mat);
-
-    /*xpos=xpos<0?0:xpos;
+function drawSprite(sprite,xpos,ypos) {
+    var spriteCache = sprite.data;
+    xpos=xpos<0?0:xpos;
     ypos=ypos<0?0:ypos;
     xposChache=xpos;
-    for(let y=0;y<sprite.length&&ypos<600;y++) {
+    for(let y=0;y<sprite.h&&ypos<600;y++) {
         xpos=xposChache;
-        for(let x=0;x<sprite[0].length&&xpos<800;x++) {
-            Forward(mat,xpos,ypos);
-            //console.log(tx+" "+ty);
-            if(ty>0&&tx>0) {
-            screenGrid[ty][tx]=sprite[y][x];
-            }
+        for(let x=0;x<sprite.w&&xpos<800;x++) {
+            screenGrid[ypos][xpos]=spriteCache[y][x];
             xpos++;
         }
         ypos++;
-    }*/
+    }
+}
+
+function drawSpriteScaled(sprite,xpos,ypos,scale=1) {
+    var mat = [[1,0,0],[0,1,0],[0,0,1]];
+    var mat2 = [[1,0,0],[0,1,0],[0,0,1]];
+    translateMat(mat2,-(sprite.w*scale/2),-(sprite.h*scale/2)); // center sprite
+    scaleMat(mat,scale,scale); // scale
+    matrixMultiply(mat,mat2,mat);
+    translateMat(mat2,xpos,ypos); // move to x and y pos
+    matrixMultiply(mat,mat2,mat);
 
     var ex, ey;
     var sx, sy;
+    mat=invert(mat);
 
-    Forward(mat, 0, 0);
-    sx = tx; sy = ty;
-    ex = tx; ey = ty;
+    sx = ~~(xpos - scale*sprite.w/2);sy = ~~(ypos - scale*sprite.h/2);
+    ex = Math.round(xpos + scale*sprite.w/2);ey = Math.round(ypos + scale*sprite.h/2);
+    if(ex>cw) {ex=cw;}
+    if(ey>ch) {ey=ch;}
+    if(sy<0 ) {sy=0; }
+    if(sx<0 ) {sx=0; }
 
-    Forward(mat, sprite.w, sprite.h);
-    sx = Math.min(sx, tx); sy = Math.min(sy, ty);
-    ex = Math.max(ex, tx); ey = Math.max(ey, ty);
-
-    Forward(mat, 0, sprite.h);
-    sx = Math.min(sx, tx); sy = Math.min(sy, ty);
-    ex = Math.max(ex, tx); ey = Math.max(ey, ty);
-
-    Forward(mat, sprite.w, 0);
-    sx = Math.min(sx, tx); sy = Math.min(sy, ty);
-    ex = Math.max(ex, tx); ey = Math.max(ey, ty);
-    
-    mat=Invert(mat);
-
-    // Use transformed corner locations in screen space to establish
-    // region of pixels to fill, using inverse transform to sample
-    // sprite.data at suitable locations.
-
-    for(let x = ~~sx; x < ex&&x<800; x++)
-    {
-        for(let y = ~~sy; y < ey&&y<600; y++)
-        {
-            let nx, ny;
-            Forward(mat, x, y);
-            nx=tx;ny=ty;
-            /*olc::Pixel p = sprCar->GetPixel((int32_t)(nx + 0.5f), (int32_t)(ny + 0.5f));
-            Draw(x, y, p);*/
-            
-            if(y>0&&x>0&&ny<sprite.h&&nx<sprite.w&&nx>0&&ny>0) {
-                screenGrid[y][x]=sprite.data[~~ny][~~nx];
+    let ghhh = sprite.h;
+    let gwww = sprite.w;
+    var m00 = mat[0][0], m10 = mat[1][0], m20 = mat[2][0];
+    var m01 = mat[0][1], m11 = mat[1][1], m21 = mat[2][1];
+    if(scale<1&&scale>0) { //at smaller sclaes we need to make sure the pixels being accesed are existant
+        for(let x = sx; x < ex; x++) {
+            for(let y = sy; y < ey; y++) {
+                var sdy = ~~(x * m01 + y * m11 + m21);
+                var sdx = ~~(x * m00 + y * m10 + m20);
+                if(sdy<ghhh&&sdx<gwww&&sdx>0&&sdy>0) {
+                    screenGrid[y][x]=sprite.data[sdy][sdx];
+                }
+            }
+        }
+    } else if(scale>0) {
+        for(let x = sx; x < ex; x++) {
+            for(let y = sy; y < ey; y++) {
+                var sdy = ~~(x * m01 + y * m11 + m21);
+                var sdx = ~~(x * m00 + y * m10 + m20);
+                    screenGrid[y][x]=sprite.data[sdy][sdx];
             }
         }
     }
 }
-	function Translate(mat,ox,oy) {
-		mat[2][0] = ox;
-		mat[2][1] = oy;
-	}
+function drawSpriteAdv(sprite,xpos,ypos,rot=0,scale=1) {
+    var mat = [[1,0,0],[0,1,0],[0,0,1]];
+    scaleMat(mat,scale,scale); //scale spritee
+    var mat2 = [[1,0,0],[0,1,0],[0,0,1]];
+    translateMat(mat2,-(sprite.w*scale/2),-(sprite.h*scale/2)); // center sprite
+    matrixMultiply(mat,mat,mat2);
 
-	function Rotate(mat,theta)
-	{
-		mat[0][0] = Math.cos(theta);  mat[1][0] = Math.sin(theta); mat[2][0] = 0.0;
-		mat[0][1] = -Math.sin(theta); mat[1][1] = Math.cos(theta); mat[2][1] = 0.0;
-        mat[0][2] = 0.0;		  mat[1][2] = 0.0;	       mat[2][2] = 1.0;
-	}
+    rotateMat(mat2,rot); // rotate sprit
+    matrixMultiply(mat,mat2,mat);
+    
+    translateMat(mat2,xpos,ypos); // move to x and y positions
+    matrixMultiply(mat,mat2,mat);
 
-	function Scale(mat,sx,sy)
-	{
-		mat[0][0] = sx;   mat[1][0] = 0.0; mat[2][0] = 0.0;
-		mat[0][1] = 0.0;  mat[1][1] = sy;  mat[2][1] = 0.0;
-		mat[0][2] = 0.0;  mat[1][2] = 0.0; mat[2][2] = 1.0;
-	}
-	function MatrixMultiply(matResult,matA,matB){
-		for (let c=0;c<3;c++){
-			for (let r=0;r<3;r++){
-				matResult[c][r] = matA[0][r] * matB[c][0] + matA[1][r] * matB[c][1] + matA[2][r] * matB[c][2];
-			}
-		}
-	}
-    function Forward(mat,in_x,in_y)
-	{
-		tx = in_x * mat[0][0] + in_y * mat[1][0] + mat[2][0];
-		ty = in_x * mat[0][1] + in_y * mat[1][1] + mat[2][1];
-	}
-    function Invert(matIn)
-	{   
-        tempMat=[[0,0,0],[0,0,0],[0,0,0]];
-		var det = matIn[0][0] * (matIn[1][1] * matIn[2][2] - matIn[1][2] * matIn[2][1]) -
-			matIn[1][0] * (matIn[0][1] * matIn[2][2] - matIn[2][1] * matIn[0][2]) +
-			matIn[2][0] * (matIn[0][1] * matIn[1][2] - matIn[1][1] * matIn[0][2]);
+    var ex, ey;
+    var sx, sy;
 
-		var idet = 1 / det;
-		tempMat[0][0] = (matIn[1][1] * matIn[2][2] - matIn[1][2] * matIn[2][1]) * idet;
-		tempMat[1][0] = (matIn[2][0] * matIn[1][2] - matIn[1][0] * matIn[2][2]) * idet;
-		tempMat[2][0] = (matIn[1][0] * matIn[2][1] - matIn[2][0] * matIn[1][1]) * idet;
-		tempMat[0][1] = (matIn[2][1] * matIn[0][2] - matIn[0][1] * matIn[2][2]) * idet;
-		tempMat[1][1] = (matIn[0][0] * matIn[2][2] - matIn[2][0] * matIn[0][2]) * idet;
-		tempMat[2][1] = (matIn[0][1] * matIn[2][0] - matIn[0][0] * matIn[2][1]) * idet;
-		tempMat[0][2] = (matIn[0][1] * matIn[1][2] - matIn[0][2] * matIn[1][1]) * idet;
-		tempMat[1][2] = (matIn[0][2] * matIn[1][0] - matIn[0][0] * matIn[1][2]) * idet;
-        tempMat[2][2] = (matIn[0][0] * matIn[1][1] - matIn[0][1] * matIn[1][0]) * idet;
-        return tempMat;
-	}
+    forward(mat, 0, 0);  // find bounding box
+    sx = tx; sy = ty;
+    ex = tx; ey = ty;
+
+    forward(mat, sprite.w, sprite.h);
+    sx = Math.min(sx, tx); sy = Math.min(sy, ty);
+    ex = Math.max(ex, tx); ey = Math.max(ey, ty);
+
+    forward(mat, 0, sprite.h);
+    sx = Math.min(sx, tx); sy = Math.min(sy, ty);
+    ex = Math.max(ex, tx); ey = Math.max(ey, ty);
+
+    forward(mat, sprite.w, 0);
+    sx = Math.min(sx, tx); sy = Math.min(sy, ty);
+    ex = Math.max(ex, tx); ey = Math.max(ey, ty); // stop finding bounding box
+    
+    mat=invert(mat); 
+
+    let ghhh = sprite.h;
+    let gwww = sprite.w;
+    var m00 = mat[0][0], m10 = mat[1][0], m20 = mat[2][0];
+    var m01 = mat[0][1], m11 = mat[1][1], m21 = mat[2][1];
+    sx=~~sx;sy=~~sy;ex=Math.round(ex);ey=Math.round(ey);
+    if(ex>cw) {ex=cw;}
+    if(ey>ch) {ey=ch;}
+    if(sy<0 ) {sy=0; }
+    if(sx<0 ) {sx=0; }
+    for(let x = sx; x < ex; x++) {
+        for(let y = sy; y < ey; y++) {
+            var sdy = ~~(x * m01 + y * m11 + m21);
+            var sdx = ~~(x * m00 + y * m10 + m20);
+            if(sdy<ghhh&&sdx<gwww&&sdx>0&&sdy>0) {
+                screenGrid[y][x]=sprite.data[sdy][sdx];
+            }
+        }
+    }
+}
+
+function translateMat(mat,ox,oy) {
+    mat[2][0] = ox;
+    mat[2][1] = oy;
+}
+
+function rotateMat(mat,theta) {
+    mat[0][0] = Math.cos(theta);  mat[1][0] = Math.sin(theta);
+    mat[0][1] = -Math.sin(theta); mat[1][1] = Math.cos(theta);
+}
+
+function scaleMat(mat,sx,sy) {
+    mat[0][0] = sx;
+    mat[1][1] = sy;
+}
+function matrixMultiply(matResult,matA,matB) {
+    for (let c=0;c<3;c++){
+        for (let r=0;r<3;r++){
+            matResult[c][r] = matA[0][r] * matB[c][0] + matA[1][r] * matB[c][1] + matA[2][r] * matB[c][2];
+        }
+    }
+}
+function forward(mat,in_x,in_y) {
+    tx = in_x * mat[0][0] + in_y * mat[1][0] + mat[2][0];
+    ty = in_x * mat[0][1] + in_y * mat[1][1] + mat[2][1];
+}
+function invert(matIn) {   
+    tempMat=[[0,0,0],[0,0,0],[0,0,0]];
+    var det = matIn[0][0] * (matIn[1][1] * matIn[2][2] - matIn[1][2] * matIn[2][1]) -
+        matIn[1][0] * (matIn[0][1] * matIn[2][2] - matIn[2][1] * matIn[0][2]) +
+        matIn[2][0] * (matIn[0][1] * matIn[1][2] - matIn[1][1] * matIn[0][2]);
+
+    var idet = 1 / det;
+    tempMat[0][0] = (matIn[1][1] * matIn[2][2] - matIn[1][2] * matIn[2][1]) * idet;
+    tempMat[1][0] = (matIn[2][0] * matIn[1][2] - matIn[1][0] * matIn[2][2]) * idet;
+    tempMat[2][0] = (matIn[1][0] * matIn[2][1] - matIn[2][0] * matIn[1][1]) * idet;
+    tempMat[0][1] = (matIn[2][1] * matIn[0][2] - matIn[0][1] * matIn[2][2]) * idet;
+    tempMat[1][1] = (matIn[0][0] * matIn[2][2] - matIn[2][0] * matIn[0][2]) * idet;
+    tempMat[2][1] = (matIn[0][1] * matIn[2][0] - matIn[0][0] * matIn[2][1]) * idet;
+    tempMat[0][2] = (matIn[0][1] * matIn[1][2] - matIn[0][2] * matIn[1][1]) * idet;
+    tempMat[1][2] = (matIn[0][2] * matIn[1][0] - matIn[0][0] * matIn[1][2]) * idet;
+    tempMat[2][2] = (matIn[0][0] * matIn[1][1] - matIn[0][1] * matIn[1][0]) * idet;
+    return tempMat;
+}
 
 
 
-function drawSpriteRotated(sprite,xpos,ypos,rot) {
+function drawSpriterotated(sprite,xpos,ypos,rot) {
 
 }
 

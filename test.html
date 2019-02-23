@@ -5,42 +5,49 @@
     <style>
     canvas {
         border: 1px solid black;
+        image-rendering: pixelated;
     }
     </style>
 </head>
 <body>
+    <canvas id="game" width="800" height="600"></canvas>
     <script src="game.js"></script>
     <script>
-        xlol=100;
-        ylol=100;
+        //createCanvas(800,600);
+        xlol=0;
+        ylol=0;
         images = [
-            "../tabthing.png",
+            "tabthing.png",
             "7.2.19.png",
-            "8.2.19.png"
+            "8.2.19.png",
+            "TEST.png"
         ];
-        loadSprites();
+        var zooom = 0.5;
+        loadImages();
         function start() {
             requestAnimationFrame(u);
         }
         function u() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            for(var egg=0;egg<600;egg++) {
-                for(var egg2=0;egg2<600;egg2++) {
-                    screenGrid[egg][egg2]=0;
-                }
-            }
+            startOfLoop();
+            
             ylol+=keyDown[k.DOWN]?3:(keyDown[k.UP]?-3:0);
             xlol+=keyDown[k.RIGHT]?3:(keyDown[k.LEFT]?-3:0);
-            for(let xd=0;xd<800;xd+=65) {
-                for(let yd=0;yd<600;yd+=65) {
+            for(let xd=0;xd<800;xd+=5) {
+                for(let yd=0;yd<600;yd+=5) {
                     //drawSprite(s["tabthing"],xlol+xd,ylol+yd);
+                   // drawSpriteScaled(s["test"],xd+xlol,yd+ylol,zooom);
                 }
             }
-            drawTransformedSprite(s["7.2.19"],100+xlol,100+ylol);
-            drawScreen();
+            drawSpriteAdv(s["7.2.19"],400+xlol,300+ylol,counter,3);
+            drawSpriteAdv(s["8.2.19"],300+xlol,250+ylol);
+            drawSpriteAdv(s["tabthing"],400+xlol,300+ylol);
+            drawSpriteScaled(s.tabthing,mousePos.x,mousePos.y,zooom);
+            zooom+=scroll/10;
+
+            endOfLoop();
             requestAnimationFrame(u);
         }
-        createCanvas(800,600);
+        
     </script>
 </body>
 </html>
