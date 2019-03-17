@@ -17,10 +17,10 @@
         xlol=0;
         ylol=0;
         images = [
-            "tabthing.png",
+            "../tabthing.png",
             "7.2.19.png",
             "8.2.19.png",
-            "TEST.png"
+            "test.png"
         ];
         var zooom = 0.5;
         loadImages();
@@ -39,8 +39,8 @@
                 }
             }
             drawSpriteAdv(s["7.2.19"],400+xlol,300+ylol,counter,3);
-            drawSpriteAdv(s["8.2.19"],300+xlol,250+ylol);
-            drawSpriteAdv(s["tabthing"],400+xlol,300+ylol);
+            drawSpriteAdv(s["8.2.19"],300+xlol,250+ylol,-counter,2);
+            drawSpriteAdv(s["tabthing"],400+xlol,300+ylol,counter*0.5,0.5);
             drawSpriteScaled(s.tabthing,mousePos.x,mousePos.y,zooom);
             zooom+=scroll/10;
 

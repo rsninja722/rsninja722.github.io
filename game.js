@@ -67,28 +67,7 @@ function endOfLoop() {
 function startOfLoop() {
     clearScreen();
 }
-//---canvas creation
-/*function createCanvas(width,height) {
-    let tempCanvas=document.createElement("canvas");
-    tempCanvas.id="cvs";
-    tempCanvas.width=`${width}`;
-    tempCanvas.height=`${height}`;
-    document.body.appendChild(tempCanvas);
-    canvas=document.getElementById("cvs");
-    ctx=canvas.getContext("2d");
-    addListenersTo(canvas);
-    screenData=ctx.getImageData(0,0,width,height);
-    clearScreenCache=ctx.getImageData(0,0,width,height);
-    let a=[];
-    for(let i=0;i<width;i++){a.push(0);}
-    for(let i=0;i<height;i++){screenGrid.push(a.slice());}
-    for(let i=3;i<screenData.data.length;i+=4) {screenData.data[i]=255;}
-    for(let i=3;i<clearScreenCache.data.length;i+=4) {clearScreenCache.data[i]=255;}
-    cw=canvas.width;
-    ch=canvas.height;
-}*/
-// image loading
-
+// image loading and canvas setup
 function loadImages() {
     canvas=document.getElementById("game");
     ctx=canvas.getContext("2d");
@@ -252,8 +231,9 @@ function drawSpriteScaled(sprite,xpos,ypos,scale=1) {
 }
 function drawSpriteAdv(sprite,xpos,ypos,rot=0,scale=1) {
     var mat = [[1,0,0],[0,1,0],[0,0,1]];
-    scaleMat(mat,scale,scale); //scale spritee
+    
     var mat2 = [[1,0,0],[0,1,0],[0,0,1]];
+    /*scaleMat(mat,scale,scale); //scale spritee
     translateMat(mat2,-(sprite.w*scale/2),-(sprite.h*scale/2)); // center sprite
     matrixMultiply(mat,mat,mat2);
 
@@ -261,8 +241,15 @@ function drawSpriteAdv(sprite,xpos,ypos,rot=0,scale=1) {
     matrixMultiply(mat,mat2,mat);
     
     translateMat(mat2,xpos,ypos); // move to x and y positions
+    matrixMultiply(mat,mat2,mat);*/
+    translateMat(mat2,-(sprite.w*scale/2),-(sprite.h*scale/2)); // center sprite
+    scaleMat(mat,scale,scale); // scale
     matrixMultiply(mat,mat2,mat);
-
+    rotateMat(mat2,rot);
+    matrixMultiply(mat,mat,mat2);
+    mat2 = [[1,0,0],[0,1,0],[0,0,1]];
+    translateMat(mat2,xpos,ypos); // move to x and y pos
+    matrixMultiply(mat,mat2,mat);
     var ex, ey;
     var sx, sy;
 
