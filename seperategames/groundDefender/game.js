@@ -3,9 +3,11 @@
         !-fix bounding box being rarted
         -anuke style rendering ✓
         
+        -fix mousepos for scaled canvas
+        -center draw snap to grid
         -audio
         -optimization
-    -mode (data/norm)
+        -mode (data/norm)
         -putimage basic mode ✓
         -draweverything ✓
         -key codes with names not numbers ✓
@@ -601,6 +603,10 @@ function invert(matIn) {
 }
 
 //utility
+function log(what) {
+    console.log(what);
+}
+
 function rand(min,max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
 
 function radToDeg(rad) {return rad / Math.PI * 180;}
@@ -613,4 +619,21 @@ function pointTo(obj1,obj2) {
     var opposite = (obj1.y - obj2.y);
     var h = Math.atan2(opposite, adjacent);
     return -h;
+}
+
+function dist(obj1,obj2) {
+    var one = (obj2.x - obj1.x);
+    var two = (obj2.y - obj1.y);
+    return Math.sqrt((one*one)+(two*two));
+}
+function rectRect(obj1, obj2) {
+    if (obj1.x + obj1.w / 2 >= obj2.x - obj2.w / 2 && 
+        obj1.x - obj1.w / 2 <= obj2.x + obj2.w / 2 && 
+        obj1.y + obj1.h / 2 >= obj2.y - obj2.h / 2 && 
+        obj1.y - obj1.h / 2 <= obj2.y + obj2.h / 2) 
+    {
+        return true;
+    } else {
+        return false;
+    }
 }
