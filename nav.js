@@ -1,6 +1,7 @@
 
 var navlist = [
     {name:"Ouro-fill-us",link:"https://rsninja722.github.io/seperategames/ouro/indexo.html"},
+    {name:"slime defender clicker",link:"https://rsninja722.github.io/seperategames/slimeDefenderClicker/index.html"},
     {name:"Ground Defender",link:"https://rsninja722.github.io/seperategames/groundDefender/index.html"},
     //{name:"fight game",link:"https://rsninja722.github.io/seperategames/fightGame/index.html"},
     {name:"Zombies",link:"https://rsninja722.github.io/seperategames/zombies/index.html"},

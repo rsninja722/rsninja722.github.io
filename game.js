@@ -160,9 +160,9 @@ function drawScreen() {
 
 function clearScreen() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(var egg=0;egg<600;egg++) {
-        for(var egg2=0;egg2<800;egg2++) {
-            screenGrid[egg][egg2]=0;
+    for(var egg=0,l1=screenGrid.length;egg<l1;egg++) {
+        for(var egg2=0,l2=screenGrid[0].length;egg2<l2;egg2++) {
+            screenGrid[egg][egg2]=[0,0,0,0];
         }
     }
     for(var dpos=0,l=screenData.data.length;dpos<l;dpos++) {
