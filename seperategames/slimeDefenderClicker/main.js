@@ -20,7 +20,7 @@ var upgrades = {
     sps:{stat:0,price:20},
     spc:{stat:1,price:50},
     dmg:{stat:1,price:10},
-    spd:{stat:1000,price:10},
+    spd:{stat:2000,price:10},
     auto:{stat:0,price:100}
 }
 var autoSpeeds=[Infinity,1000,900,800,750,700,650,600,550,500,475,450,425,400,375,350,325,300,275,250,225,200,175,150,125,100,75,60,50,40,30,10];
