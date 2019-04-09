@@ -1,0 +1,265 @@
+#EmergencyBannerWrapperOuter *,
+#BrowserBannerWrapperOuter * {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+#EmergencyBannerWrapperOuter *:before,
+#EmergencyBannerWrapperOuter *:after,
+#BrowserBannerWrapperOuter *:before,
+#BrowserBannerWrapperOuter *:after {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+#EmergencyBannerWrapperOuter, #BrowserBannerWrapperOuter{
+	position: absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    overflow:hidden;
+	background: rgba(0, 0, 0, 0.3);
+	font-size: 13px;
+	line-height: 17px;
+	z-index: 3001;
+}
+
+#EmergencyBannerWrapperOuter.hide, #BrowserBannerWrapperOuter.hide { display: none;}
+
+#BrowserBannerWrapperOuter .bannerContainer .alertbanner  {display:block !important;}
+
+#EmergencyBannerWrapperOuter .bannerContainer{ height:auto !important;}
+
+#EmergencyBanner
+{
+	display: none;
+	z-index: 5000;
+	width: 80%;
+	max-width: 1200px;
+	margin: 200px auto 0;
+}
+#BrowserBanner
+{
+    display: block;
+	z-index: 5000;
+	width: 80%;
+	max-width: 1200px;
+	margin: 200px auto 0;
+}
+
+.EmergencyBannerTitle, .BrowserBannerTitle
+{
+	text-align: left;
+	padding: 11px 70px 11px 47px;
+	margin-bottom: 0px;
+	font-size: 1.5em;
+	line-height: 1.2em;
+	overflow: hidden;
+	color: #fff;
+	background-image: url(../images/alertbanner/alert_icon.png);
+	background-repeat: no-repeat;
+	background-position: 15px 9px;
+}
+
+.red .EmergencyBannerTitle
+{
+	background-color: #ae0a0a;
+}
+
+.blue .EmergencyBannerTitle
+{
+	background-color: #1960af;
+}
+
+.green .EmergencyBannerTitle
+{
+	background-color: #4f8009;
+}	
+
+.browserAlert .BrowserBannerTitle
+{
+	background-color: #555;
+}	
+
+.EmergencyBannerText, .BrowserBannerText
+{		
+	padding: 25px 20px 80px 20px;
+	font-size: 1.1em;
+	line-height: 1.6em;
+	color: #262626;
+}
+.EmergencyBannerText p, .BrowserBannerText p {margin : 0;}
+
+#EmergencyBannerClose, #BrowserBannerClose
+{
+	position: absolute;
+	right: 3px;
+	top: 3px;
+	width: 45px;
+	height: 45px;
+	z-index: 100;
+}
+#EmergencyBannerWrapperOuter.hide #EmergencyBannerClose, #BrowserBannerWrapperOuter.hide #BrowserBannerClose {display:none;}
+
+#EmergencyBannerClose a,
+#EmergencyBannerClose a:link,
+#EmergencyBannerClose a:visited,
+#BrowserBannerClose a,
+#BrowserBannerClose a:link,
+#BrowserBannerClose a:visited
+{
+	background-image: url(../images/alertbanner/close_btn.png);
+	background-repeat: no-repeat;
+	width: 45px;
+	height: 45px;
+	display: block;
+	text-indent: -9999px;
+	font-size: 1px;
+	cursor: pointer;
+}
+
+#EmergencyBannerClose a:hover,
+#EmergencyBannerClose a:active,
+#EmergencyBannerClose a:focus
+#BrowserBannerClose a:hover,
+#BrowserBannerClose a:active,
+#BrowserBannerClose a:focus
+{
+	background-position: 0 -45px;
+}
+
+#emergencyAlertBannersNavButtons{
+	display: none;
+}
+
+#EmergencyBannerWrapperOuter .bannerContainer, #BrowserBannerWrapperOuter .bannerContainer  {
+    width: 100%;
+    /*height: 336px;*/
+   /* overflow: hidden;*/
+    position: relative;
+	overflow:visible !important;
+}
+
+#EmergencyBannerWrapperOuter .bannerContainer .alertbanner{
+    display: none;
+}
+
+#EmergencyBannerWrapperOuter .bannerContainer .default, #BrowserBannerWrapperOuter .bannerContainer .default {
+    display: block;
+}
+
+#EmergencyBannerWrapperOuter .alertbanner, #BrowserBannerWrapperOuter .alertbanner
+{
+    width:100%;
+	background: #f3f3f3 url(../images/alertbanner/bg.gif) repeat-x bottom;
+	border: 3px solid #fff;
+	-webkit-box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.4);
+	-moz-box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.4);
+	box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.4);
+}
+
+/* Navigation */
+#EmergencyBannerWrapperOuter .alertNav, #BrowserBannerWrapperOuter .alertNav {
+    height: 45px;
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    z-index: 51;
+    width: auto !important;
+}
+#EmergencyBannerWrapperOuter .alertNavLeft, #BrowserBannerWrapperOuter .alertNavLeft {
+	width: 45px;
+	height: 45px;
+	float: left;
+	margin-left: 1px;
+}
+#EmergencyBannerWrapperOuter .alertNavLeft a, #BrowserBannerWrapperOuter .alertNavLeft a {
+    width: 45px;
+    height: 45px;
+    float: left;
+    font-size: 1%;
+    text-indent: -9999px;
+    overflow: hidden;
+	background: url(../images/alertbanner/bannerNavLeft.png) top left no-repeat;
+	
+}
+#EmergencyBannerWrapperOuter .alertNavLeft a:hover, #EmergencyBannerWrapperOuter .alertNavLeft a:focus,
+#BrowserBannerWrapperOuter .alertNavLeft a:hover, #BrowserBannerWrapperOuter .alertNavLeft a:focus {
+    background-position: 0px -45px;
+}
+
+#EmergencyBannerWrapperOuter .alertNavPause, #BrowserBannerWrapperOuter .alertNavPause {
+	width: 45px;
+	height: 45px;
+	float: left;
+	margin-left: 1px;
+}
+#EmergencyBannerWrapperOuter .alertNavPause a, #BrowserBannerWrapperOuter .alertNavPause a  {
+    width: 45px;
+	height: 45px;
+    float: left;
+    font-size: 1%;
+    text-indent: -9999px;
+    overflow: hidden;
+    background: url(../images/alertbanner/bannerNavPause.png) top left no-repeat;
+	
+}
+#EmergencyBannerWrapperOuter .alertNavPause a:hover, #EmergencyBannerWrapperOuter .alertNavPause a:focus,
+#BrowserBannerWrapperOuter .alertNavPause a:hover, #BrowserBannerWrapperOuter .alertNavPause a:focus {
+    background-position: 0px -45px;
+}
+#EmergencyBannerWrapperOuter .alertNavPause a.paused,
+#BrowserBannerWrapperOuter .alertNavPause a.paused  {
+	background-position: 0px -90px;
+}
+#EmergencyBannerWrapperOuter .alertNavPause a.paused:hover, #EmergencyBannerWrapperOuter .alertNavPause a.paused:focus,
+#BrowserBannerWrapperOuter .alertNavPause a.paused:hover, BrowserBannerWrapperOuter .alertNavPause a.paused:focus {
+    background-position: 0px -135px;
+}
+#EmergencyBannerWrapperOuter .alertNavRight, #BrowserBannerWrapperOuter .alertNavRight {
+	width: 45px;
+	height: 45px;
+	float: left;
+	margin-left: 1px;
+}
+#EmergencyBannerWrapperOuter .alertNavRight a, #BrowserBannerWrapperOuter .alertNavRight a {
+    width: 45px;
+    height: 45px;
+    float: left;
+    font-size: 1%;
+    text-indent: -9999px;
+    overflow: hidden;
+    background: url(../images/alertbanner/bannerNavRight.png) top left no-repeat;
+	
+}
+#EmergencyBannerWrapperOuter .alertNavRight a:hover, #EmergencyBannerWrapperOuter .alertNavRight a:focus,
+#BrowserBannerWrapperOuter .alertNavRight a:hover, #BrowserBannerWrapperOuter .alertNavRight a:focus {
+    background-position: 0px -45px;
+}
+
+
+@media only screen and (max-width: 767px) {
+
+	#EmergencyBannerWrapperOuter, #BrowserBannerWrapperOuter 
+    {
+        z-index:  4000;
+    }
+	
+	#EmergencyBanner, #BrowserBanner{
+		margin-top: 40px;
+	}
+	
+	.EmergencyBannerTitle, .BrowserBannerTitle{
+		text-align: center;
+	}
+	
+	.EmergencyBannerText, .BrowserBannerText{
+		text-align: center;
+	}
+	
+	#EmergencyBannerControls {
+  		text-align: center;
+	}
+}

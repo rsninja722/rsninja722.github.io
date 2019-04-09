@@ -1,0 +1,394 @@
+﻿/*
+	Feedback Module Default Skin.  Created by Kevin Gray
+	
+	Revision History:
+	2.1.5 - Larry Stuart/Kevin Gray - Dec 11, 2014 - Started revision history and minified, updated the css to better support responsive (items now stack, and fit better)
+
+*/
+
+div.pageSubscriptionModal {
+    overflow: hidden !important;
+}
+
+.pageSubscriptionModal * {
+    box-sizing: border-box;
+}
+
+.feedbackTabButton.psDefaultTab {
+    top: 50%;
+    right: 0px !important;
+    margin-top: -50px !important;
+    _top: expression((parseInt(this.parentNode.style.height)-this.clientHeight)/2+"px") !important;
+    _left: expression((document.documentElement.clientWidth||document.body.clientWidth)-this.clientWidth+"px") !important;
+    _margin-top: 0 !important;
+    position: fixed!important;
+    width: 36px;
+    height: 100px;
+    overflow: hidden!important;
+    _position: absolute!important;
+    z-index: 9999;
+    background-color: #3276B1;
+    margin-right: -5px;
+}
+
+    .feedbackTabButton.psDefaultTab:hover {
+        margin-right: 0px;
+    }
+
+    .feedbackTabButton.psDefaultTab div {
+        display: block!important;
+        position: absolute!important;
+        width: 36px;
+        height: 100px;
+        background-color: #000000;
+        cursor: pointer!important;
+        background: url(../images/tab.png);
+        _background: none!important;
+        progid:DXImageTransform.Microsoft.AlphaImageLoader(src=../images/tab.png);
+    }
+
+
+.pageSubscriptionModal h1 {
+    font-size: 17px!important;
+    font-weight: bold!important;
+    color: #333!important;
+    margin-bottom: 6px!important;
+    margin-top: 0;
+}
+
+.pageSubscriptionModal h2 {
+    font-size: 12pt;
+}
+
+.ui-dialog, .ui-widget-overlay {
+    z-index: 9999;
+}
+
+/*.psRecommendButton.selected
+{
+    color: #428bca;
+    background-color: whitesmoke;
+    border-color: #428bca;
+    
+}*/
+
+.psOneToTenContainer {
+    position: relative;
+    margin-bottom: 10px;
+    display: table;
+    width: 100%;
+    border: solid 1px #aaa;
+}
+
+.psRecommendButton {
+    position: relative!important;
+    text-align: center!important;
+    color: #000!important;
+    outline: none!important;
+    text-decoration: none!important;
+    text-shadow: none;
+    box-sizing: border-box;
+    cursor: pointer !important;
+    font-size: 10pt;
+    background: #fff;
+    display: table-cell !important;
+    float: none;
+    vertical-align: middle;
+    border: none;
+    padding: 8px 5px !important;
+    border-left: solid 1px #aaa;
+}
+
+.psFormContainer .psOneToTenContainer > .psRecommendButton:first-child {
+    border-left: none;
+}
+
+.psRecommendButton:hover, .psRecommendButton.selected {
+    color: #000;
+    background: #eee;
+}
+
+.psRecommendButton.selected {
+    /*border-color:#ps6633 !important;
+    border-width:2px;*/
+    /*height: 38px;*/
+    background: #666;
+    color: #fff !important;
+}
+
+.psSpecificContainer {
+    margin-bottom: 5px;
+}
+
+.psFormContainer {
+    border: 1px solid #C5CEDA !important;
+    padding: 10px !important;
+    background: #F8F8F8!important;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.psSpecificContainer .ui-tabs-nav {
+    display: table;
+    width: 100%;
+    border: solid 1px #aaa;
+}
+
+.pageSubscriptionModal div.psLogo {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+	.pageSubscriptionModal div.psLogo img 
+	{
+		max-width:325px;
+        ms-interpolation-mode: bicubic;
+	}
+
+.psSpecificText, .psFeedbackText, .psCommentText, .psContactFieldLabel, .psEmailText, .psSpecificDescription, .psCategoryText, .psContactFormDescriptionText {
+    font-size: 11px!important;
+    margin-bottom: 5px!important;
+    color: #666!important;
+}
+
+.psContactFieldLabel {
+    margin-top: 4px;
+}
+
+.pageSubscriptionModalThankyou h1 {
+    /*margin-top: 0px;*/
+    color: #333;
+    font-size: 1.8em;
+}
+
+.psThankYouFormDescription {
+    color: #666;
+    font-size: 0.8em;
+}
+
+.ui-dialog {
+    box-shadow: 0 10px 10px rgba(0,0,0,0.4);
+}
+
+
+.pageSubscriptionModalThankyou {
+    padding: 1em 1.5em;
+}
+
+.psValidation {
+    color: #f00;
+    font-weight: bold;
+    font-size: 11px!important;
+}
+
+.psFeedbackButton {
+    float: right;
+}
+
+    .psFeedbackButton div {
+        float: left!important;
+        height: 26px;
+        background: url(../images/button.gif);
+        white-space: nowrap!important;
+        cursor: pointer;
+    }
+
+.psButtonLeft, .psButtonRight {
+    width: 11px;
+}
+
+.psButtonMiddle {
+    font: 12px arial,helvetica,sans-serif!important;
+    padding: 0 5px!important;
+    background-position: 0 -26px!important;
+    line-height: 26px!important;
+    color: #333!important;
+}
+
+.psButtonLeft {
+    background-position: 0px 0px !important;
+}
+
+.psButtonMiddle {
+    background-position: 0px -26px !important;
+}
+
+.psButtonRight {
+    background-position: 11px 0px !important;
+}
+
+.psFeedbackClose {
+    color: #999!important;
+    height: 26px;
+    line-height: 26px!important;
+    margin-left: 10px;
+    float: right;
+    cursor: pointer;
+    font: 12px arial,helvetica,sans-serif!important;
+    margin-top: 5px;
+}
+
+    .psFeedbackClose:hover {
+        color: #555!important;
+    }
+
+.psEmail {
+    width: 250px;
+}
+
+.pageSubscriptionModal .form-group {
+    width: 100%;
+}
+
+/*************** Override the jquery ui styles *****************/
+
+
+.psSpecificContainer ul, .psSpecificContainer {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none!important;
+    background: none;
+}
+
+    .psSpecificContainer ul {
+    }
+
+        .psSpecificContainer ul li {
+            background: none !important;
+            border-radius: 0 !important;
+            border: 1px solid #aaa !important;
+        }
+
+
+    .psSpecificContainer li.ui-state-active {
+        /*border-color: #FF6633 !important;*/
+        text-decoration: none!important;
+        /*border-width:2px !important;*/
+        outline: none !important;
+        /*height: 31px !important;*/
+        color: #000;
+        background: #666;
+    }
+
+    .psSpecificContainer ul li:hover a {
+        color: #000 !important;
+        background: #eee;
+    }
+
+    .psSpecificContainer li.ui-state-active a {
+        color: #fff !important;
+        background: #666;
+    }
+
+    .psSpecificContainer .ui-tabs-nav {
+        border-radius: 0 !important;
+        border: none!important;
+        font-weight: normal !important;
+        border-radius: 0 !important;
+        display: table;
+        width: 100%;
+        background: #fff !important;
+        border: solid 1px #aaa !important;
+    }
+
+        .psSpecificContainer .ui-tabs-nav li {
+            margin: 0 !important;
+            list-style: none !important;
+            top: 0 !important;
+            padding: 0 !important;
+            display: table-cell;
+            float: none;
+            border: none !important;
+            border-left: solid 1px #aaa !important;
+        }
+
+            .psSpecificContainer .ui-tabs-nav li:first-child {
+                border-left: none !important;
+            }
+
+            .psSpecificContainer .ui-tabs-nav li a {
+                width: 100% !important;
+                font-size: 10pt !important;
+                color: #000!important;
+                outline: none!important;
+                text-decoration: none!important;
+                text-shadow: none;
+                float: none !important;
+                display: block;
+                padding: 10px 8px !important;
+                text-align: center;
+            }
+
+    .psSpecificContainer div {
+        border: 1px solid #aaa;
+        border-top-width: 0px;
+    }
+
+.pageSubscriptionModal .ui-dialog-titlebar-close, .pageSubscriptionModalThankyou .ui-dialog-titlebar-close {
+    top: 15px;
+    width: 25px;
+    height: 25px;
+}
+
+#captchaContainer {
+    margin-top: 10px;
+}
+
+.psErrorMessage {
+    display: none;
+}
+
+#loadingDialog {
+    text-align: center;
+}
+#loadingDialog img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: auto;
+}
+
+/*************** END:Override the jquery ui styles *****************/
+
+/*==================
+  Wide Mobile
+====================*/
+
+@media only screen and (max-width : 767px) {
+
+    .psLogo img {
+        max-width: 100%;
+    }
+
+
+    .psEmail {
+        max-width: 100%;
+    }
+
+    .psFormContainer .psOneToTenContainer > .psRecommendButton, .psFormContainer .psSpecificContainer .ui-tabs-nav li {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .psFormContainer .psOneToTenContainer > .psRecommendButton {
+        border-left: none;
+        border-top: solid 1px #aaa;
+    }
+
+        .psFormContainer .psOneToTenContainer > .psRecommendButton:first-child {
+            border-top: none;
+        }
+
+    .psFormContainer .psSpecificContainer .ui-tabs-nav li {
+        border: none !important;
+        border-top: solid 1px #aaa !important;
+    }
+
+        .psFormContainer .psSpecificContainer .ui-tabs-nav li:first-child {
+            border-top: none !important;
+        }
+}
+

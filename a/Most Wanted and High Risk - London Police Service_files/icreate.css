@@ -1,0 +1,22 @@
+/*
+	--------------------------------------------------
+	iCREATE STYLES
+	--------------------------------------------------
+
+	Author:	eSolutionsGroup.ca
+		
+
+	i:Create Styles
+	These styles are available to the client while editing an i:Create
+	page.  Clients can select the below styles from a drop-down list
+	to apply to text.
+	
+*/
+.Left { text-align: left;}
+.Right {	text-align: right;}
+.IntroParagraph {}
+.Indent {    margin-left: 30px;}
+.largeButton-Green {}
+.largeButton-Yellow {}
+.largeButton-Blue {}
+.largeButton-Red {}
