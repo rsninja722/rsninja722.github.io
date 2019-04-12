@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>pixel art generator</title>
+        <style>
+            html {
+                background-color: #2d2d2d;
+                color: rgb(172, 172, 172);
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #main {
+                border: 1px solid #777777;
+            }
+            #preveiw {
+                position: absolute;
+                left:450px;
+                top:100px;
+            }
+            input {
+                -webkit-appearance: none;
+                appearance: none;
+                height: 25px;
+                background: #111111;
+                border: 1px solid#444444;
+                color:#ffffff;
+            }
+            .number {
+                width:75px;
+                padding-left: 5px;
+            }
+            button {
+                background-color: #222222;
+                border: 2px solid #444444;
+                color: rgb(172, 172, 172);
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 8px;  
+			}
+			button:active {
+				background-color: #000000;
+			}
+            select {
+                background-color: #222222;
+                border: 2px solid #444444;
+                color:rgb(172, 172, 172);
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="main" width="400" height="300"></canvas><canvas id="preveiw" style="background-color: black"></canvas>
+        <div id="colors">
+            <button id="delete" onclick="deleteColor()">- color</button><button id="add" onclick="addColor()" style="margin-right: 10px">+ color</button>
+            <button id="gen" onclick="gen()" style="margin-right: 10px">GEN</button>
+            w:<input type="number" class="number" id="imgw" value="10">h:<input type="number" class="number"id="imgh" value="10">
+            <br><br>
+            <div id="c1">
+                <input type="color" id="s1">
+            </div>
+        </div>
+        <div id="genType" style="position: absolute;left:100px;top:350px;">
+            gen type:<select>
+                <option>random</option>
+                <option>cool</option>
+                <option>options</option>
+                <option>bud</option>
+            </select>
+        </div>
+        <div id="preSize" style="position: absolute;left:430px;top:10px;">
+            <button id="-" onclick="minus()" style="padding-left:8px;padding-right:8px;">-</button>    
+            <input type="number" style="width:30px;" value="1" id="psize">
+            <button id="+" onclick="plus()">+</button>
+        </div>
+        <button onclick="toggle()" style="position: absolute;left:550px;top:10px;">bindings</button>
+        <div id="keyBindings" style="position: absolute;left:100px;top:370px;display:none;">
+            <pre>
+q - delete color
+w - add color
+
+g - generate
+
+o/l - width up/down
+p/; - height up/down
+
+&lt; - size down
+&gt; - size up 
+            </pre>
+        </div>
+        <script src="input.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>
