@@ -26,23 +26,36 @@ class button {
         switch(this.type) {
             case "txt":
                 if(this.state=="press") {
-                    // drawSprite(s.btxtpress,this.x+this.w/2,this.y+this.h/2);
-                    rect(this.x,this.y,this.w,this.h,"#202020");
+                    drawSprite(s.txtPress,this.x+this.w/2,this.y+this.h/2);
                 }
                 else if(this.state=="hover") {
-                    //drawSprite(s.btxthover,this.x+this.w/2,this.y+this.h/2);
-                    rect(this.x,this.y,this.w,this.h,"#606060");
+                    drawSprite(s.txtHover,this.x+this.w/2,this.y+this.h/2);
                 }
                 else {
-                   // drawSprite(s.btxt,this.x+this.w/2,this.y+this.h/2);
-                   rect(this.x,this.y,this.w,this.h,"#484848");
+                    drawSprite(s.txtDefult,this.x+this.w/2,this.y+this.h/2);
                 }
                 break;
             case "img":
-                rect(this.x,this.y,this.w,this.h,"#606060");
+                if(this.state=="press") {
+                    drawSprite(s.imgPress,this.x+this.w/2,this.y+this.h/2);
+                    if(this.id=="spd") {drawSprite(s.speedupPress,this.x+this.w/2,this.y+this.h/2);}
+                }
+                else if(this.state=="hover") {
+                    drawSprite(s.imgHover,this.x+this.w/2,this.y+this.h/2);
+                    if(this.id=="spd") {drawSprite(s.speedup,this.x+this.w/2,this.y+this.h/2);}
+                }
+                else {
+                    drawSprite(s.imgDefult,this.x+this.w/2,this.y+this.h/2);
+                    if(this.id=="spd") {drawSprite(s.speedup,this.x+this.w/2,this.y+this.h/2);}
+                }
                 break;
             case "big":
-                rect(this.x,this.y,this.w,this.h,"#999999");
+                if(this.state=="press"||clickTimer>0) {
+                    drawSprite(s.bigPress,this.x+this.w/2,this.y+this.h/2);
+                    if(clickTimer>0) {clickTimer--;}
+                } else {
+                    drawSprite(s.bigDefult,this.x+this.w/2,this.y+this.h/2);
+                }
                 break;
         }
         
@@ -50,7 +63,7 @@ class button {
 
     update() {
         if(pointRect(mousePos,this)) {
-            if(mousePress[0]) {
+            if(mousePress[0]||scroll) {
                 buyUpgrade(this);
             }
             if(mouseDown[0]) {
@@ -63,7 +76,7 @@ class button {
         }
     }
 }
-buttons.push(new button(310,10,"img","dmg"));buttons.push(new button(400,10,"img","spd"));
+buttons.push(new button(310,5,"img","dmg"));buttons.push(new button(405,5,"img","spd"));
 buttons.push(new button(320,70,"txt","sps"));
 buttons.push(new button(320,140,"big","click"));
 buttons.push(new button(320,280,"txt","auto"));

@@ -47,31 +47,58 @@
                 border: 2px solid #444444;
                 color:rgb(172, 172, 172);
             }
+            .rngHide {
+                position:relative;
+                top:-3px;
+                width:50px;
+                display: none;
+            }
+            .rngShow {
+                position:relative;
+                top:-3px;
+                width:50px;
+            }
+            .groupHide {
+                position:relative;
+                top:-3px;
+                width:30px;
+                display: none;
+            }
+            .groupShow {
+                position:relative;
+                top:-3px;
+                width:30px;
+            }
         </style>
     </head>
     <body>
         <canvas id="main" width="400" height="300"></canvas><canvas id="preveiw" style="background-color: black"></canvas>
+        
         <div id="colors">
             <button id="delete" onclick="deleteColor()">- color</button><button id="add" onclick="addColor()" style="margin-right: 10px">+ color</button>
             <button id="gen" onclick="gen()" style="margin-right: 10px">GEN</button>
             w:<input type="number" class="number" id="imgw" value="10">h:<input type="number" class="number"id="imgh" value="10">
-            <br><br>
+            <br><br><br>
             <div id="c1">
-                <input type="color" id="s1">
+                <input type="color" id="s1"> <input type="number" class="rngHide" id="r1" value="1"> <input type="number" class="groupHide" id="g1" value="0">
             </div>
         </div>
+
         <div id="genType" style="position: absolute;left:100px;top:350px;">
-            gen type:<select>
+            gen type:<select id="genSelect">
                 <option>random</option>
-                <option>cool</option>
-                <option>options</option>
-                <option>bud</option>
+                <option>random + probability</option>
+                <option>groups</option>
             </select>
         </div>
+
         <div id="preSize" style="position: absolute;left:430px;top:10px;">
             <button id="-" onclick="minus()" style="padding-left:8px;padding-right:8px;">-</button>    
             <input type="number" style="width:30px;" value="1" id="psize">
             <button id="+" onclick="plus()">+</button>
+        </div>
+
+        <div id="groups" style="position:absolute; left:250px; top:400px;">
         </div>
         <button onclick="toggle()" style="position: absolute;left:550px;top:10px;">bindings</button>
         <div id="keyBindings" style="position: absolute;left:100px;top:370px;display:none;">
@@ -86,6 +113,11 @@ p/; - height up/down
 
 &lt; - size down
 &gt; - size up 
+
+Modes:
+    random | randomly sets pixels
+    random + probability | set chance for each pixel 2.5 = 250%, 0.3 = 30%...
+    groups | 0 = no group, use any non zero number to set groups of pixels
             </pre>
         </div>
         <script src="input.js"></script>

@@ -189,6 +189,11 @@ function getImage(source,position) {
             f+=4;
         }
     }
+    //loading
+    ctx.fillStyle="#2d2d2d";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctxtext("Loading",25,25,"#1c99ff",20);
+    
     return {data:sprite,w:sprite[0].length,h:sprite.length,index:position};
 }
 //drawing
@@ -749,4 +754,10 @@ function rectRect(obj1, obj2) {
     } else {
         return false;
     }
+}
+
+function ctxtext(string,x,y,color,size) {
+    ctx.font = `${size}px verdana`;
+    ctx.fillStyle = color
+    ctx.fillText(string.toString(),x,y);
 }

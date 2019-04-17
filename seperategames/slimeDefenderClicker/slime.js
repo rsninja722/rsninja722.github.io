@@ -2,48 +2,84 @@ class slime {
     constructor(x,y,type) {
         this.x=x;
         this.y=y;
-        this.w=12;
-        this.h=12;
-        this.angle=pointTo(this,{x:300,y:200})-degToRad(90+rand(-20,20));
+        this.w=24;
+        this.h=24;
+        this.angle=pointTo(this,{x:300,y:225})-degToRad(90+rand(-20,20));
         this.v={x:Math.sin(this.angle),y:Math.cos(this.angle)};
         this.type=type;
         this.jumptime=0;
         this.animFrame=0;
+        this.dmgTime=0;
+        switch(type) {
+            case 0: this.health=this.maxHealth=2; break;
+            case 1: this.health=this.maxHealth=3; break;
+            case 2: this.health=this.maxHealth=4; break;
+            case 3: this.health=this.maxHealth=6; break;
+            case 4: this.health=this.maxHealth=8; break;
+            case 5: this.health=this.maxHealth=12; break;
+            case 6: this.health=this.maxHealth=15; break;
+            case 7: this.health=this.maxHealth=20; break;
+        }
     }
 
     draw() {
         if(this.type<8) {
+            var scolor = slimeColors[this.type].slice();
+            scolor[1]-=this.dmgTime?120:0;
+            scolor[2]-=this.dmgTime?120:0;
             if(this.jumptime<25) {
-                drawSpriteEffect(s.slime2,this.x,this.y,slimeColors[this.type],this.angle-1.57079632,1+(Math.sin(this.jumptime/7.65)/2));
+                drawSpriteEffect(s.slime2,this.x,this.y,scolor,this.angle-1.57079632,1+(Math.sin(this.jumptime/7.65)/2));
             } else {
-                drawSpriteEffect(s.slime1,this.x,this.y,slimeColors[this.type],this.angle-1.57079632);
+                drawSpriteEffect(s.slime1,this.x,this.y,scolor,this.angle-1.57079632);
             }
+            rect(this.x-12,this.y+16,this.w,5,"#2d2d2d");
+            rect(this.x-11,this.y+17,this.w-2,3,"#a81212");
+            rect(this.x-11,this.y+17,(this.w-2)*(this.health/this.maxHealth),3,"#00ff00");
         }
+        if(this.dmgTime>0) {this.dmgTime--;}
     }
     
     update() { 
+        //moving forwards
         if(this.jumptime<25) {
             this.x+=this.v.x*(this.jumptime<18?1.5:1);
             this.y+=this.v.y*(this.jumptime<18?1.5:1);
         }
 
+        // jumping
         this.jumptime++;
         if(this.jumptime>=60) {
             this.jumptime=0;
         }
 
-        if(this.x>300) {return true;}
+        if(this.x>300) {return true;} //off screen
+        if(this.y<60) {return true;}
+
+        //bullet colition
         for(var j=0;j<bullets.length;j++) {
             if(rectRect(this,bullets[j])) {
-                return true;
+                this.dmgTime=3;
+                var tempdmg = bullets[j].damage;
+                if(this.health>=tempdmg) {
+                    bullets[j].damage=0;
+                    this.health-=tempdmg;
+                } else {
+                    bullets[j].damage-=this.health;
+                    this.health=0;
+                }
+                if(bullets[j].damage<=0) {bullets[j].dead=true;} // despawn bullet
+                if(this.health<=0) {
+                    return true;
+                }
             }
         }
 
+        // turn
         if(this.jumptime==45) {
-            if(this.angle>pointTo(this,{x:300,y:200})-1.57079632) {
-                this.angle+=rand(-5,1)/10;
+            if(this.angle>pointTo(this,{x:300,y:225})-1.57079632) {
+                this.angle+=rand(-7,1)/10;
             } else {
-                this.angle+=rand(-1,5)/10;
+                this.angle+=rand(-1,7)/10;
             }
             this.v={x:Math.sin(this.angle),y:Math.cos(this.angle)};
         }
@@ -61,17 +97,62 @@ var slimeColors = [
     [0,0,0]
 ]
 
-var scount=0;
+//interval time before first spaen and inbetween
+var waves = [
+    [
+        {type:0,interval:2000,amount:10},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [
+        {type:0,interval:1600,amount:9},
+        {type:1,interval:3000,amount:1},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [
+        {type:0,interval:2000,amount:2},
+        {type:1,interval:3000,amount:2},
+        {type:0,interval:2000,amount:2},
+        {type:1,interval:3000,amount:2},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [
+        {type:7,interval:1000,amount:1000000}
+    ]
+]
+
+var wdat = {wave:0,pos:0,count:0};
 
 var slimeTime = Date.now();
-var primeSlimeTime = 100;
+var primeSlimeTime = waves[0][0].interval;
 function spawnSlime() {
     if(Date.now()>=slimeTime+primeSlimeTime) {
-        slimes.push(new slime(0,rand(0,400),scount));
-        primeSlimeTime=rand(1000,1500);
-        slimeTime=Date.now();
+        if(curSpawn().type=="wait") {
+            setTimeout(function() {textAnims.push( new textAnim(200,210,"large1",`w`,[40,200,40,255],"wave"));},100);
+            setTimeout(function() {textAnims.push( new textAnim(215,210,"large1",`a`,[40,200,40,255],"wave"));},200);
+            setTimeout(function() {textAnims.push( new textAnim(230,210,"large1",`v`,[40,200,40,255],"wave"));},300);
+            setTimeout(function() {textAnims.push( new textAnim(245,210,"large1",`e`,[40,200,40,255],"wave"));},400);
 
-        scount++;
-        if(scount>7) {scount=0;}
+            let s=(wdat.wave+2).toString();
+            if(s.length>0) {setTimeout(function() {textAnims.push( new textAnim(275,210,"large1",s[0],[40,200,40,255],"wave"));},600);}
+            if(s.length>1) {setTimeout(function() {textAnims.push( new textAnim(290,210,"large1",s[1],[40,200,40,255],"wave"));},700);}
+            if(s.length>2) {setTimeout(function() {textAnims.push( new textAnim(305,210,"large1",s[2],[40,200,40,255],"wave"));},800);}
+        } else {
+            slimes.push(new slime(0,rand(60,400),curSpawn().type));
+        }
+        wdat.count++;
+        if(wdat.count>=curSpawn().amount) {
+            wdat.pos++;
+            wdat.count=0;
+            if(wdat.pos==waves[wdat.wave].length) {
+                wdat.wave++;
+                wdat.pos=0;
+            }
+        }
+        primeSlimeTime=curSpawn().interval;
+        slimeTime=Date.now();
     }
+}
+
+function curSpawn() {
+    return waves[wdat.wave][wdat.pos];
 }

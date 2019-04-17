@@ -23,6 +23,8 @@ var pic = [];
 var lastSize = {x:10,y:10};
 genPic();
 
+var addedGroups = [];
+
 var bindingState = false;
 
 requestAnimationFrame(update);
@@ -47,6 +49,45 @@ function update() {
         
         // generate
         if(keyPress[k.g]) {gen();}
+    
+    // type handling
+    if(document.getElementById("genSelect").value=="random + probability") {
+        for(var i=0;i<colors.length;i++) {
+            document.getElementById(`r${i+1}`).className = "rngShow";
+        }
+    } else {
+        for(var i=0;i<colors.length;i++) {
+            document.getElementById(`r${i+1}`).className = "rngHide";
+        }
+    }
+    if(document.getElementById("genSelect").value=="groups") {
+        for(var i=0;i<colors.length;i++) {
+            document.getElementById(`g${i+1}`).className = "groupShow";
+        }
+    } else {
+        for(var i=0;i<colors.length;i++) {
+            document.getElementById(`g${i+1}`).className = "groupHide";
+        }
+    }
+    
+    //add and delete group ui
+    var groups = getGroups();
+    for(var i=0;i<groups.length;i++) {
+        if(groups[i]>0) {
+            if(!addedGroups.includes(groups[i])) {
+                addGroup(groups[i]);
+                addedGroups.push(groups[i]);
+            }
+        }
+    }
+
+    for(var i=0;i<addedGroups.length;i++) {
+        if(!groups.includes(addedGroups[i])) {
+            deleteGroup(addedGroups[i]);
+            addedGroups.splice(i,1);
+            i--;
+        }
+    }
     
     // detecting resizing
     var imgw = document.getElementById("imgw").value;
@@ -85,15 +126,109 @@ function update() {
 
 // generate new pattern
 function gen() {
-    var randMax = colors.length-1;
-    for(var y=0;y<pic.length;y++) {
-        for(var x=0;x<pic[0].length;x++) {
-            pic[y][x]=rand(0,randMax);
+    var genMode = document.getElementById("genSelect").value;
+    if(genMode == "random + probability") { // random with probability
+        var rng = getRng();
+        var rngBase = 100/colors.length;
+        rng = rng.map(x => ~~(x * rngBase));
+
+        for(var i in rng) {
+            if(i!=0) {
+                rng[i]+=rng[i-1];
+            }
+        }
+
+        var randMax = rng[rng.length-1];
+
+        for(var y=0;y<pic.length;y++) {
+            for(var x=0;x<pic[0].length;x++) {
+                pic[y][x]=randPixel(randMax,rng);
+            }
+        }
+    } else if(genMode == "groups") {
+        var groupData = getGroupData();
+        var randMax = colors.length-1;
+        var groups=getGroups();
+        var validColors = [];
+        for(var i=0;i<groups.length;i++) {
+            if(groups[i]==0) {
+                validColors.push(i);
+            }
+        }
+        for(var y=0;y<pic.length;y++) {
+            for(var x=0;x<pic[0].length;x++) {
+                pic[y][x]=validColors[rand(0,validColors.length-1)]; //prevernt everything
+                var gkeys = Object.keys(groupData);
+                
+                for(var i=0;i<gkeys.length;i++) {//console.log(groupData[gkeys[0]].chance);
+                    if(rand(0,groupData[gkeys[i]].chance)==1) {
+                        //console.log("fuck off")
+                        var size = rand(1,groupData[gkeys[i]].max);
+                        var xpos=x;var ypos=y;
+                        var gcolors=[];
+                        for(var j=0;j<groups.length;j++) {
+                            if(groups[j]==gkeys[i]) {
+                                gcolors.push(j);
+                            }
+                        }
+                        for(var j=0;j<size;j++) {
+                            pic[ypos][xpos]=gcolors[rand(0,gcolors.length-1)];
+                            xpos+=rand(-1,1);
+                            ypos+=rand(-1,1);
+                            if(xpos>pic[0].length-1) {xpos=pic[0].length-1;}
+                            if(ypos>pic.length-1) {ypos=pic.length-1;}
+                            if(xpos<0) {xpos=0;}
+                            if(ypos<0) {ypos=0;}
+                        }
+                    }
+                }
+            }
+        }
+    } else { // random
+        var randMax = colors.length-1;
+        for(var y=0;y<pic.length;y++) {
+            for(var x=0;x<pic[0].length;x++) {
+                pic[y][x]=rand(0,randMax);
+            }
         }
     }
+    
     drawPic();
 }
 function rand(min,max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
+
+function randPixel(range,rng) {
+    var randNum = rand(0,range);
+    for( var j=0;j<rng.length;j++) {
+        if(randNum<=rng[j]) {
+            return j;
+        }
+    }
+}
+
+function getRng() {
+    var returnArray = [];
+    for(var i=0;i<colors.length;i++) {
+        returnArray.push(parseFloat(document.getElementById(`r${i+1}`).value));
+    }
+    return returnArray;
+}
+
+function getGroups() {
+    var returnArray = [];
+    for(var i=0;i<colors.length;i++) {
+        returnArray.push(parseFloat(document.getElementById(`g${i+1}`).value));
+    }
+    return returnArray;
+}
+
+function getGroupData() {
+    var returnArray = {};
+    for(var j=0;j<addedGroups.length;j++) {
+        returnArray[`${addedGroups[j]}`]=({chance:parseInt(document.getElementById(`gc${addedGroups[j]}`).value),max:parseInt(document.getElementById(`gms${addedGroups[j]}`).value)});
+    }
+    return returnArray;
+}
 
 //draw main screen and preveiw
 function drawPic() {
@@ -160,10 +295,23 @@ function minus() {
     drawPic();
 }
 
+function addGroup(gid) {
+    var newDiv = document.createElement("div");
+    newDiv.id = `gs${gid}`; //group settings
+    newDiv.innerHTML=`${gid}: chance<input type="number" class="groupShow" id="gc${gid}"> max size<input type="number" class="groupShow" id="gms${gid}">`;
+    document.getElementById("groups").appendChild(newDiv);
+}
+
+function deleteGroup(gid) {
+    if(idCount>1) {
+        document.getElementById("groups").removeChild(document.getElementById(`gs${gid}`));
+    }
+}
+
 function addColor() {
     var newDiv = document.createElement("div");
     newDiv.id = `c${++idCount}`;
-    newDiv.innerHTML=`<input type="color" id="s${idCount}">`;
+    newDiv.innerHTML=`<input type="color" id="s${idCount}"> <input type="number" class="rngHide" id="r${idCount}" value="1"> <input type="number" class="groupHide" id="g${idCount}" value="0">`;
     document.getElementById("colors").appendChild(newDiv);
     var colorToAdd = colors[colors.length-1];
     colors.push(colorToAdd);
@@ -174,9 +322,10 @@ function addColor() {
 function deleteColor() {
     if(idCount>1) {
         document.getElementById("colors").removeChild(document.getElementById(`c${idCount--}`));
+        colors.splice(colors.length-1,1);
+        lastColors.splice(lastColors.length-1,1);
     }
-    colors.splice(colors.length-1,1);
-    lastColors.splice(lastColors.length-1,1);
+    
 }
 
 function toggle() {
