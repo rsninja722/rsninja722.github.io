@@ -4,7 +4,7 @@ images = [
     "assets/imgDefult.png","assets/imgHover.png","assets/imgPress.png",
     "assets/bigDefult.png","assets/bigPress.png",
     "assets/icon.png",
-    "assets/duotur_16_ammo.png",
+    "assets/duoturBarrel.png","assets/duoturBase.png","assets/duoturRingreload.png","assets/duoturRingreload2.png",
     "assets/slime1.png","assets/slime2.png",
     "assets/pipe.png",
     "assets/moneybox.png",
@@ -12,6 +12,7 @@ images = [
     "assets/piston.png",
     "assets/dirt.png",
     "assets/speedup.png","assets/speedupPress.png",
+    "assets/dmg.png",
     "assets/orbSmall.png","assets/orbLarge.png"
 ];
 
@@ -19,14 +20,10 @@ backgroundColor = "#68431e";
 
 /*
     art to do
-        -big button
-        -rest of slimes
-        -damage anim
         -turret animations
         -bullet
         -particles
         -upgrade animations
-        -better pipe
 */
 
 var money = 0;
@@ -48,16 +45,19 @@ var spsAnim=0;
 var autoAnim=0;
 var clickTimer=0;
 
+var turrot=0;
+var recoil=0;
+
 startUpdate("auto");
-setInterval(physics,1000/50);
+setInterval(physics,1000/25);
 
 function onImagesReady() {
     doFontStuff();// does things with fonts
 }
 
-turrot=0;
-function update() {
 
+function update() {
+    
     for(var y=70;y<410;y+=20) {
         for(var x=10;x<310;x+=20) {
             drawSprite(s.dirt,x,y);
@@ -108,9 +108,22 @@ function update() {
     for(var i=0;i<slimes.length;i++) { // slimes
         slimes[i].draw();
     }
+
+    for(var i=0;i<particles.length;i++) { // particles
+        particles[i].draw();
+    }
+}
+
+function input() {
+    for(var i=0;i<buttons.length;i++) { //buttons
+        buttons[i].update(false);
+    }
+    // console.log(`x:${mousePos.x} y:${mousePos.y}`);
+    resetInput();
 }
 
 function physics() {
+    
     //update timers
     timers.ps.cur = Date.now();
     timers.auto.cur = Date.now();
@@ -127,6 +140,7 @@ function physics() {
     if(timers.gun.cur-timers.gun.start>=upgrades.spd.stat) { // shooting
         if(slimes.length>0) {
             bullets.push(new bullet(turrot-degToRad(90)));
+            recoil=5.5;
         }
         timers.gun.start=timers.gun.cur;// update timer
     }
@@ -136,10 +150,6 @@ function physics() {
         orbs.push(new orb("click",upgrades.spc.stat)); 
         
         timers.auto.start=timers.auto.cur;// update timer
-    }
-    
-    for(var i=0;i<buttons.length;i++) { //buttons
-        buttons[i].update();
     }
     for(var i=0;i<orbs.length;i++) { //orbs
         if(orbs[i].update()) {
@@ -156,12 +166,20 @@ function physics() {
             bullets.splice(i,1);
         }
     }
+    for(var i=0;i<particles.length;i++) { //particles
+        if(particles[i].update()) {
+            particles.splice(i,1);
+        }
+    }
 
+    resetInput();
+    for(var i=0;i<buttons.length;i++) { //buttons
+        buttons[i].update(true);
+    }
     spawnSlime();
-
-    if(mousePress[0]) {console.log(`x:${mousePos.x} y:${mousePos.y}`);}//temporary, used for positioning ui
 }
 function buyUpgrade(button)  {
+    var wasPurchaceSuccesful = false;
     switch(button.id) {
         case "sps": // $/second
             if(money>=upgrades.sps.price) {
@@ -173,6 +191,7 @@ function buyUpgrade(button)  {
                     upgrades.sps.price*=1.25;
                 }
                 upgrades.sps.stat++;
+                wasPurchaceSuccesful=true;
             }
             break;
         case "spc": // $/click
@@ -185,6 +204,7 @@ function buyUpgrade(button)  {
                     upgrades.spc.price*=1.75;
                 }
                 upgrades.spc.stat++;
+                wasPurchaceSuccesful=true;
             }
             break;
         case "auto": // auto clicker
@@ -193,6 +213,7 @@ function buyUpgrade(button)  {
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.auto.price)}`,[200,0,0,255]));
                 upgrades.auto.price*=1.15;
                 upgrades.auto.stat++;
+                wasPurchaceSuccesful=true;
             }
             break;
         case "dmg":
@@ -201,6 +222,7 @@ function buyUpgrade(button)  {
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.dmg.price)}`,[200,0,0,255]));
                 upgrades.dmg.stat++;
                 upgrades.dmg.price*=1.55;
+                wasPurchaceSuccesful=true;
             }
             break;
         case "spd":
@@ -209,11 +231,17 @@ function buyUpgrade(button)  {
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.spd.price)}`,[200,0,0,255]));
                 upgrades.spd.stat-=100;
                 upgrades.spd.price*=1.55;
+                wasPurchaceSuccesful=true;
             }
             break;
         case "click": // $ button
             orbs.push(new orb("click",upgrades.spc.stat)); // spawn money orb at $ button
             break;
+    }
+    if(wasPurchaceSuccesful==true) {
+        button.spawnparticles();
+    } else if(button.id!="click") {
+        //play sound fk you no buy
     }
 }
 
@@ -233,5 +261,24 @@ function drawTurret() {
     }
     if(turrot>targetAngle) {turrot-=0.02;}
     if(turrot<targetAngle) {turrot+=0.02;}
-    drawSpriteAdv(s.duotur_16_ammo,300,225,turrot,0.5);
+    drawSpriteAdv(s.duoturBarrel,300-Math.sin(turrot-1.5707963)*recoil,225-Math.cos(turrot-1.5707963)*recoil,turrot,0.5);
+    drawSpriteAdv(s.duoturBase,300,225,0,0.5);
+    if(recoil<=0) {
+        drawSpriteAdv(s.duoturRingreload2,300,225,0,0.5);
+    } else {
+        if(recoil==5.5) {
+            drawSpriteAdv(s.duoturRingreload,300,225,0,0.5);
+        } else {
+            drawSpriteAdv(s.duoturRingreload,300,225,-(11-recoil)/30,0.5);
+        }
+    }
+    if(recoil==5.5) {
+        recoil=10;
+    } else if(recoil>0) {
+        if(upgrades.spd.stat>500) {
+            recoil--;
+        } else {
+            recoil-=2;
+        }
+    }
 }

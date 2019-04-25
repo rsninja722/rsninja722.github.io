@@ -82,12 +82,12 @@ function putText() {
 
         }
     }
-    drawText(text.large1,`$:${parseNum(~~money)}`,175,5,[40,240,40,255],10);
+    drawText(text.large1,`$:${parseNum(~~money)}`,178,6,[40,240,40,255],10);
     drawText(text.medium1,`dmg:${~~upgrades.dmg.stat}`,5,5,[40,240,40,255],5);
-    drawText(text.medium1,`spd:${~~upgrades.spd.stat}`,100,5,[40,240,40,255],5);
+    drawText(text.medium1,`spd:${~~upgrades.spd.stat}`,80,5,[40,240,40,255],5);
     drawText(text.medium1,`$/sec:${~~upgrades.sps.stat}`,5,30,[40,240,40,255],4);
-    drawText(text.medium1,`$/click:${~~upgrades.spc.stat}`,100,30,[40,240,40,255],4);
-    drawText(text.medium1,`auto spd:${(autoSpeeds[upgrades.auto.stat]==Infinity?0:autoSpeeds[upgrades.auto.stat])}`,100,45,[40,240,40,255],4);
+    drawText(text.medium1,`$/click:${~~upgrades.spc.stat}`,80,30,[40,240,40,255],4);
+    drawText(text.medium1,`auto spd:${(autoSpeeds[upgrades.auto.stat]==Infinity?0:autoSpeeds[upgrades.auto.stat])}`,80,45,[40,240,40,255],4);
     for(var i=0;i<textAnims.length;i++) {
         if(textAnims[i].update()) {
             textAnims.splice(i,1);

@@ -38,16 +38,15 @@ class button {
             case "img":
                 if(this.state=="press") {
                     drawSprite(s.imgPress,this.x+this.w/2,this.y+this.h/2);
-                    if(this.id=="spd") {drawSprite(s.speedupPress,this.x+this.w/2,this.y+this.h/2);}
                 }
                 else if(this.state=="hover") {
                     drawSprite(s.imgHover,this.x+this.w/2,this.y+this.h/2);
-                    if(this.id=="spd") {drawSprite(s.speedup,this.x+this.w/2,this.y+this.h/2);}
                 }
                 else {
                     drawSprite(s.imgDefult,this.x+this.w/2,this.y+this.h/2);
-                    if(this.id=="spd") {drawSprite(s.speedup,this.x+this.w/2,this.y+this.h/2);}
                 }
+                if(this.id=="spd") {drawSprite(s.speedup,this.x+this.w/2,this.y+this.h/2);}
+                if(this.id=="dmg") {drawSprite(s.dmg,this.x+this.w/2,this.y+this.h/2);}
                 break;
             case "big":
                 if(this.state=="press"||clickTimer>0) {
@@ -61,10 +60,10 @@ class button {
         
     }
 
-    update() {
+    update(justUi) {
         if(pointRect(mousePos,this)) {
             if(mousePress[0]||scroll) {
-                buyUpgrade(this);
+                if(!justUi) {buyUpgrade(this);}
             }
             if(mouseDown[0]) {
                 this.state="press";
@@ -73,6 +72,13 @@ class button {
             }
         } else {
             this.state="defult";
+        }
+    }
+
+    spawnparticles() {
+        let range = {min:{x:this.x,y:this.y},max:{x:this.x+this.w,y:this.y+this.h}};
+        for(let i=0;i<75;i++) {
+            particles.push(new particle(rand(range.min.x,range.max.x),rand(range.min.y,range.max.y),"purchace"));
         }
     }
 }

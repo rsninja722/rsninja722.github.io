@@ -52,8 +52,8 @@ class slime {
             this.jumptime=0;
         }
 
-        if(this.x>300) {return true;} //off screen
-        if(this.y<60) {return true;}
+        if(this.x>288) {this.x=288;} //off screen
+        if(this.y<72) {this.y=72;}
 
         //bullet colition
         for(var j=0;j<bullets.length;j++) {

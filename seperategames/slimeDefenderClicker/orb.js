@@ -38,7 +38,7 @@ class orb{
                         break;
                     case 3:
                         this.y-=2;
-                        if(this.y<=25) {money+=this.value;textAnims.push( new textAnim(175,5,"large1",`+$${parseNum(this.value)}`,[40,240,40,255]));return true;}
+                        if(this.y<=25) {money+=this.value;textAnims.push( new textAnim(170,5,"large1",`+$${parseNum(this.value)}`,[40,240,40,255]));return true;}
                         break;
                 }
                 break;
@@ -51,6 +51,7 @@ class orb{
     draw() {
         if(this.value<10) {
             drawSprite(s.orbSmall,this.x,this.y);
+            //effects.push([this.x-5,this.y-5,this.x+5,this.y+5,[0,50,0],orbSmallEffect.slice()]);
         } else {
             drawSprite(s.orbLarge,this.x,this.y);
         }
@@ -58,3 +59,12 @@ class orb{
 }
 
 var orbs=[];
+
+var orbSmallEffect=[];
+for(var y=0;y<10;y++) {
+    var a=[];
+    for(var x=0;x<10;x++) {
+        a.push(true);
+    }
+    orbSmallEffect.push(a.slice());
+}

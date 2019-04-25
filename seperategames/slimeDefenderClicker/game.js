@@ -70,9 +70,11 @@ function resetInput() {for(var i=0;i<keyPress.length;i++){if(keyPress[i]){keyPre
         touches.splice(0,1);
     }
 }
+
+// change input() in mdown
 function kdown(e) {var h=e.keyCode;keyPress[h]=keyPress[h]==[][[]]?1:0;keyDown[h]=1;if(preventedEvents[0]) {e.preventDefault();}}
 function kup(e) {var h=e.keyCode;delete keyPress[h];delete keyDown[h];}
-function mdown(e) {var h=e.button;mousePress[h]=mousePress[h]==[][[]]?1:0;mouseDown[h]=1;if(preventedEvents[1]) {e.preventDefault();}}
+function mdown(e) {var h=e.button;mousePress[h]=mousePress[h]==[][[]]?1:0;mouseDown[h]=1;if(preventedEvents[1]) {e.preventDefault();}input();}
 function mup(e) {var h=e.button;delete mousePress[h];delete mouseDown[h];}
 function mmove(e) {mousePos.x=e.offsetX;mousePos.y=e.offsetY;}
 function cmenu(e) {if(preventedEvents[1]) {e.preventDefault();}}
@@ -674,7 +676,16 @@ function rect(x,y,w,h,color) {
         var parsedcolor;
         if(color!=lastColor) {
             lastColor = color;
-            parsedcolor = [parseInt(color[1]+color[2], 16),parseInt(color[3]+color[4], 16),parseInt(color[5]+color[6], 16)];
+            if(color[0]=="#") {
+                parsedcolor = [parseInt(color[1]+color[2], 16),parseInt(color[3]+color[4], 16),parseInt(color[5]+color[6], 16)];
+            } else {
+                parsedcolor=[0,0,0];
+                parsedcolor[0]=parseInt(color.slice(color.indexOf("(")+1,color.indexOf(",")));
+                    color = color.slice(color.indexOf(",")+1);
+                parsedcolor[1]=parseInt(color.slice(0,color.indexOf(",")));
+                    color = color.slice(color.indexOf(",")+1);
+                parsedcolor[2]=parseInt(color.slice(0,color.indexOf(")")));
+            }
             sc.push(parsedcolor.slice());
         }
         var ci = sc.length-1;
@@ -760,4 +771,12 @@ function ctxtext(string,x,y,color,size) {
     ctx.font = `${size}px verdana`;
     ctx.fillStyle = color
     ctx.fillText(string.toString(),x,y);
+}
+
+String.prototype.allIndexesOf = function (char) {
+    var indexes = [];
+    for(let i=0;i<this.length;i++) {
+        if(this[i]==char) {indexes.push(i);}
+    }
+    return indexes;
 }

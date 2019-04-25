@@ -8,6 +8,8 @@ class bullet {
         this.h=20;
         this.damage=upgrades.dmg.stat;
         this.dead=false;
+        this.x+=this.v.x*50;
+        this.y+=this.v.y*50;
     }
 
     draw() {
