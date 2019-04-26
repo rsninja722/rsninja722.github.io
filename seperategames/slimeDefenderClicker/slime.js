@@ -69,6 +69,9 @@ class slime {
                 }
                 if(bullets[j].damage<=0) {bullets[j].dead=true;} // despawn bullet
                 if(this.health<=0) {
+                    for(let i=0;i<25;i++) {
+                        particles.push(new particle(this.x+rand(-8,8),this.y+rand(-8,8),"slime",particleColors[this.type][rand(0,1)]));
+                    }
                     return true;
                 }
             }
@@ -97,10 +100,27 @@ var slimeColors = [
     [0,0,0]
 ]
 
+var particleColors = [
+    ["#86ff44","#61c12c"],
+    ["#2a3fdd","#1c2ca0"],
+    ["#b92fd8","#8b20a3"],
+    ["#cc432a","#af3823"],
+    ["#f418de","#c417b3"],
+    ["#b26c1c","#965c19"],
+    ["#fff53d","#d8cf2b"],
+    ["#ededed","#c1c1c1"]
+]
 //interval time before first spaen and inbetween
 var waves = [
     [
-        {type:0,interval:2000,amount:10},
+        {type:0,interval:2000,amount:1},
+        {type:1,interval:2000,amount:1},
+        {type:2,interval:2000,amount:1},
+        {type:3,interval:2000,amount:1},
+        {type:4,interval:2000,amount:1},
+        {type:5,interval:2000,amount:1},
+        {type:6,interval:2000,amount:1},
+        {type:7,interval:2000,amount:1},
         {type:"wait",interval:5000,amount:1}
     ],
     [

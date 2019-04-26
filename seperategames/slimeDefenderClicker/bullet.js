@@ -18,8 +18,8 @@ class bullet {
 
     update() {
         if(this.dead) {return true;}
-        this.x+=this.v.x*10;
-        this.y+=this.v.y*10;
+        this.x+=this.v.x*20;
+        this.y+=this.v.y*20;
         if(this.x<0||this.y>ch||this.y<0) {
             return true;
         }

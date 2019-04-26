@@ -24,6 +24,16 @@ backgroundColor = "#68431e";
         -bullet
         -particles
         -upgrade animations
+        -final slime
+        -thumbnail
+    -saving
+    -balencing
+    -upgrade maxes
+    -sound
+    -damage numbers
+    -pause
+    -sound settings
+    -music
 */
 
 var money = 0;
@@ -49,7 +59,7 @@ var turrot=0;
 var recoil=0;
 
 startUpdate("auto");
-setInterval(physics,1000/25);
+setInterval(physics,1000/50);
 
 function onImagesReady() {
     doFontStuff();// does things with fonts
@@ -62,6 +72,10 @@ function update() {
         for(var x=10;x<310;x+=20) {
             drawSprite(s.dirt,x,y);
         }
+    }
+
+    for(var i=0;i<particles.length;i++) { // particles
+        if(particles[i].type!="purchace") { particles[i].draw(); }
     }
 
     for(var i=0;i<bullets.length;i++) {
@@ -104,13 +118,11 @@ function update() {
         }
     }
 
-
+    for(var i=0;i<particles.length;i++) { // particles
+        if(particles[i].type=="purchace") { particles[i].draw(); }
+    }
     for(var i=0;i<slimes.length;i++) { // slimes
         slimes[i].draw();
-    }
-
-    for(var i=0;i<particles.length;i++) { // particles
-        particles[i].draw();
     }
 }
 
@@ -141,6 +153,11 @@ function physics() {
         if(slimes.length>0) {
             bullets.push(new bullet(turrot-degToRad(90)));
             recoil=5.5;
+            var pxspawn = 300+Math.sin(turrot-1.5707963)*40;
+            var pyspawn = 225+Math.cos(turrot-1.5707963)*40;
+            for(let i=0;i<50;i++) {
+                particles.push(new particle(pxspawn,pyspawn,"shoot"));
+            }
         }
         timers.gun.start=timers.gun.cur;// update timer
     }
