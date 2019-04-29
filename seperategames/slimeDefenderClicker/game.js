@@ -31,6 +31,8 @@ cw,
 ch,
 drawingMode="pixelated",
 updateSpeed,
+camera={x:0,y:0},
+gameScale=1,
 
 images,
 s={},
@@ -76,7 +78,7 @@ function kdown(e) {var h=e.keyCode;keyPress[h]=keyPress[h]==[][[]]?1:0;keyDown[h
 function kup(e) {var h=e.keyCode;delete keyPress[h];delete keyDown[h];}
 function mdown(e) {var h=e.button;mousePress[h]=mousePress[h]==[][[]]?1:0;mouseDown[h]=1;if(preventedEvents[1]) {e.preventDefault();}input();}
 function mup(e) {var h=e.button;delete mousePress[h];delete mouseDown[h];}
-function mmove(e) {mousePos.x=e.offsetX;mousePos.y=e.offsetY;}
+function mmove(e) {mousePos.x=e.offsetX/gameScale;mousePos.y=e.offsetY/gameScale;}
 function cmenu(e) {if(preventedEvents[1]) {e.preventDefault();}}
 function scrl(e) {scroll+=-1*(e.deltaY/100);if(preventedEvents[2]) {e.preventDefault();}}
 function tpress(e) {
@@ -133,6 +135,20 @@ function spriteLoadLoop() {
         }
     }
     if(!(sloaded>=ssources.length)){requestAnimationFrame(spriteLoadLoop);}else{
+
+        //remove after
+        let spritesToChange = ["Boss00","Boss01","Boss10","Boss11"];
+        for(let i=0;i<spritesToChange.length;i++) {
+            for(let y=0;y<s[spritesToChange[i]].h;y++) {
+                for(let x=0;x<s[spritesToChange[i]].w;x++) {
+                    if(s[spritesToChange[i]].data[y][x]==2) {
+                        s[spritesToChange[i]].data[y][x]=0;
+                    }
+                }
+            }
+        }
+        //remove after
+
         scLengthCache=sc.length;
         if(updateSpeed=="auto") {
             requestAnimationFrame(gameLoop);
@@ -147,6 +163,7 @@ function gameLoop() {
     while(sc.length>scLengthCache) {
         sc.pop();
     }
+    document.getElementById("game").style =`width: ${cw*gameScale}px; height: ${ch*gameScale}px; ${(gameScale==Math.round(gameScale))?"image-rendering: pixelated":""}`;
     clearScreen();
         update();
     resetInput();
@@ -275,6 +292,8 @@ function clearScreen() {
     }
 }
 function drawSprite(sprite,xpos,ypos) {
+    xpos+=camera.x
+    ypos+=camera.y
     if(drawingMode=="pixelated") {
         var spriteCache = sprite.data;
         //xpos=xpos-sprite.w/2<0?0:xpos-sprite.w/2;
@@ -319,6 +338,8 @@ function drawSprite(sprite,xpos,ypos) {
 }
 
 function drawSpriteScaled(sprite,xpos,ypos,scale=1) {
+    xpos+=camera.x
+    ypos+=camera.y
     if(drawingMode=="pixelated") {
         var mat = [[1,0,0],[0,1,0],[0,0,1]];
         var mat2 = [[1,0,0],[0,1,0],[0,0,1]];
@@ -376,6 +397,8 @@ function drawSpriteScaled(sprite,xpos,ypos,scale=1) {
     }
 }
 function drawSpriteAdv(sprite,xpos,ypos,rot=0,scale=1) { //don't try to read or under stand, I can't even make sense of it and I just wrote it
+    xpos+=camera.x
+    ypos+=camera.y
     if(drawingMode=="pixelated") {    
         var mat = [[1,0,0],[0,1,0],[0,0,1]];
         rotateMat(mat,rot);
@@ -442,6 +465,8 @@ function drawSpriteAdv(sprite,xpos,ypos,rot=0,scale=1) { //don't try to read or 
 }
 
 function drawSpriteEffect(sprite,xpos,ypos,effect,rot=0,scale=1) { // sprite adv but you can overlay rgb with [r,g,b] in affects
+    xpos+=camera.x
+    ypos+=camera.y
     if(drawingMode=="pixelated") {    
         var mat = [[1,0,0],[0,1,0],[0,0,1]];
         rotateMat(mat,rot);
@@ -523,6 +548,8 @@ function drawSpriteEffect(sprite,xpos,ypos,effect,rot=0,scale=1) { // sprite adv
 }
 
 function drawSpriteSnapToGrid(sprite,xpos,ypos,rot=0,scale=1) {
+    xpos+=camera.x
+    ypos+=camera.y
     scale=Math.abs(Math.round(scale));
     xpos=~~xpos;
     ypos=~~ypos;
@@ -672,6 +699,8 @@ function drawSpriteSnapToGrid(sprite,xpos,ypos,rot=0,scale=1) {
 }
 
 function rect(x,y,w,h,color) {
+    x+=camera.x
+    y+=camera.y
     if(drawingMode=="pixelated") {
         var parsedcolor;
         if(color!=lastColor) {
@@ -770,7 +799,7 @@ function rectRect(obj1, obj2) {
 function ctxtext(string,x,y,color,size) {
     ctx.font = `${size}px verdana`;
     ctx.fillStyle = color
-    ctx.fillText(string.toString(),x,y);
+    ctx.fillText(string.toString(),x+camera.x,y+camera.y);
 }
 
 String.prototype.allIndexesOf = function (char) {

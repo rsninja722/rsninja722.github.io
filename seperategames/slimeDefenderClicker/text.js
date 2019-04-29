@@ -1,4 +1,6 @@
 function drawText(font,string,x,y,color,space) {
+    x+=camera.x
+    y+=camera.y
     string=string.toString();
     for(let s=0;s<string.length;s++) {
         var xpos = x+s*12+s*space;
@@ -47,7 +49,7 @@ function doFontStuff() {
     parseFont("small2",ssources[1],3,5,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9",".","!","?",":"," "]);
     parseFont("small3",ssources[2],3,5,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6","7","8","9",".","!","?"," "]);
     //add $ /
-    parseFont("medium1",ssources[3],7,9,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9",".",",",":","!","?","/","<","^",">","$"," "]);
+    parseFont("medium1",ssources[3],7,9,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9",".",",",":","!","?","/","<","^",">","$","-"," "]);
     parseFont("large1",ssources[4],11,17,["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9",".",",",":","!","?","$","/","+","-"," "]);
     text.small1["0"] = text.small1.o;
     text.small2["0"] = text.small2.o;
@@ -74,7 +76,7 @@ function putText() {
                     sizetodraw="large1";
                     break;
             }
-            drawText(text[sizetodraw],txttodraw,buttons[i].x+10,buttons[i].y+(sizetodraw=="large1"?15:20),[14,tclr,14,255],sizetodraw=="large1"?9:4);
+            drawText(text[sizetodraw],txttodraw,buttons[i].x+10,buttons[i].y+(sizetodraw=="large1"?15:20),[14,tclr,14,255],sizetodraw=="large1"?9:3);
         }
         if(buttons[i].id!="click") {
             drawText(text.small2,`p:`,buttons[i].x+buttons[i].w,buttons[i].y+16,[40,140,40,255],1);
@@ -83,11 +85,11 @@ function putText() {
         }
     }
     drawText(text.large1,`$:${parseNum(~~money)}`,178,6,[40,240,40,255],10);
-    drawText(text.medium1,`dmg:${~~upgrades.dmg.stat}`,5,5,[40,240,40,255],5);
-    drawText(text.medium1,`spd:${~~upgrades.spd.stat}`,80,5,[40,240,40,255],5);
-    drawText(text.medium1,`$/sec:${~~upgrades.sps.stat}`,5,30,[40,240,40,255],4);
-    drawText(text.medium1,`$/click:${~~upgrades.spc.stat}`,80,30,[40,240,40,255],4);
-    drawText(text.medium1,`auto spd:${(autoSpeeds[upgrades.auto.stat]==Infinity?0:autoSpeeds[upgrades.auto.stat])}`,80,45,[40,240,40,255],4);
+    drawText(text.medium1,`dmg:${~~upgrades.dmg.stat}`,5,8,[40,240,40,255],5);
+    drawText(text.medium1,`spd:${~~upgrades.spd.stat}`,80,8,[40,240,40,255],5);
+    drawText(text.medium1,`$/sec:${~~upgrades.sps.stat}`,5,38,[40,240,40,255],4);
+    drawText(text.medium1,`$/click:${~~upgrades.spc.stat}`,80,38,[40,240,40,255],4);
+    drawText(text.medium1,`auto spd:${(autoSpeeds[upgrades.auto.stat]==Infinity?0:autoSpeeds[upgrades.auto.stat])}`,165,38,[40,240,40,255],4);
     for(var i=0;i<textAnims.length;i++) {
         if(textAnims[i].update()) {
             textAnims.splice(i,1);
@@ -126,6 +128,7 @@ function parseNum(num) {
 
 var textAnims=[];
 var PriotextAnims=[]; //higher priority for drawing
+
 class textAnim {
     constructor(x,y,font,txt,color,type="defult") {
         this.x=x;
@@ -137,6 +140,9 @@ class textAnim {
         if(type=="wave") {
             this.count=100;
             this.ogx=x;
+        }
+        if(type=="dmg") {
+            this.count=20;
         }
         switch(font) {
             case "large1":
@@ -158,12 +164,18 @@ class textAnim {
             if(this.count<=0) {
                 return true;
             }
+        } else if(this.type=="dmg") {
+            this.y++;
+            this.count--;
+            if(this.count<=0) {
+                return true;
+            }
         } else {
             this.y+=1;
             if(this.y>40) {
                 return true;
             }
         }
-        drawText(text[this.font],this.txt,~~this.x,this.y,this.color,this.spacing);
+        drawText(text[this.font],this.txt,~~this.x,~~this.y,this.color,this.spacing);
     }
 }

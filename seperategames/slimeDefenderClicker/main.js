@@ -13,27 +13,26 @@ images = [
     "assets/dirt.png",
     "assets/speedup.png","assets/speedupPress.png",
     "assets/dmg.png",
-    "assets/orbSmall.png","assets/orbLarge.png"
+    "assets/orbSmall.png","assets/orbLarge.png",
+    "assets/Boss00.png","assets/Boss01.png","assets/Boss10.png","assets/Boss11.png",
+    "assets/rock1.png","assets/rock2.png"
 ];
 
 backgroundColor = "#68431e";
 
 /*
     art to do
-        -turret animations
         -bullet
         -particles
         -upgrade animations
-        -final slime
         -thumbnail
     -saving
     -balencing
     -upgrade maxes
     -sound
-    -damage numbers
     -pause
     -sound settings
-    -music
+    -music  
 */
 
 var money = 0;
@@ -45,6 +44,9 @@ var upgrades = {
     auto:{stat:0,price:100}
 }
 var autoSpeeds=[Infinity,1000,900,800,750,700,650,600,550,500,450,400,350,300,275,250,225,200,175,150,125,100,75,60,50,40,30,10];
+var screenShake = [0,1,-1,2,-2,3,-3,4,-4,5,-5,6,-6,7,-7];
+var curShake=0;
+var gameDone=0;
 
 var timers = {
     ps:{start:Date.now(),cur:Date.now()},
@@ -67,15 +69,30 @@ function onImagesReady() {
 
 
 function update() {
-    
+    camera.x=screenShake[curShake];
+    if(curShake>0) {
+        curShake--;
+    }
     for(var y=70;y<410;y+=20) {
         for(var x=10;x<310;x+=20) {
             drawSprite(s.dirt,x,y);
         }
     }
+    
+    // drawSpriteAdv(s.rock1,6,390,0,1);
+    // drawSpriteAdv(s.rock1,132,388,1,1.1);
+    // drawSpriteAdv(s.rock1,214,384,-0.3,0.9);
+    // drawSpriteAdv(s.rock1,9,73,1.5,1.15);
+    // drawSpriteAdv(s.rock1,203,71,3,0.8);
+
+    // drawSpriteAdv(s.rock2,52,76,0,1);
+    // drawSpriteAdv(s.rock2,118,70,1.5,1.1);
+    // drawSpriteAdv(s.rock2,49,375,-0.7,0.9);
+    // drawSpriteAdv(s.rock2,259,375,2,1.15);
+    // drawSpriteAdv(s.rock2,18,112,-1.6,0.8);
 
     for(var i=0;i<particles.length;i++) { // particles
-        if(particles[i].type!="purchace") { particles[i].draw(); }
+        if(particles[i].type!="purchace"&&particles[i].type!="boss") { particles[i].draw(); }
     }
 
     for(var i=0;i<bullets.length;i++) {
@@ -84,7 +101,10 @@ function update() {
     drawTurret();
 
     rect(300,0,200,400,"#272727"); // sidebar
+    
     rect(0,0,300,60,"#2d2d2d"); // topbar
+        rect(0,25,170,5,"#3f3f3f") // seperator
+        rect(0,55,270,5,"#3f3f3f") // bottom border
 
     drawSprite(s.pipe,294,97); // orb pipe
 
@@ -117,25 +137,37 @@ function update() {
             drawSprite(s.attachbox,buttons[i].x+buttons[i].w+25,buttons[i].y+20);
         }
     }
-
-    for(var i=0;i<particles.length;i++) { // particles
-        if(particles[i].type=="purchace") { particles[i].draw(); }
-    }
     for(var i=0;i<slimes.length;i++) { // slimes
         slimes[i].draw();
     }
+    for(var i=0;i<particles.length;i++) { // particles
+        if(particles[i].type=="purchace"||particles[i].type=="boss") { particles[i].draw(); }
+    }
+    
 }
 
 function input() {
     for(var i=0;i<buttons.length;i++) { //buttons
         buttons[i].update(false);
     }
-    // console.log(`x:${mousePos.x} y:${mousePos.y}`);
+    if(mousePress[0]) {console.log(`x:${mousePos.x} y:${mousePos.y}`);}
     resetInput();
 }
 
 function physics() {
-    
+    if(gameDone>1) {
+        gameDone--;
+    }
+    if(gameDone==2) {
+        setTimeout(function() {textAnims.push( new textAnim(230,210,"large1",`y`,[0,212,255,255],"wave"));},100);
+        setTimeout(function() {textAnims.push( new textAnim(250,210,"large1",`o`,[0,212,255,255],"wave"));},200);
+        setTimeout(function() {textAnims.push( new textAnim(270,210,"large1",`u`,[0,212,255,255],"wave"));},300);
+
+        setTimeout(function() {textAnims.push( new textAnim(220,230,"large1",`w`,[18,235,255,255],"wave"));},400);
+        setTimeout(function() {textAnims.push( new textAnim(240,230,"large1",`i`,[18,235,255,255],"wave"));},400);
+        setTimeout(function() {textAnims.push( new textAnim(260,230,"large1",`n`,[18,235,255,255],"wave"));},400);
+        setTimeout(function() {textAnims.push( new textAnim(280,230,"large1",`!`,[18,235,255,255],"wave"));},400);
+    }
     //update timers
     timers.ps.cur = Date.now();
     timers.auto.cur = Date.now();

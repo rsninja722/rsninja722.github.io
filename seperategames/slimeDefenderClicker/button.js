@@ -78,7 +78,7 @@ class button {
     spawnparticles() {
         let range = {min:{x:this.x,y:this.y},max:{x:this.x+this.w,y:this.y+this.h}};
         for(let i=0;i<75;i++) {
-            particles.push(new particle(rand(range.min.x,range.max.x),rand(range.min.y,range.max.y),"purchace"));
+            particles.push(new particle(rand(range.min.x,range.max.x),rand(range.min.y,range.max.y),"purchace",(this.type=="img"?true:false)));
         }
     }
 }

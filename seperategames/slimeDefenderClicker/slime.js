@@ -19,6 +19,7 @@ class slime {
             case 5: this.health=this.maxHealth=12; break;
             case 6: this.health=this.maxHealth=15; break;
             case 7: this.health=this.maxHealth=20; break;
+            case 8: this.health=this.maxHealth=20; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
         }
     }
 
@@ -35,25 +36,58 @@ class slime {
             rect(this.x-12,this.y+16,this.w,5,"#2d2d2d");
             rect(this.x-11,this.y+17,this.w-2,3,"#a81212");
             rect(this.x-11,this.y+17,(this.w-2)*(this.health/this.maxHealth),3,"#00ff00");
+        } else {
+            if(this.jumptime<25) {
+                drawSpriteAdv(s[`Boss${this.bossState}1`],this.x,this.y,this.angle-1.57079632,1+(Math.sin(this.jumptime/7.65)/2));
+            } else {
+                if(this.jumptime>(this.bossState?70:125)) {
+                    drawSpriteAdv(s[`Boss${this.bossState}0`],this.x,this.y,this.angle-1.57079632,(this.jumptime%2==0?1.1:1));
+                } else {
+                    var idleSize = 0;
+                    if(this.jumptime%10<5) {
+                        idleSize=((this.jumptime%10)+1)/100;
+                    } else {
+                        idleSize=0.1-((this.jumptime%10)+1)/100;
+                    }
+                    drawSpriteAdv(s[`Boss${this.bossState}0`],this.x,this.y,this.angle-1.57079632,1+idleSize);
+                }
+            }
+            rect(this.x-24,this.y+32,this.w,5,"#2d2d2d");
+            rect(this.x-23,this.y+33,this.w-2,3,"#a81212");
+            rect(this.x-23,this.y+33,(this.w-2)*(this.health/this.maxHealth),3,"#00ff00");
         }
         if(this.dmgTime>0) {this.dmgTime--;}
     }
     
     update() { 
+        if(this.type==8&&this.changeTime>0) {
+            this.changeTime--;
+            this.jumptime=50;
+            camera.y=rand(-2,2);
+            curShake=this.changeTime%2?10:9;
+            for(let i=0;i<25;i++) {
+                particles.push(new particle(rand(this.x-this.w/2,this.x+this.w/2),rand(this.y-this.h/2,this.y+this.h/2),"boss"));
+            }
+        } else {
+            camera.y=0;
+        }
+
         //moving forwards
         if(this.jumptime<25) {
-            this.x+=this.v.x*(this.jumptime<18?1.5:1);
-            this.y+=this.v.y*(this.jumptime<18?1.5:1);
+            this.x+=this.v.x* (this.type==8?(this.jumptime<18?0.75:0.5):(this.jumptime<18?1:0.5));
+            this.y+=this.v.y* (this.type==8?(this.jumptime<18?0.75:0.5):(this.jumptime<18?1:0.5));
         }
 
         // jumping
-        this.jumptime++;
-        if(this.jumptime>=60) {
+        this.jumptime+=this.type==8?0.5:1;
+        if(this.type==8&&this.jumptime==27) {curShake=14;}
+        if(this.jumptime>=(this.type==8?(this.bossState?90:150):60)) {
             this.jumptime=0;
         }
 
         if(this.x>288) {this.x=288;} //off screen
         if(this.y<72) {this.y=72;}
+        if(this.y+this.h/2)
 
         //bullet colition
         for(var j=0;j<bullets.length;j++) {
@@ -61,24 +95,47 @@ class slime {
                 this.dmgTime=3;
                 var tempdmg = bullets[j].damage;
                 if(this.health>=tempdmg) {
+                    textAnims.push( new textAnim(this.x,this.y+this.h/2,"medium1",`-${bullets[j].damage}`,[240,40,40,255],"dmg"));
                     bullets[j].damage=0;
-                    this.health-=tempdmg;
+                    if(this.type==8) {
+                        if(this.changeTime<1) {
+                            this.health-=tempdmg;
+                        }
+                    } else {
+                        this.health-=tempdmg;
+                    }
                 } else {
+                    textAnims.push( new textAnim(this.x,this.y+this.h/2,"medium1",`-${this.health}`,[240,40,40,255],"dmg"));
                     bullets[j].damage-=this.health;
                     this.health=0;
                 }
                 if(bullets[j].damage<=0) {bullets[j].dead=true;} // despawn bullet
                 if(this.health<=0) {
-                    for(let i=0;i<25;i++) {
-                        particles.push(new particle(this.x+rand(-8,8),this.y+rand(-8,8),"slime",particleColors[this.type][rand(0,1)]));
+                    if(this.type<8) {
+                        for(let i=0;i<25;i++) {
+                            particles.push(new particle(this.x+rand(-8,8),this.y+rand(-8,8),"slime",particleColors[this.type][rand(0,1)]));
+                        }
+                    } else {
+                        gameDone = 100;
+                        for(let i=0;i<100;i++) {
+                            var whatcolor = rand(0,1);
+                            var tempcolor = `rgb(${rand(155,255)},${whatcolor?rand(0,100):rand(0,70)},${whatcolor?rand(0,50):rand(0,255)})`;
+                            particles.push(new particle(this.x+rand(-20,20),this.y+rand(-20,20),"slime",tempcolor));
+                        }
                     }
                     return true;
                 }
             }
         }
+        if(this.type==8) {
+            if(this.health<this.maxHealth/2&&this.changeTime==-1) {
+                this.bossState=1;
+                this.changeTime=100;
+            }
+        }
 
         // turn
-        if(this.jumptime==45) {
+        if(this.jumptime==(this.type==8?80:45)) {
             if(this.angle>pointTo(this,{x:300,y:225})-1.57079632) {
                 this.angle+=rand(-7,1)/10;
             } else {
@@ -113,8 +170,8 @@ var particleColors = [
 //interval time before first spaen and inbetween
 var waves = [
     [
-        {type:0,interval:2000,amount:1},
-        {type:1,interval:2000,amount:1},
+        {type:8,interval:1000,amount:1},
+        {type:1,interval:200000,amount:1},
         {type:2,interval:2000,amount:1},
         {type:3,interval:2000,amount:1},
         {type:4,interval:2000,amount:1},

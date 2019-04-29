@@ -10,9 +10,11 @@ class particle {
                 this.size = rand(1,5);
                 this.color = `rgb(0,${rand(150,200)},0)`;
                 this.pulseState = rand(0,1);
-                this.timer = rand(25,75);
+                this.timer = (option?rand(25,50):rand(25,75));
                 this.angle = degToRad(rand(0,360));
                 this.v = {x:Math.cos(this.angle)*2,y:Math.sin(this.angle)*2};
+                this.gototur=option;
+                this.state="fall";
                 break;
             case "shoot":
                 this.size = rand(1,3);
@@ -26,8 +28,16 @@ class particle {
                 this.color = option;
                 this.angle = degToRad(rand(0,360));
                 this.timer = rand(25,75);
-                this.speed = rand(0,30)/10;
+                this.speed = gameDone?rand(1,6):rand(0,30)/10;
                 this.v = {x:Math.sin(this.angle)*this.speed,y:Math.cos(this.angle)*this.speed};
+                break;
+            case "boss":
+                this.size = rand(1,5);
+                var whatcolor = rand(0,1);
+                this.color = `rgb(${rand(155,255)},${whatcolor?rand(0,100):rand(0,70)},${whatcolor?rand(0,50):rand(0,255)})`;
+                this.timer = rand(25,75);
+                this.angle = degToRad(rand(0,360));
+                this.v = {x:Math.cos(this.angle)*2,y:Math.sin(this.angle)*2};
                 break;
         }
     }
@@ -37,23 +47,31 @@ class particle {
         this.y += this.v.y;
     
         if(this.type=="purchace") {
-            this.v.y += gravity;
+            if(this.state=="fall") {
+                this.v.y += gravity;
 
-            if(this.v.x>0.02) {this.v.x-=0.02;}
-            if(this.v.x<-0.02) {this.v.x+=0.02;}
-            var poses = this.color.allIndexesOf(",");
-            var curc = parseInt(this.color.slice(poses[0]+1,poses[1]));
-            if(this.pulseState) {
-                curc+=4;
-                if(curc>200) {this.pulseState=0;}
-                this.color = `rgb(0,${curc},0)`;
+                if(this.v.x>0.02) {this.v.x-=0.02;}
+                if(this.v.x<-0.02) {this.v.x+=0.02;}
+                var poses = this.color.allIndexesOf(",");
+                var curc = parseInt(this.color.slice(poses[0]+1,poses[1]));
+                if(this.pulseState) {
+                    curc+=4;
+                    if(curc>200) {this.pulseState=0;}
+                    this.color = `rgb(0,${curc},0)`;
+                } else {
+                    curc-=4;
+                    if(curc<100) {this.pulseState=1;}
+                    this.color = `rgb(0,${curc},0)`;
+                }
+                this.timer--;
+                if(this.timer<1) {if(this.gototur) {this.state="totur"} else {return true;}}
             } else {
-                curc-=4;
-                if(curc<100) {this.pulseState=1;}
-                this.color = `rgb(0,${curc},0)`;
+                this.angle = pointTo(this,{x:290,y:225})-1.5707963;
+                this.v = {x:Math.sin(this.angle)*2,y:Math.cos(this.angle)*2};
+                if(this.x<295&&this.x>285&&this.y<230&&this.y>225) {
+                    return true;
+                }
             }
-            this.timer--;
-            if(this.timer<1) {return true;}
         }
         if(this.type=="shoot") {
             if(this.v.x<0) {this.v.x+=0.2+(15.2-this.v.x)/60;} else {return true;}
@@ -71,6 +89,14 @@ class particle {
             if(this.v.x<0) {this.v.x+=0.2;}
             if(this.v.x>-0.3&&this.v.x<0.3) {this.v.x=0;} 
             if(this.v.y>-0.3&&this.v.y<0.3) {this.v.y=0;} 
+            this.timer--;
+            if(this.timer<1) {return true;}
+        }
+        if(this.type=="boss") {
+            if(this.v.x>0.02) {this.v.x-=0.02;}
+            if(this.v.x<-0.02) {this.v.x+=0.02;}
+            if(this.v.y>0.02) {this.v.y-=0.02;}
+            if(this.v.y<-0.02) {this.v.y+=0.02;}
             this.timer--;
             if(this.timer<1) {return true;}
         }
