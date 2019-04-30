@@ -170,7 +170,7 @@ var particleColors = [
 //interval time before first spaen and inbetween
 var waves = [
     [ // wave 1
-        {type:1,interval:2000,amount:1},
+        {type:8,interval:2000,amount:1},
         {type:"wait",interval:10000,amount:1}
     ],
     [
