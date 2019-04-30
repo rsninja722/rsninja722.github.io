@@ -13,7 +13,8 @@ class bullet {
     }
 
     draw() {
-        rect(this.x-10,this.y-10,this.w,this.h,"#ff6655");
+        //rect(this.x-10,this.y-10,this.w,this.h,"#ff6655");
+        drawSpriteAdv(s[`bullet${(Math.ceil(this.damage/2)<6?Math.ceil(this.damage/2):6)}`],this.x,this.y,this.angle);
     }
 
     update() {
@@ -23,6 +24,16 @@ class bullet {
         if(this.x<0||this.y>ch||this.y<0) {
             return true;
         }
+        particles.push(new particle(this.x,this.y,"bullet",bulletColors[(Math.ceil(this.damage/2)<6?Math.ceil(this.damage/2):6)-1]));
+        particles.push(new particle(this.x-this.v.x/2,this.y-this.v.y/2,"bullet",bulletColors[(Math.ceil(this.damage/2)<6?Math.ceil(this.damage/2):6)-1]));
     }
 }
 var bullets=[];
+var bulletColors=[
+    "#d13530",
+    "#e82620",
+    "#d67f22",
+    "#d1cb21",
+    "#3cb721",
+    "#2dff00s"
+]

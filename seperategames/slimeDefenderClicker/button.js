@@ -62,7 +62,7 @@ class button {
 
     update(justUi) {
         if(pointRect(mousePos,this)) {
-            if(mousePress[0]||scroll) {
+            if(mousePress[0]||(scroll&&upgrades.scrollClick.stat)) {
                 if(!justUi) {buyUpgrade(this);}
             }
             if(mouseDown[0]) {

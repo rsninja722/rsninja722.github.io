@@ -15,16 +15,18 @@ images = [
     "assets/dmg.png",
     "assets/orbSmall.png","assets/orbLarge.png",
     "assets/Boss00.png","assets/Boss01.png","assets/Boss10.png","assets/Boss11.png",
-    "assets/rock1.png","assets/rock2.png"
+    "assets/rock1.png","assets/rock2.png",
+    "assets/sound1.png","assets/sound0.png","assets/expand1.png","assets/expand0.png",
+    "assets/bullet1.png","assets/bullet2.png","assets/bullet3.png","assets/bullet4.png","assets/bullet5.png","assets/bullet6.png"
 ];
+
+var sound=true;
 
 backgroundColor = "#68431e";
 
 /*
     art to do
         -bullet
-        -particles
-        -upgrade animations
         -thumbnail
     -saving
     -balencing
@@ -32,7 +34,7 @@ backgroundColor = "#68431e";
     -sound
     -pause
     -sound settings
-    -music  
+    -music
 */
 
 var money = 0;
@@ -41,7 +43,8 @@ var upgrades = {
     spc:{stat:1,price:50},
     dmg:{stat:1,price:10},
     spd:{stat:1000,price:10},
-    auto:{stat:0,price:100}
+    auto:{stat:0,price:100},
+    scrollClick:{stat:false}
 }
 var autoSpeeds=[Infinity,1000,900,800,750,700,650,600,550,500,450,400,350,300,275,250,225,200,175,150,125,100,75,60,50,40,30,10];
 var screenShake = [0,1,-1,2,-2,3,-3,4,-4,5,-5,6,-6,7,-7];
@@ -72,6 +75,7 @@ function update() {
     camera.x=screenShake[curShake];
     if(curShake>0) {
         curShake--;
+        window.navigator.vibrate(100);
     }
     for(var y=70;y<410;y+=20) {
         for(var x=10;x<310;x+=20) {
@@ -143,14 +147,25 @@ function update() {
     for(var i=0;i<particles.length;i++) { // particles
         if(particles[i].type=="purchace"||particles[i].type=="boss") { particles[i].draw(); }
     }
-    
+
+    rect(0,380,40,20,"#2d2d2d");
+    drawSprite(s[`sound${(sound?1:0)}`],10,390);
+    drawSprite(s[`expand${(gameScale==1?1:0)}`],30,390);
 }
 
 function input() {
     for(var i=0;i<buttons.length;i++) { //buttons
         buttons[i].update(false);
     }
-    if(mousePress[0]) {console.log(`x:${mousePos.x} y:${mousePos.y}`);}
+    if(mousePress[0]) {
+        //console.log(`x:${mousePos.x} y:${mousePos.y}`);
+        if(pointRect(mousePos,{x:2,y:382,w:16,h:16})) {
+            if(sound==1) {sound=0;} else {sound=1;}
+        }
+        if(pointRect(mousePos,{x:22,y:382,w:16,h:16})) {
+            if(gameScale==1) {gameScale=2;} else {gameScale=1;}
+        }
+    }
     resetInput();
 }
 

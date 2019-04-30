@@ -12,13 +12,13 @@ class slime {
         this.dmgTime=0;
         switch(type) {
             case 0: this.health=this.maxHealth=2; break;
-            case 1: this.health=this.maxHealth=3; break;
-            case 2: this.health=this.maxHealth=4; break;
-            case 3: this.health=this.maxHealth=6; break;
-            case 4: this.health=this.maxHealth=8; break;
-            case 5: this.health=this.maxHealth=12; break;
-            case 6: this.health=this.maxHealth=15; break;
-            case 7: this.health=this.maxHealth=20; break;
+            case 1: this.health=this.maxHealth=4; break;
+            case 2: this.health=this.maxHealth=7; break;
+            case 3: this.health=this.maxHealth=15; break;
+            case 4: this.health=this.maxHealth=25; break;
+            case 5: this.health=this.maxHealth=80; break;
+            case 6: this.health=this.maxHealth=200; break;
+            case 7: this.health=this.maxHealth=500; break;
             case 8: this.health=this.maxHealth=20; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
         }
     }
@@ -169,31 +169,59 @@ var particleColors = [
 ]
 //interval time before first spaen and inbetween
 var waves = [
-    [
-        {type:8,interval:1000,amount:1},
-        {type:1,interval:200000,amount:1},
-        {type:2,interval:2000,amount:1},
-        {type:3,interval:2000,amount:1},
-        {type:4,interval:2000,amount:1},
-        {type:5,interval:2000,amount:1},
-        {type:6,interval:2000,amount:1},
-        {type:7,interval:2000,amount:1},
-        {type:"wait",interval:5000,amount:1}
+    [ // wave 1
+        {type:1,interval:2000,amount:1},
+        {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:0,interval:1600,amount:9},
+        {type:0,interval:1600,amount:8},
         {type:1,interval:3000,amount:1},
         {type:"wait",interval:5000,amount:1}
     ],
     [
-        {type:0,interval:2000,amount:2},
+        {type:0,interval:1500,amount:2},
         {type:1,interval:3000,amount:2},
-        {type:0,interval:2000,amount:2},
+        {type:0,interval:1500,amount:2},
         {type:1,interval:3000,amount:2},
         {type:"wait",interval:5000,amount:1}
     ],
     [
-        {type:7,interval:1000,amount:1000000}
+        {type:1,interval:2500,amount:6},
+        {type:0,interval:500,amount:10},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [ // wave 5
+        {type:1,interval:2000,amount:8},
+        {type:2,interval:4000,amount:2},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [
+        {type:2,interval:3000,amount:1},
+        {type:1,interval:2000,amount:3},
+        {type:2,interval:3000,amount:1},
+        {type:1,interval:2000,amount:3},
+        {type:2,interval:3000,amount:1},
+        {type:1,interval:2000,amount:4},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [
+        {type:2,interval:3000,amount:4},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [
+        {type:8,interval:2000,amount:1},
+        {type:"wait",interval:500000,amount:1}
+    ],
+    [
+        {type:0,interval:2000,amount:2},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [ // wave 10
+        {type:0,interval:2000,amount:2},
+        {type:"wait",interval:5000,amount:1}
+    ],
+    [ // boss
+        {type:8,interval:5000,amount:1}
     ]
 ]
 

@@ -39,6 +39,13 @@ class particle {
                 this.angle = degToRad(rand(0,360));
                 this.v = {x:Math.cos(this.angle)*2,y:Math.sin(this.angle)*2};
                 break;
+            case "bullet":
+                this.size = rand(4,5);
+                this.color = option;
+                this.timer = 25;
+                this.v = {x:0,y:0};
+                this.x+=rand(-5,5);
+                this.y+=rand(-5,5);
         }
     }
 
@@ -67,7 +74,7 @@ class particle {
                 if(this.timer<1) {if(this.gototur) {this.state="totur"} else {return true;}}
             } else {
                 this.angle = pointTo(this,{x:290,y:225})-1.5707963;
-                this.v = {x:Math.sin(this.angle)*2,y:Math.cos(this.angle)*2};
+                this.v = {x:Math.sin(this.angle)*4,y:Math.cos(this.angle)*4};
                 if(this.x<295&&this.x>285&&this.y<230&&this.y>225) {
                     return true;
                 }
@@ -99,6 +106,15 @@ class particle {
             if(this.v.y<-0.02) {this.v.y+=0.02;}
             this.timer--;
             if(this.timer<1) {return true;}
+        }
+        if(this.type=="bullet") {
+            this.timer--;
+            if(this.timer<1) {return true;}
+            if(!(this.timer%5)) {
+                if(this.size>1) {
+                    this.size--;
+                }
+            }
         }
     }
 

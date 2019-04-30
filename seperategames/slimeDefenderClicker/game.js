@@ -1,19 +1,17 @@
 /*
     TODO
         !-fix bounding box being rarted
-        -anuke style rendering ✓
-        
-        -fix mousepos for scaled canvas
+        -add ocapacity mode
+
+        -sounds: https://www.html5rocks.com/en/tutorials/webaudio/intro/
         -center draw snap to grid
+        -center draw rect
         -audio
         -optimization
         -mode (data/norm)
-        -putimage basic mode ✓
-        -draweverything ✓
-        -key codes with names not numbers ✓
         -physics
         -basic objects
-        -utils(rand,etc.) ✓/2
+        -utils(rand,etc.)
         -text
         -documentation
 */
