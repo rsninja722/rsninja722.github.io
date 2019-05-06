@@ -15,6 +15,31 @@ var prectx = precvs.getContext("2d");
 precvs.width = 10;
 precvs.height = 10;
 
+precvs.addEventListener("mousedown",mouseDown);
+precvs.addEventListener("mouseup",mouseUp);
+precvs.addEventListener("mousemove",mouseMove);
+precvs.addEventListener("contextmenu",rightClick);
+
+var press = {l:0,r:0};
+var pos = {x:0,y:0};
+var drawingColor = 0;
+
+function mouseDown(e) {
+    if(e.button==0) {press.l=1;}
+    if(e.button==2) {press.r=1;}
+}
+function rightClick(e) {
+    e.preventDefault();
+}
+function mouseUp(e) {
+    if(e.button==0) {press.l=0;}
+    if(e.button==2) {press.r=0;}
+}
+function mouseMove(e) {
+    pos.x=Math.floor(e.offsetX/preSize);
+    pos.y=Math.floor(e.offsetY/preSize);
+}
+
 // colors and scales of image
 var preSize=1;
 var colors = ["#000000"];
@@ -28,6 +53,17 @@ var addedGroups = [];
 var bindingState = false;
 
 requestAnimationFrame(update);
+setInterval(input,4);
+
+function input() {
+    if(press.r) {
+        drawingColor = pic[pos.y][pos.x];
+    }
+    if(press.l) {
+        pic[pos.y][pos.x] = drawingColor;
+        drawPic();
+    }
+}
 
 // main loop
 function update() {
@@ -49,6 +85,13 @@ function update() {
         
         // generate
         if(keyPress[k.g]) {gen();}
+
+        //color hotkeys
+        for(var i=0;i<9;i++) {
+            if(keyPress[k[`${i+1}`]]) {
+                drawingColor = i;
+            }
+        }
     
     // type handling
     if(document.getElementById("genSelect").value=="random + probability") {
@@ -88,6 +131,9 @@ function update() {
             i--;
         }
     }
+
+    //update selected color
+    document.getElementById("tbl").style = `border: 1px solid #aaaaaa; width: 10px; height: 10px; background-color: ${colors[drawingColor]}`;
     
     // detecting resizing
     var imgw = document.getElementById("imgw").value;

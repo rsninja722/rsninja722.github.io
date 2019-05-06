@@ -16,6 +16,11 @@
                 left:450px;
                 top:100px;
             }
+            #tbl {
+                position: absolute;
+                left: 430px;
+                top: 100px
+            }
             input {
                 -webkit-appearance: none;
                 appearance: none;
@@ -69,10 +74,11 @@
                 top:-3px;
                 width:30px;
             }
+
         </style>
     </head>
     <body>
-        <canvas id="main" width="400" height="300"></canvas><canvas id="preveiw" style="background-color: black"></canvas>
+        <canvas id="main" width="400" height="300"></canvas><canvas id="preveiw" style="background-color: black"></canvas><table id="tbl" style="border: 1px solid #aaaaaa"><tr><td></td></tr></table>
         
         <div id="colors">
             <button id="delete" onclick="deleteColor()">- color</button><button id="add" onclick="addColor()" style="margin-right: 10px">+ color</button>
@@ -113,6 +119,10 @@ p/; - height up/down
 
 &lt; - size down
 &gt; - size up 
+
+1-9 select color
+rmb - select color from picture
+lmb - draw on picture
 
 Modes:
     random | randomly sets pixels
