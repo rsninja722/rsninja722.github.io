@@ -1,28 +1,32 @@
 images = [
-    "assets/text/small1.png","assets/text/small2.png","assets/text/small3.png","assets/text/medium1.png","assets/text/large1.png",
-    "assets/txtDefult.png","assets/txtHover.png","assets/txtPress.png",
-    "assets/imgDefult.png","assets/imgHover.png","assets/imgPress.png",
-    "assets/bigDefult.png","assets/bigPress.png",
-    "assets/icon.png",
-    "assets/duoturBarrel.png","assets/duoturBase.png","assets/duoturRingreload.png","assets/duoturRingreload2.png",
-    "assets/slime1.png","assets/slime2.png",
-    "assets/pipe.png",
-    "assets/moneybox.png",
-    "assets/attachbox.png",
-    "assets/piston.png",
-    "assets/dirt.png",
-    "assets/speedup.png","assets/speedupPress.png",
-    "assets/dmg.png",
-    "assets/orbSmall.png","assets/orbLarge.png",
-    "assets/Boss00.png","assets/Boss01.png","assets/Boss10.png","assets/Boss11.png",
-    "assets/rock1.png","assets/rock2.png",
-    "assets/sound1.png","assets/sound0.png","assets/expand1.png","assets/expand0.png",
-    "assets/bullet1.png","assets/bullet2.png","assets/bullet3.png","assets/bullet4.png","assets/bullet5.png","assets/bullet6.png"
+    "assets/",
+    [
+        "text/",
+        "small1.png","small2.png","small3.png","medium1.png","large1.png"
+    ],
+    "txtDefult.png","txtHover.png","txtPress.png",
+    "imgDefult.png","imgHover.png","imgPress.png",
+    "bigDefult.png","bigPress.png",
+    "icon.png",
+    "duoturBarrel.png","duoturBase.png","duoturRingreload.png","duoturRingreload2.png",
+    "slime1.png","slime2.png",
+    "pipe.png",
+    "moneybox.png",
+    "attachbox.png",
+    "piston.png",
+    "dirt.png",
+    "speedup.png","speedupPress.png",
+    "dmg.png",
+    "orbSmall.png","orbLarge.png",
+    "Boss00.png","Boss01.png","Boss10.png","Boss11.png",
+    "rock1.png","rock2.png",
+    "sound1.png","sound0.png","expand1.png","expand0.png","pause0.png","pause1.png",
+    "bullet1.png","bullet2.png","bullet3.png","bullet4.png","bullet5.png","bullet6.png"
 ];
 
 var sound=true;
 
-backgroundColor = "#68431e";
+backgroundColor = "#2d2d2d";
 
 /*
     art to do
@@ -32,8 +36,6 @@ backgroundColor = "#68431e";
     -balencing
     -upgrade maxes
     -sound
-    -pause
-    -sound settings
     -music
 */
 
@@ -63,6 +65,8 @@ var clickTimer=0;
 var turrot=0;
 var recoil=0;
 
+var pause = false;
+
 startUpdate("auto");
 setInterval(physics,1000/50);
 
@@ -83,17 +87,8 @@ function update() {
         }
     }
     
-    // drawSpriteAdv(s.rock1,6,390,0,1);
-    // drawSpriteAdv(s.rock1,132,388,1,1.1);
-    // drawSpriteAdv(s.rock1,214,384,-0.3,0.9);
-    // drawSpriteAdv(s.rock1,9,73,1.5,1.15);
-    // drawSpriteAdv(s.rock1,203,71,3,0.8);
-
-    // drawSpriteAdv(s.rock2,52,76,0,1);
-    // drawSpriteAdv(s.rock2,118,70,1.5,1.1);
-    // drawSpriteAdv(s.rock2,49,375,-0.7,0.9);
-    // drawSpriteAdv(s.rock2,259,375,2,1.15);
-    // drawSpriteAdv(s.rock2,18,112,-1.6,0.8);
+    // drawSpriteAdv(s.rock1,6,390,0,1);drawSpriteAdv(s.rock1,132,388,1,1.1);drawSpriteAdv(s.rock1,214,384,-0.3,0.9);drawSpriteAdv(s.rock1,9,73,1.5,1.15);drawSpriteAdv(s.rock1,203,71,3,0.8);
+    // drawSpriteAdv(s.rock2,52,76,0,1);drawSpriteAdv(s.rock2,118,70,1.5,1.1);drawSpriteAdv(s.rock2,49,375,-0.7,0.9);drawSpriteAdv(s.rock2,259,375,2,1.15);drawSpriteAdv(s.rock2,18,112,-1.6,0.8);
 
     for(var i=0;i<particles.length;i++) { // particles
         if(particles[i].type!="purchace"&&particles[i].type!="boss") { particles[i].draw(); }
@@ -148,14 +143,20 @@ function update() {
         if(particles[i].type=="purchace"||particles[i].type=="boss") { particles[i].draw(); }
     }
 
-    rect(0,380,40,20,"#2d2d2d");
+    rect(0,380,60,20,"#2d2d2d");
     drawSprite(s[`sound${(sound?1:0)}`],10,390);
     drawSprite(s[`expand${(gameScale==1?1:0)}`],30,390);
+    drawSprite(s[`pause${(pause?1:0)}`],50,390);
+    if(pause) {
+        drawSpriteScaled(s.pause0,250,200,5);
+    }
 }
 
 function input() {
-    for(var i=0;i<buttons.length;i++) { //buttons
-        buttons[i].update(false);
+    if(!pause) {
+        for(var i=0;i<buttons.length;i++) { //buttons
+            buttons[i].update(false);
+        }
     }
     if(mousePress[0]) {
         //console.log(`x:${mousePos.x} y:${mousePos.y}`);
@@ -165,82 +166,87 @@ function input() {
         if(pointRect(mousePos,{x:22,y:382,w:16,h:16})) {
             if(gameScale==1) {gameScale=2;} else {gameScale=1;}
         }
+        if(pointRect(mousePos,{x:42,y:382,w:16,h:16})) {
+            if(pause==1) {pause=0;} else {pause=1;}
+        }
     }
     resetInput();
 }
 
 function physics() {
-    if(gameDone>1) {
-        gameDone--;
-    }
-    if(gameDone==2) {
-        setTimeout(function() {textAnims.push( new textAnim(230,210,"large1",`y`,[0,212,255,255],"wave"));},100);
-        setTimeout(function() {textAnims.push( new textAnim(250,210,"large1",`o`,[0,212,255,255],"wave"));},200);
-        setTimeout(function() {textAnims.push( new textAnim(270,210,"large1",`u`,[0,212,255,255],"wave"));},300);
-
-        setTimeout(function() {textAnims.push( new textAnim(220,230,"large1",`w`,[18,235,255,255],"wave"));},400);
-        setTimeout(function() {textAnims.push( new textAnim(240,230,"large1",`i`,[18,235,255,255],"wave"));},400);
-        setTimeout(function() {textAnims.push( new textAnim(260,230,"large1",`n`,[18,235,255,255],"wave"));},400);
-        setTimeout(function() {textAnims.push( new textAnim(280,230,"large1",`!`,[18,235,255,255],"wave"));},400);
-    }
-    //update timers
-    timers.ps.cur = Date.now();
-    timers.auto.cur = Date.now();
-    timers.gun.cur = Date.now();
-
-    if(timers.ps.cur-timers.ps.start>=1000) { // $ per second
-        if(upgrades.sps.stat>0) {
-            orbs.push(new orb("sps",upgrades.sps.stat)); // spawn money orb at $/s button
-            spsAnim=3; // animate 
+    if(!pause) {
+        if(gameDone>1) {
+            gameDone--;
         }
-        timers.ps.start=timers.ps.cur;// update timer
-    }
+        if(gameDone==2) {
+            setTimeout(function() {textAnims.push( new textAnim(230,210,"large1",`y`,[0,212,255,255],"wave"));},100);
+            setTimeout(function() {textAnims.push( new textAnim(250,210,"large1",`o`,[0,212,255,255],"wave"));},200);
+            setTimeout(function() {textAnims.push( new textAnim(270,210,"large1",`u`,[0,212,255,255],"wave"));},300);
 
-    if(timers.gun.cur-timers.gun.start>=upgrades.spd.stat) { // shooting
-        if(slimes.length>0) {
-            bullets.push(new bullet(turrot-degToRad(90)));
-            recoil=5.5;
-            var pxspawn = 300+Math.sin(turrot-1.5707963)*40;
-            var pyspawn = 225+Math.cos(turrot-1.5707963)*40;
-            for(let i=0;i<50;i++) {
-                particles.push(new particle(pxspawn,pyspawn,"shoot"));
+            setTimeout(function() {textAnims.push( new textAnim(220,230,"large1",`w`,[18,235,255,255],"wave"));},400);
+            setTimeout(function() {textAnims.push( new textAnim(240,230,"large1",`i`,[18,235,255,255],"wave"));},400);
+            setTimeout(function() {textAnims.push( new textAnim(260,230,"large1",`n`,[18,235,255,255],"wave"));},400);
+            setTimeout(function() {textAnims.push( new textAnim(280,230,"large1",`!`,[18,235,255,255],"wave"));},400);
+        }
+        //update timers
+        timers.ps.cur = Date.now();
+        timers.auto.cur = Date.now();
+        timers.gun.cur = Date.now();
+
+        if(timers.ps.cur-timers.ps.start>=1000) { // $ per second
+            if(upgrades.sps.stat>0) {
+                orbs.push(new orb("sps",upgrades.sps.stat)); // spawn money orb at $/s button
+                spsAnim=3; // animate 
+            }
+            timers.ps.start=timers.ps.cur;// update timer
+        }
+
+        if(timers.gun.cur-timers.gun.start>=upgrades.spd.stat) { // shooting
+            if(slimes.length>0) {
+                bullets.push(new bullet(turrot-degToRad(90)));
+                recoil=5.5;
+                var pxspawn = 300+Math.sin(turrot-1.5707963)*40;
+                var pyspawn = 225+Math.cos(turrot-1.5707963)*40;
+                for(let i=0;i<50;i++) {
+                    particles.push(new particle(pxspawn,pyspawn,"shoot"));
+                }
+            }
+            timers.gun.start=timers.gun.cur;// update timer
+        }
+
+        if(timers.auto.cur-timers.auto.start>=autoSpeeds[upgrades.auto.stat]) { // auto click
+            autoAnim=5;
+            orbs.push(new orb("click",upgrades.spc.stat)); 
+            
+            timers.auto.start=timers.auto.cur;// update timer
+        }
+        for(var i=0;i<orbs.length;i++) { //orbs
+            if(orbs[i].update()) {
+                orbs.splice(i,1);
             }
         }
-        timers.gun.start=timers.gun.cur;// update timer
-    }
+        for(var i=0;i<slimes.length;i++) { //slimes
+            if(slimes[i].update()) {
+                slimes.splice(i,1);
+            }
+        }
+        for(var i=0;i<bullets.length;i++) { //bullets
+            if(bullets[i].update()) {
+                bullets.splice(i,1);
+            }
+        }
+        for(var i=0;i<particles.length;i++) { //particles
+            if(particles[i].update()) {
+                particles.splice(i,1);
+            }
+        }
 
-    if(timers.auto.cur-timers.auto.start>=autoSpeeds[upgrades.auto.stat]) { // auto click
-        autoAnim=5;
-        orbs.push(new orb("click",upgrades.spc.stat)); 
-        
-        timers.auto.start=timers.auto.cur;// update timer
-    }
-    for(var i=0;i<orbs.length;i++) { //orbs
-        if(orbs[i].update()) {
-            orbs.splice(i,1);
+        resetInput();
+        for(var i=0;i<buttons.length;i++) { //buttons
+            buttons[i].update(true);
         }
+        spawnSlime();
     }
-    for(var i=0;i<slimes.length;i++) { //slimes
-        if(slimes[i].update()) {
-            slimes.splice(i,1);
-        }
-    }
-    for(var i=0;i<bullets.length;i++) { //bullets
-        if(bullets[i].update()) {
-            bullets.splice(i,1);
-        }
-    }
-    for(var i=0;i<particles.length;i++) { //particles
-        if(particles[i].update()) {
-            particles.splice(i,1);
-        }
-    }
-
-    resetInput();
-    for(var i=0;i<buttons.length;i++) { //buttons
-        buttons[i].update(true);
-    }
-    spawnSlime();
 }
 function buyUpgrade(button)  {
     var wasPurchaceSuccesful = false;

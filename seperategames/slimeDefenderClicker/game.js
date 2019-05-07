@@ -33,6 +33,8 @@ camera={x:0,y:0},
 gameScale=1,
 
 images,
+fullPaths=[],
+sounds,
 s={},
 sc=[[256,256,256]],
 scLengthCache,
@@ -109,22 +111,44 @@ function startUpdate(frameRate) {
     for(let i=3;i<clearScreenCache.data.length;i+=4) {clearScreenCache.data[i]=255;}
     cw=canvas.width;
     ch=canvas.height;
-    for(var i=0;i<images.length;i++) {
-        let temp = new Image();
-        temp.src = images[i];
-        ssources.push(temp);
+    var curpath="";
+    deeper(images);
+    function deeper(curpos) {
+        let addedPath="";
+        for(let j=0;j<curpos.length;j++) {
+            if(typeof curpos[j]=="string") {
+                if(j==0) {
+                    curpath+=curpos[j];
+                    addedPath = curpos[j];
+                } else {
+                    let temp = new Image();
+                    temp.src = curpath + curpos[j];
+                    fullPaths.push(curpath + curpos[j]);
+                    ssources.push(temp);
+                }
+            }
+            if(typeof curpos[j]=="object") {
+               deeper(curpos[j]);
+            }
+        }
+        curpath = curpath.slice(0,curpath.length-addedPath.length);
     }
     updateSpeed=frameRate;
     spriteLoadLoop();
+    soundLoad();
+}
+
+function soundLoad() {
+    
 }
 
 function spriteLoadLoop() {
-    for(var i=0;i<ssources.length;i++) {
+    for(let i=0;i<ssources.length;i++) {
         if(ssources[i].complete) {
             let startpos;
-            let endpos = images[i].lastIndexOf(".");
-            for(let j=endpos-1;acceptableChars.includes(images[i][j]);j--) {startpos=j;}
-            spriteName = images[i].slice(startpos,endpos)
+            let endpos = fullPaths[i].lastIndexOf(".");
+            for(let j=endpos-1;acceptableChars.includes(fullPaths[i][j]);j--) {startpos=j;}
+            spriteName = fullPaths[i].slice(startpos,endpos)
             if(s[spriteName]==undefined) {
                 s[spriteName] = getImage(ssources[i],i);
                 while(s[spriteName]==undefined) {} //wait for sprite to get got

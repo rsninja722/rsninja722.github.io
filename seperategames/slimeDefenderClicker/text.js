@@ -157,23 +157,25 @@ class textAnim {
         }
     }
     update() {
-        if(this.type=="wave") {
-            if(this.count<20) {this.x=this.ogx+Math.pow((20-this.count),2);}
-            if(this.count>80) {this.x=this.ogx-(Math.pow((this.count-80),2)/2);}
-            this.count--;
-            if(this.count<=0) {
-                return true;
-            }
-        } else if(this.type=="dmg") {
-            this.y++;
-            this.count--;
-            if(this.count<=0) {
-                return true;
-            }
-        } else {
-            this.y+=1;
-            if(this.y>40) {
-                return true;
+        if(!pause) {
+            if(this.type=="wave") {
+                if(this.count<20) {this.x=this.ogx+Math.pow((20-this.count),2);}
+                if(this.count>80) {this.x=this.ogx-(Math.pow((this.count-80),2)/2);}
+                this.count--;
+                if(this.count<=0) {
+                    return true;
+                }
+            } else if(this.type=="dmg") {
+                this.y++;
+                this.count--;
+                if(this.count<=0) {
+                    return true;
+                }
+            } else {
+                this.y+=1;
+                if(this.y>40) {
+                    return true;
+                }
             }
         }
         drawText(text[this.font],this.txt,~~this.x,~~this.y,this.color,this.spacing);

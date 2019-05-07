@@ -19,7 +19,7 @@ class slime {
             case 5: this.health=this.maxHealth=80; break;
             case 6: this.health=this.maxHealth=200; break;
             case 7: this.health=this.maxHealth=500; break;
-            case 8: this.health=this.maxHealth=20; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
+            case 8: this.health=this.maxHealth=5000; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
         }
     }
 
@@ -170,8 +170,8 @@ var particleColors = [
 //interval time before first spaen and inbetween
 var waves = [
     [ // wave 1
-        {type:8,interval:2000,amount:1},
-        {type:"wait",interval:10000,amount:1}
+        {type:0,interval:2000,amount:10},
+        {type:"wait",interval:5000,amount:1}
     ],
     [
         {type:0,interval:1600,amount:8},
