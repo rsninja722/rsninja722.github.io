@@ -38,6 +38,7 @@ function mouseUp(e) {
 function mouseMove(e) {
     pos.x=Math.floor(e.offsetX/preSize);
     pos.y=Math.floor(e.offsetY/preSize);
+    cursorTime=100;
 }
 
 // colors and scales of image
@@ -46,6 +47,7 @@ var colors = ["#000000"];
 var lastColors  = ["#000000"];
 var pic = [];
 var lastSize = {x:10,y:10};
+var cursorTime = 0;
 genPic();
 
 var addedGroups = [];
@@ -62,6 +64,21 @@ function input() {
     if(press.l) {
         pic[pos.y][pos.x] = drawingColor;
         drawPic();
+    }
+    prectx.clearRect(0,0,pic.length,pic[0],length);
+    for(var y=0;y<pic.length;y++) {
+        for(var x=0;x<pic[0].length;x++) {
+            prectx.fillStyle = colors[pic[y][x]];
+            prectx.fillRect(x*preSize,y*preSize,preSize,preSize);
+        }
+    }
+    if(cursorTime) {
+        prectx.beginPath();
+        prectx.strokeStyle = "#ffffff";
+        prectx.lineWidth = 1;
+        prectx.rect(pos.x*preSize,pos.y*preSize,preSize,preSize);
+        prectx.stroke();
+        cursorTime--;
     }
 }
 
@@ -381,5 +398,23 @@ function toggle() {
     } else {
         document.getElementById("keyBindings").style = "position: absolute;left:100px;top:370px;";
         bindingState=true;
+    }
+}
+
+function downloadPicture() {
+    download(precvs,"texture.png");
+}
+
+// Source from:  http://stackoverflow.com/questions/18480474/how-to-save-an-image-from-canvas
+function download(canvas, filename) {
+    var lnk = document.createElement('a'), e;
+    lnk.download = filename;
+    lnk.href = canvas.toDataURL("image/png;base64");
+    if (document.createEvent) {
+        e = document.createEvent("MouseEvents");
+        e.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        lnk.dispatchEvent(e);
+    } else if (lnk.fireEvent) {
+        lnk.fireEvent("onclick");
     }
 }
