@@ -24,6 +24,17 @@ images = [
     "bullet1.png","bullet2.png","bullet3.png","bullet4.png","bullet5.png","bullet6.png"
 ];
 
+var sounds = [
+    "assets/sounds/",
+    "shoot1.wav","shoot2.wav",
+    "hover.wav",
+    "bigClick1.wav","bigClick2.wav","bigClick3.wav",
+    "buy.wav",
+    "transform.wav",
+    "nobuy.wav"
+]
+
+
 var sound=true;
 
 backgroundColor = "#2d2d2d";
@@ -38,7 +49,7 @@ backgroundColor = "#2d2d2d";
     -sound
     -music
 */
-
+var started = false;
 var money = 0;
 var upgrades = {
     sps:{stat:0,price:20},
@@ -153,7 +164,7 @@ function update() {
 }
 
 function input() {
-    if(!pause) {
+    if(!pause&&started) {
         for(var i=0;i<buttons.length;i++) { //buttons
             buttons[i].update(false);
         }
@@ -169,12 +180,22 @@ function input() {
         if(pointRect(mousePos,{x:42,y:382,w:16,h:16})) {
             if(pause==1) {pause=0;} else {pause=1;}
         }
+        if(!started) {
+            started=true;
+            context = new AudioContext();
+            addSound("assets/sounds/sdc1.wav",1);
+            for(let i=0;i<soundPaths.length;i++) {
+                addSound(soundPaths[i],4);
+            }
+            a.sdc1[1].loop=true;
+            a.sdc1[1].play();
+        }
     }
     resetInput();
 }
 
 function physics() {
-    if(!pause) {
+    if(!pause&&started) {
         if(gameDone>1) {
             gameDone--;
         }
@@ -197,12 +218,14 @@ function physics() {
             if(upgrades.sps.stat>0) {
                 orbs.push(new orb("sps",upgrades.sps.stat)); // spawn money orb at $/s button
                 spsAnim=3; // animate 
+                if(sound){play(a[`bigClick${rand(1,3)}`]);}
             }
             timers.ps.start=timers.ps.cur;// update timer
         }
 
         if(timers.gun.cur-timers.gun.start>=upgrades.spd.stat) { // shooting
             if(slimes.length>0) {
+                if(sound){play(a[`shoot${rand(1,2)}`]);}
                 bullets.push(new bullet(turrot-degToRad(90)));
                 recoil=5.5;
                 var pxspawn = 300+Math.sin(turrot-1.5707963)*40;
@@ -217,7 +240,8 @@ function physics() {
         if(timers.auto.cur-timers.auto.start>=autoSpeeds[upgrades.auto.stat]) { // auto click
             autoAnim=5;
             orbs.push(new orb("click",upgrades.spc.stat)); 
-            
+            if(sound){play(a[`bigClick${rand(1,3)}`]);}
+
             timers.auto.start=timers.auto.cur;// update timer
         }
         for(var i=0;i<orbs.length;i++) { //orbs
@@ -306,12 +330,15 @@ function buyUpgrade(button)  {
             break;
         case "click": // $ button
             orbs.push(new orb("click",upgrades.spc.stat)); // spawn money orb at $ button
+            if(sound){play(a[`bigClick${rand(1,3)}`]);}
             break;
     }
     if(wasPurchaceSuccesful==true) {
+        curShake=4;
+        if(sound){play(a.buy);}
         button.spawnparticles();
     } else if(button.id!="click") {
-        //play sound fk you no buy
+        if(sound){play(a.nobuy);}
     }
 }
 

@@ -130,7 +130,8 @@ class slime {
         if(this.type==8) {
             if(this.health<this.maxHealth/2&&this.changeTime==-1) {
                 this.bossState=1;
-                this.changeTime=100;
+                this.changeTime=50;
+                if(sound){play(a.transform);}
             }
         }
 

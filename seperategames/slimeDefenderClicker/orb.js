@@ -59,12 +59,3 @@ class orb{
 }
 
 var orbs=[];
-
-var orbSmallEffect=[];
-for(var y=0;y<10;y++) {
-    var a=[];
-    for(var x=0;x<10;x++) {
-        a.push(true);
-    }
-    orbSmallEffect.push(a.slice());
-}

@@ -102,6 +102,9 @@ function putText() {
             i--;
         }
     }
+    if(!started) {
+        drawText(text.large1,"click anywhere to start",10,190,[40,240,240,255],10);
+    }
 }
 
 // 100,000,000,000

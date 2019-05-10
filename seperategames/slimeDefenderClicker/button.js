@@ -68,6 +68,7 @@ class button {
             if(mouseDown[0]) {
                 this.state="press";
             } else {
+                if(this.state=="defult") {if(sound){play(a.hover);}}
                 this.state="hover";
             }
         } else {

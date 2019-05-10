@@ -17,9 +17,6 @@
 */
 //Thank you to Javidx9 for affine transformation code (originally written in c++)
 //globals
-var counter=0;
-setInterval(lok,3);
-function lok() {counter+=0;}
 var canvas,
 ctx,
 screenGrid=[],
@@ -32,9 +29,12 @@ updateSpeed,
 camera={x:0,y:0},
 gameScale=1,
 
-images,
-fullPaths=[],
-sounds,
+images=[],
+imagePaths=[],
+sounds=[],
+soundPaths=[],
+a = {},
+abuffer = [],
 s={},
 sc=[[256,256,256]],
 scLengthCache,
@@ -58,9 +58,12 @@ mousePos = {
 },
 tx=0,
 ty=0,
-preventedEvents = [false,false,false],
-k={a:65,b:66,c:67,d:68,e:69,f:70,g:71,h:72,i:73,j:74,k:75,l:76,m:77,n:78,o:79,p:80,q:81,r:82,s:83,t:84,u:85,v:86,w:87,x:88,y:89,z:90,0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,BACKTICK:192,MINUS:189,EQUALS:187,OPENSQUARE:219,ENDSQUARE:221,SEMICOLON:186,SINGLEQUOTE:222,BACKSLASH:220,COMMA:188,PERIOD:190,SLASH:191,ENTER:13,BACKSPACE:8,TAB:9,CAPSLOCK:20,SHIFT:16,CONTROL:17,ALT:18,META:91,LEFTBACKSLASH:226,ESCAPE:27,HOME:36,END:35,PAGEUP:33,PAGEDOWN:34,DELETE:46,INSERT:45,PAUSE:19,UP:38,DOWN:40,LEFT:37,RIGHT:39,CONTEXT:93,SPACE:32,F1:112,F2:113,F3:114,F4:115,F5:116,F6:117,F7:118,F8:119,F9:120,F10:121,F11:122,F12:123};
-acceptableChars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890_-. ";//for image names
+preventedEvents = [false,false,false];
+const k={a:65,b:66,c:67,d:68,e:69,f:70,g:71,h:72,i:73,j:74,k:75,l:76,m:77,n:78,o:79,p:80,q:81,r:82,s:83,t:84,u:85,v:86,w:87,x:88,y:89,z:90,0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,BACKTICK:192,MINUS:189,EQUALS:187,OPENSQUARE:219,ENDSQUARE:221,SEMICOLON:186,SINGLEQUOTE:222,BACKSLASH:220,COMMA:188,PERIOD:190,SLASH:191,ENTER:13,BACKSPACE:8,TAB:9,CAPSLOCK:20,SHIFT:16,CONTROL:17,ALT:18,META:91,LEFTBACKSLASH:226,ESCAPE:27,HOME:36,END:35,PAGEUP:33,PAGEDOWN:34,DELETE:46,INSERT:45,PAUSE:19,UP:38,DOWN:40,LEFT:37,RIGHT:39,CONTEXT:93,SPACE:32,F1:112,F2:113,F3:114,F4:115,F5:116,F6:117,F7:118,F8:119,F9:120,F10:121,F11:122,F12:123};
+const acceptableChars="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890_-. ";//for image names
+
+const AudioContext = window.AudioContext||window.webkitAudioContext;
+var context;
 //---IO
 function addListenersTo(elementToListenTo) {window.addEventListener("keydown",kdown);window.addEventListener("keyup",kup);elementToListenTo.addEventListener("mousedown",mdown);elementToListenTo.addEventListener("mouseup",mup);elementToListenTo.addEventListener("mousemove",mmove);elementToListenTo.addEventListener("contextmenu",cmenu);elementToListenTo.addEventListener("wheel",scrl);elementToListenTo.addEventListener("touchstart",tpress);elementToListenTo.addEventListener("touchmove",tdown);}
 function removeListenersFrom(elementToListenTo) {window.removeEventListener("keydown",kdown);window.removeEventListener("keyup",kup);elementToListenTo.removeEventListener("mousedown",mdown);elementToListenTo.removeEventListener("mouseup",mup);elementToListenTo.removeEventListener("mousemove",mmove);elementToListenTo.removeEventListener("contextmenu",cmenu);elementToListenTo.removeEventListener("wheel",scrl);elementToListenTo.removeEventListener("touchstart",tpress);elementToListenTo.removeEventListener("touchmove",tdown);}
@@ -112,8 +115,9 @@ function startUpdate(frameRate) {
     cw=canvas.width;
     ch=canvas.height;
     var curpath="";
-    deeper(images);
-    function deeper(curpos) {
+    deeper(images,"image");
+    deeper(sounds,"sound");
+    function deeper(curpos,type) {
         let addedPath="";
         for(let j=0;j<curpos.length;j++) {
             if(typeof curpos[j]=="string") {
@@ -121,14 +125,18 @@ function startUpdate(frameRate) {
                     curpath+=curpos[j];
                     addedPath = curpos[j];
                 } else {
-                    let temp = new Image();
-                    temp.src = curpath + curpos[j];
-                    fullPaths.push(curpath + curpos[j]);
-                    ssources.push(temp);
+                    if(type=="image") {
+                        let temp = new Image();
+                        temp.src = curpath + curpos[j];
+                        imagePaths.push(curpath + curpos[j]);
+                        ssources.push(temp);
+                    } else if(type=="sound") {
+                        soundPaths.push(curpath + curpos[j]);
+                    }
                 }
             }
             if(typeof curpos[j]=="object") {
-               deeper(curpos[j]);
+               deeper(curpos[j],type);
             }
         }
         curpath = curpath.slice(0,curpath.length-addedPath.length);
@@ -146,9 +154,9 @@ function spriteLoadLoop() {
     for(let i=0;i<ssources.length;i++) {
         if(ssources[i].complete) {
             let startpos;
-            let endpos = fullPaths[i].lastIndexOf(".");
-            for(let j=endpos-1;acceptableChars.includes(fullPaths[i][j]);j--) {startpos=j;}
-            spriteName = fullPaths[i].slice(startpos,endpos)
+            let endpos = imagePaths[i].lastIndexOf(".");
+            for(let j=endpos-1;acceptableChars.includes(imagePaths[i][j]);j--) {startpos=j;}
+            spriteName = imagePaths[i].slice(startpos,endpos)
             if(s[spriteName]==undefined) {
                 s[spriteName] = getImage(ssources[i],i);
                 while(s[spriteName]==undefined) {} //wait for sprite to get got
@@ -236,6 +244,30 @@ function getImage(source,position) {
     ctxtext("Loading",25,25,"#1c99ff",20);
     
     return {data:sprite,w:sprite[0].length,h:sprite.length,index:position};
+}
+function addSound(src,amount) {
+    let startpos;
+    let endpos = src.lastIndexOf(".");
+    for(let j=endpos-1;acceptableChars.includes(src[j]);j--) {startpos=j;}
+    soundName = src.slice(startpos,endpos);
+    a[soundName] = [1];
+    for(let i=0;i<amount;i++) {
+        let loadingSound = new Audio();
+        loadingSound.src = src;
+        a[soundName].push(loadingSound);
+
+        let sound = context.createMediaElementSource(loadingSound);
+        sound.connect(context.destination);
+
+        abuffer.push(sound);
+    }
+}
+function play(sound) {
+    sound[sound[0]].play();
+    sound[0]++;
+    if(sound[0]==sound.length-1) {
+        sound[0]=1;
+    }
 }
 //drawing
 function drawScreen() {
