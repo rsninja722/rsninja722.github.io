@@ -76,6 +76,7 @@ class particle {
                 this.angle = pointTo(this,{x:290,y:225})-1.5707963;
                 this.v = {x:Math.sin(this.angle)*4,y:Math.cos(this.angle)*4};
                 if(this.x<295&&this.x>285&&this.y<230&&this.y>225) {
+                    if(sound&&(rand(0,2)==1)){play(a.particle1);}
                     return true;
                 }
             }

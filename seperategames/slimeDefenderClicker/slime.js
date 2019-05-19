@@ -104,6 +104,7 @@ class slime {
                     } else {
                         this.health-=tempdmg;
                     }
+                    if(sound) {play(a[`hit${rand(0,1)}`]);}
                 } else {
                     textAnims.push( new textAnim(this.x,this.y+this.h/2,"medium1",`-${this.health}`,[240,40,40,255],"dmg"));
                     bullets[j].damage-=this.health;
@@ -123,6 +124,7 @@ class slime {
                             particles.push(new particle(this.x+rand(-20,20),this.y+rand(-20,20),"slime",tempcolor));
                         }
                     }
+                    if(sound) {play(a.die);}
                     return true;
                 }
             }
@@ -242,6 +244,8 @@ function spawnSlime() {
             if(s.length>0) {setTimeout(function() {textAnims.push( new textAnim(275,210,"large1",s[0],[40,200,40,255],"wave"));},600);}
             if(s.length>1) {setTimeout(function() {textAnims.push( new textAnim(290,210,"large1",s[1],[40,200,40,255],"wave"));},700);}
             if(s.length>2) {setTimeout(function() {textAnims.push( new textAnim(305,210,"large1",s[2],[40,200,40,255],"wave"));},800);}
+
+            setTimeout(function() {if(sound){play(a.nextWave);}},1000);
         } else {
             slimes.push(new slime(0,rand(60,400),curSpawn().type));
         }

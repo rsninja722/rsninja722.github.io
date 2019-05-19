@@ -4,7 +4,7 @@ function drawText(font,string,x,y,color,space) {
     string=string.toString();
     for(let s=0;s<string.length;s++) {
         var xpos = x+s*12+s*space;
-        if(xpos<cw&&xpos>0) {
+        if(xpos<cw+40&&xpos>0) { // TODO: fix
             let pos = (cw*4*y+4)+(x*4)+(s*12+s*space*4);
             let count = 0;
             for(let y=0;y<font.height;y++) {

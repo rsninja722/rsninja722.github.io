@@ -31,7 +31,10 @@ var sounds = [
     "bigClick1.wav","bigClick2.wav","bigClick3.wav",
     "buy.wav",
     "transform.wav",
-    "nobuy.wav"
+    "nobuy.wav",
+    "orb1.wav","orb2.wav","orb3.wav",
+    "nextWave.wav",
+    "hit0.wav","hit1.wav","die.wav"
 ]
 
 
@@ -41,12 +44,13 @@ backgroundColor = "#2d2d2d";
 
 /*
     art to do
-        -bullet
         -thumbnail
     -saving
     -balencing
     -upgrade maxes
     -sound
+    -turret health
+    -volume slider
     -music
 */
 var started = false;
@@ -184,6 +188,7 @@ function input() {
             started=true;
             context = new AudioContext();
             addSound("assets/sounds/sdc1.wav",1);
+            addSound("assets/sounds/particle1.wav",20);
             for(let i=0;i<soundPaths.length;i++) {
                 addSound(soundPaths[i],4);
             }

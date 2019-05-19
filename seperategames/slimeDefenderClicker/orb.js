@@ -38,7 +38,7 @@ class orb{
                         break;
                     case 3:
                         this.y-=2;
-                        if(this.y<=25) {money+=this.value;textAnims.push( new textAnim(170,5,"large1",`+$${parseNum(this.value)}`,[40,240,40,255]));return true;}
+                        if(this.y<=25) {money+=this.value;textAnims.push( new textAnim(170,5,"large1",`+$${parseNum(this.value)}`,[40,240,40,255]));if(sound){play(a[`orb${rand(1,3)}`]);}return true;}
                         break;
                 }
                 break;
