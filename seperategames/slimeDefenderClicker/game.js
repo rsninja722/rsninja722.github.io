@@ -35,6 +35,7 @@ sounds=[],
 soundPaths=[],
 a = {},
 abuffer = [],
+volumeList = [],
 s={},
 sc=[[256,256,256]],
 scLengthCache,
@@ -79,9 +80,9 @@ function resetInput() {for(var i=0;i<keyPress.length;i++){if(keyPress[i]){keyPre
 // change input() in mdown
 function kdown(e) {var h=e.keyCode;keyPress[h]=keyPress[h]==[][[]]?1:0;keyDown[h]=1;if(preventedEvents[0]) {e.preventDefault();}}
 function kup(e) {var h=e.keyCode;delete keyPress[h];delete keyDown[h];}
-function mdown(e) {var h=e.button;mousePress[h]=mousePress[h]==[][[]]?1:0;mouseDown[h]=1;if(preventedEvents[1]) {e.preventDefault();}input();}
+function mdown(e) {var h=e.button;mousePress[h]=mousePress[h]==[][[]]?1:0;mouseDown[h]=1;if(preventedEvents[1]) {e.preventDefault();}input(true);}
 function mup(e) {var h=e.button;delete mousePress[h];delete mouseDown[h];}
-function mmove(e) {mousePos.x=e.offsetX/gameScale;mousePos.y=e.offsetY/gameScale;}
+function mmove(e) {mousePos.x=e.offsetX/gameScale;mousePos.y=e.offsetY/gameScale;input(false);}
 function cmenu(e) {if(preventedEvents[1]) {e.preventDefault();}}
 function scrl(e) {scroll+=-1*(e.deltaY/100);if(preventedEvents[2]) {e.preventDefault();}}
 function tpress(e) {
@@ -256,10 +257,14 @@ function addSound(src,amount) {
         loadingSound.src = src;
         a[soundName].push(loadingSound);
 
-        let sound = context.createMediaElementSource(loadingSound);
-        sound.connect(context.destination);
+        let soundNode = context.createMediaElementSource(loadingSound);
+        let gainNode = context.createGain();
 
-        abuffer.push(sound);
+        soundNode.connect(gainNode);
+        gainNode.connect(context.destination);
+
+        abuffer.push(soundNode);
+        volumeList.push(gainNode);
     }
 }
 function play(sound) {

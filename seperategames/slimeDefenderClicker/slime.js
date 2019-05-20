@@ -72,6 +72,10 @@ class slime {
             camera.y=0;
         }
 
+        if(this.jumptime==0) {
+            if(sound){play(a[`jump${rand(1,3)}`]);}
+        }
+
         //moving forwards
         if(this.jumptime<25) {
             this.x+=this.v.x* (this.type==8?(this.jumptime<18?0.75:0.5):(this.jumptime<18?1:0.5));
@@ -80,14 +84,14 @@ class slime {
 
         // jumping
         this.jumptime+=this.type==8?0.5:1;
-        if(this.type==8&&this.jumptime==27) {curShake=14;}
+        if(this.type==8&&this.jumptime==27) {curShake=14;if(sound){play(a.bigJump);}}
         if(this.jumptime>=(this.type==8?(this.bossState?90:150):60)) {
             this.jumptime=0;
         }
 
         if(this.x>288) {this.x=288;} //off screen
         if(this.y<72) {this.y=72;}
-        if(this.y+this.h/2)
+        if(this.y+this.h/2>400) {this.y=400-this.h/2;}
 
         //bullet colition
         for(var j=0;j<bullets.length;j++) {

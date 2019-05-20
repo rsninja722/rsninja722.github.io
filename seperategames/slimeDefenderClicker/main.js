@@ -34,11 +34,15 @@ var sounds = [
     "nobuy.wav",
     "orb1.wav","orb2.wav","orb3.wav",
     "nextWave.wav",
-    "hit0.wav","hit1.wav","die.wav"
+    "hit0.wav","hit1.wav","die.wav",
+    "jump1.wav","jump2.wav","jump3.wav","bigJump.wav"
 ]
 
 
 var sound=true;
+var volume=1;
+var volumeCache=1;
+var soundSlider = {show:false,pos:350};
 
 backgroundColor = "#2d2d2d";
 
@@ -48,19 +52,16 @@ backgroundColor = "#2d2d2d";
     -saving
     -balencing
     -upgrade maxes
-    -sound
     -turret health
-    -volume slider
-    -music
 */
 var started = false;
 var money = 0;
 var upgrades = {
-    sps:{stat:0,price:20},
-    spc:{stat:1,price:50},
-    dmg:{stat:1,price:10},
-    spd:{stat:1000,price:10},
-    auto:{stat:0,price:100},
+    sps:{stat:0,price:50},
+    spc:{stat:1,price:10},
+    dmg:{stat:1,price:100},
+    spd:{stat:1000,price:100},
+    auto:{stat:0,price:500},
     scrollClick:{stat:false}
 }
 var autoSpeeds=[Infinity,1000,900,800,750,700,650,600,550,500,450,400,350,300,275,250,225,200,175,150,125,100,75,60,50,40,30,10];
@@ -165,18 +166,25 @@ function update() {
     if(pause) {
         drawSpriteScaled(s.pause0,250,200,5);
     }
+    if(soundSlider.show) {
+        rect(0,340,20,40,"#303030");
+        rect(3,345+(30*(1-volume)),14,5,"#404040");
+    }
 }
 
-function input() {
-    if(!pause&&started) {
+function input(clickButtons) {
+    if(!pause&&started&&clickButtons) {
         for(var i=0;i<buttons.length;i++) { //buttons
             buttons[i].update(false);
         }
     }
+    if(pointRect(mousePos,{x:2,y:382,w:16,h:16})) {
+        soundSlider.show = true;
+    }
     if(mousePress[0]) {
         //console.log(`x:${mousePos.x} y:${mousePos.y}`);
         if(pointRect(mousePos,{x:2,y:382,w:16,h:16})) {
-            if(sound==1) {sound=0;} else {sound=1;}
+            if(sound==1) {sound=0;volumeCache=volume;volume=0;changeVolume();} else {sound=1;volume=volumeCache;changeVolume();}
         }
         if(pointRect(mousePos,{x:22,y:382,w:16,h:16})) {
             if(gameScale==1) {gameScale=2;} else {gameScale=1;}
@@ -195,6 +203,14 @@ function input() {
             a.sdc1[1].loop=true;
             a.sdc1[1].play();
         }
+    }
+    if(mousePos.x>20||mousePos.y<330) {soundSlider.show=false;}
+    if(soundSlider.show&&mouseDown[0]&&mousePos.y<375) {
+        let ypos = mousePos.y;
+        if(ypos<345) {ypos=345;}
+        if(ypos>375) {ypos=375;}
+        volume=(30-(ypos-345))/30;
+        changeVolume();
     }
     resetInput();
 }
@@ -284,12 +300,12 @@ function buyUpgrade(button)  {
             if(money>=upgrades.sps.price) {
                 money-=upgrades.sps.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.sps.price)}`,[200,0,0,255]));
-                if(upgrades.sps.price<50) {
-                    upgrades.sps.price*=2;
+                upgrades.sps.price+=upgrades.sps.price*2;
+                if(upgrades.sps.stat==0) {
+                    upgrades.sps.stat=5;
                 } else {
-                    upgrades.sps.price*=1.25;
+                    upgrades.sps.stat+=upgrades.sps.stat*2;
                 }
-                upgrades.sps.stat++;
                 wasPurchaceSuccesful=true;
             }
             break;
@@ -297,12 +313,8 @@ function buyUpgrade(button)  {
             if(money>=upgrades.spc.price) {
                 money-=upgrades.spc.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.spc.price)}`,[200,0,0,255]));
-                if(upgrades.spc.price<250) {
-                    upgrades.spc.price*=2.5;
-                } else {
-                    upgrades.spc.price*=1.75;
-                }
-                upgrades.spc.stat++;
+                upgrades.spc.price+=upgrades.spc.price*2;
+                upgrades.spc.stat+=Math.round(upgrades.spc.stat*1.1);
                 wasPurchaceSuccesful=true;
             }
             break;
@@ -310,7 +322,7 @@ function buyUpgrade(button)  {
             if(money>=upgrades.auto.price) {
                 money-=upgrades.auto.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.auto.price)}`,[200,0,0,255]));
-                upgrades.auto.price*=1.15;
+                upgrades.auto.price+=Math.round(upgrades.auto.price*2);
                 upgrades.auto.stat++;
                 wasPurchaceSuccesful=true;
             }
@@ -320,7 +332,7 @@ function buyUpgrade(button)  {
                 money-=upgrades.dmg.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.dmg.price)}`,[200,0,0,255]));
                 upgrades.dmg.stat++;
-                upgrades.dmg.price*=1.55;
+                upgrades.dmg.price*=1.25;
                 wasPurchaceSuccesful=true;
             }
             break;
@@ -329,7 +341,7 @@ function buyUpgrade(button)  {
                 money-=upgrades.spd.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.spd.price)}`,[200,0,0,255]));
                 upgrades.spd.stat-=100;
-                upgrades.spd.price*=1.55;
+                upgrades.spd.price*=1.25;
                 wasPurchaceSuccesful=true;
             }
             break;
@@ -382,5 +394,11 @@ function drawTurret() {
         } else {
             recoil-=2;
         }
+    }
+}
+
+function changeVolume() {
+    for(var i in volumeList) {
+        volumeList[i].gain.value=volume;
     }
 }
