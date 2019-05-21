@@ -17,6 +17,7 @@ var navlist = [
     //{name:"the game",link:"https://rsninja722.github.io/RPGBLITZ.html"},
    // {name:"game.js really early demo",link:"https://rsninja722.github.io/test.html"},
    {name:"art gen",link:"https://rsninja722.github.io/seperategames/artgen/index.html"},
+   {name:"discrod invisible gen",link:"https://rsninja722.github.io/seperategames/discordInvisbleGenerator/index.html"},
     {name:"Home",link:"https://rsninja722.github.io/index.html"}
 ]
 //style
