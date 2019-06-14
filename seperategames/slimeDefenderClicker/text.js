@@ -80,16 +80,16 @@ function putText() {
         }
         if(buttons[i].id!="click") {
             drawText(text.small2,`p:`,buttons[i].x+buttons[i].w,buttons[i].y+16,[40,140,40,255],1);
-            drawText(text.medium1,`${parseNum(~~(upgrades[buttons[i].id].price))}`,buttons[i].x+buttons[i].w+7,buttons[i].y+15,[40,140,40,255],3);
+            drawText(text.medium1,`${(upgrades[buttons[i].id].stat==maxes[buttons[i].id])?"max":parseNum(Math.floor(upgrades[buttons[i].id].price))}`,buttons[i].x+buttons[i].w+7,buttons[i].y+15,[40,140,40,255],3);
 
         }
     }
-    drawText(text.large1,`$:${parseNum(~~money)}`,178,6,[40,240,40,255],10);
-    drawText(text.medium1,`dmg:${~~upgrades.dmg.stat}`,5,8,[40,240,40,255],5);
-    drawText(text.medium1,`spd:${~~upgrades.spd.stat}`,80,8,[40,240,40,255],5);
-    drawText(text.medium1,`$/sec:${~~upgrades.sps.stat}`,5,38,[40,240,40,255],4);
-    drawText(text.medium1,`$/click:${~~upgrades.spc.stat}`,80,38,[40,240,40,255],4);
-    drawText(text.medium1,`auto spd:${(autoSpeeds[upgrades.auto.stat]==Infinity?0:autoSpeeds[upgrades.auto.stat])}`,165,38,[40,240,40,255],4);
+    
+    drawText(text.medium1,`dmg:${Math.floor(upgrades.dmg.stat)}`,5,8,[40,240,40,255],5);
+    drawText(text.medium1,`spd:${Math.floor(upgrades.spd.stat)}`,80,8,[40,240,40,255],5);
+    drawText(text.medium1,`$/sec:${parseNum(Math.floor(upgrades.sps.stat))}`,5,38,[40,240,40,255],4);
+    drawText(text.medium1,`$/click:${parseNum(Math.floor(upgrades.spc.stat))}`,90,38,[40,240,40,255],4);
+    drawText(text.medium1,`auto:${(autoSpeeds[upgrades.auto.stat]==Infinity?0:autoSpeeds[upgrades.auto.stat])}`,195,38,[40,240,40,255],4);
     for(var i=0;i<textAnims.length;i++) {
         if(textAnims[i].update()) {
             textAnims.splice(i,1);
@@ -102,16 +102,29 @@ function putText() {
             i--;
         }
     }
+    drawText(text.large1,`$:${parseNum(Math.floor(money))}`,178,6,[40,240,40,255],10);
     if(!started) {
-        drawText(text.large1,"click anywhere to start",10,190,[40,240,240,255],10);
+        drawText(text.large1,"click anywhere to start",10,150,[40,240,240,255],10);
+    }
+    if(gameOver) {
+        drawText(text.medium1,"you were slimed!",100,190,[40,240,240,255],10);
+        drawText(text.medium1,"hold space to restart",100,210,[40,240,240,255],5);
     }
 }
 
-// 100,000,000,000
+// 100,000,000,000,000,000
 function parseNum(num) {
     num = num.toString();
     let txt;
     switch(num.length) {
+        case 18: txt = `${num[0]}${num[1]}${num[2]}.${num[3]}q`; break;
+        case 17: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}q`; break;
+        case 16: txt = `${num[0]}.${num[1]}${num[2]}${num[3]}q`; break;
+
+        case 15: txt = `${num[0]}${num[1]}${num[2]}tr`; break;
+        case 14: txt = `${num[0]}${num[1]}.${num[2]}tr`; break;
+        case 13: txt = `${num[0]}.${num[1]}${num[2]}tr`; break;
+
         case 12: txt = `${num[0]}${num[1]}${num[2]}.${num[3]}b`; break;
         case 11: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}b`; break;
         case 10: txt = `${num[0]}.${num[1]}${num[2]}${num[3]}b`; break;

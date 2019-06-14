@@ -38,7 +38,7 @@ class orb{
                         break;
                     case 3:
                         this.y-=2;
-                        if(this.y<=25) {money+=this.value;textAnims.push( new textAnim(170,5,"large1",`+$${parseNum(this.value)}`,[40,240,40,255]));if(sound){play(a[`orb${rand(1,3)}`]);}return true;}
+                        if(this.y<=25) {money+=this.value;textAnims.push( new textAnim(180,5,"large1",`+$${parseNum(this.value)}`,[40,240,40,255]));if(sound){play(a[`orb${rand(1,3)}`]);}return true;}
                         break;
                 }
                 break;
@@ -49,9 +49,10 @@ class orb{
     }
 
     draw() {
-        if(this.value<10) {
+        if(this.value<25) {
             drawSprite(s.orbSmall,this.x,this.y);
-            //effects.push([this.x-5,this.y-5,this.x+5,this.y+5,[0,50,0],orbSmallEffect.slice()]);
+        } else if(this.value<200) {
+            drawSprite(s.orbMedium,this.x,this.y);
         } else {
             drawSprite(s.orbLarge,this.x,this.y);
         }

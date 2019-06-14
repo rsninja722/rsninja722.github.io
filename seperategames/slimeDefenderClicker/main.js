@@ -17,11 +17,12 @@ images = [
     "dirt.png",
     "speedup.png","speedupPress.png",
     "dmg.png",
-    "orbSmall.png","orbLarge.png",
+    "orbSmall.png","orbMedium.png","orbLarge.png",
     "Boss00.png","Boss01.png","Boss10.png","Boss11.png",
     "rock1.png","rock2.png",
     "sound1.png","sound0.png","expand1.png","expand0.png","pause0.png","pause1.png",
-    "bullet1.png","bullet2.png","bullet3.png","bullet4.png","bullet5.png","bullet6.png"
+    "bullet1.png","bullet2.png","bullet3.png","bullet4.png","bullet5.png","bullet6.png",
+    "tut.png"
 ];
 
 var sounds = [
@@ -46,13 +47,34 @@ var soundSlider = {show:false,pos:350};
 
 backgroundColor = "#2d2d2d";
 
+function save() {
+    saveStr = "";
+    saveData = [JSON.stringify(upgrades),money.toString(),sound.toString(),volume.toString(),JSON.stringify(wdat)];
+    for(var i in saveData) {
+        saveStr+= saveData[i] + (i==saveData.length-1?"":"|");
+    }
+    
+    localStorage.setItem("gamesave", saveStr);
+    textAnims.push( new textAnim(10,65,"medium1","game saved",[40,150,40],"dmg"));
+}
+
+function load() {
+    if(localStorage.gamesave) {
+        var saveData = localStorage.gamesave.split("|");
+        for(var i in saveData) {
+            saveData[i] = JSON.parse(saveData[i]);
+        }
+        upgrades=saveData[0];
+        money=saveData[1];
+        sound=saveData[2];
+        volume=saveData[3];
+        wdat=saveData[4];
+    }
+}
 /*
     art to do
         -thumbnail
-    -saving
     -balencing
-    -upgrade maxes
-    -turret health
 */
 var started = false;
 var money = 0;
@@ -63,11 +85,20 @@ var upgrades = {
     spd:{stat:1000,price:100},
     auto:{stat:0,price:500},
     scrollClick:{stat:false}
+};
+var maxes = {
+    sps:Infinity,
+    spc:Infinity,
+    dmg:Infinity,
+    spd:100,
+    auto:6
 }
-var autoSpeeds=[Infinity,1000,900,800,750,700,650,600,550,500,450,400,350,300,275,250,225,200,175,150,125,100,75,60,50,40,30,10];
+var autoSpeeds=[Infinity,1000,750,500,250,100,50];
 var screenShake = [0,1,-1,2,-2,3,-3,4,-4,5,-5,6,-6,7,-7];
 var curShake=0;
 var gameDone=0;
+
+var gameOver = false;
 
 var timers = {
     ps:{start:Date.now(),cur:Date.now()},
@@ -83,6 +114,14 @@ var recoil=0;
 
 var pause = false;
 
+function resetGame() {
+    gameOver = false;money = 0;upgrades = {sps:{stat:0,price:50},spc:{stat:1,price:10},dmg:{stat:1,price:100},spd:{stat:1000,price:100},auto:{stat:0,price:500},scrollClick:{stat:false}};timers = {ps:{start:Date.now(),cur:Date.now()},auto:{start:Date.now(),cur:Date.now()},gun:{start:Date.now(),cur:Date.now()}};spsAnim=0;autoAnim=0;clickTimer=0;recoil=0;wdat = {wave:0,pos:0,count:0};slimes=[];bullets=[];particles=[];orbs=[];
+    localStorage.gamesave = "";
+    slimeTime = Date.now();
+    primeSlimeTime = waves[0][0].interval;
+}
+
+load();
 startUpdate("auto");
 setInterval(physics,1000/50);
 
@@ -103,9 +142,6 @@ function update() {
         }
     }
     
-    // drawSpriteAdv(s.rock1,6,390,0,1);drawSpriteAdv(s.rock1,132,388,1,1.1);drawSpriteAdv(s.rock1,214,384,-0.3,0.9);drawSpriteAdv(s.rock1,9,73,1.5,1.15);drawSpriteAdv(s.rock1,203,71,3,0.8);
-    // drawSpriteAdv(s.rock2,52,76,0,1);drawSpriteAdv(s.rock2,118,70,1.5,1.1);drawSpriteAdv(s.rock2,49,375,-0.7,0.9);drawSpriteAdv(s.rock2,259,375,2,1.15);drawSpriteAdv(s.rock2,18,112,-1.6,0.8);
-
     for(var i=0;i<particles.length;i++) { // particles
         if(particles[i].type!="purchace"&&particles[i].type!="boss") { particles[i].draw(); }
     }
@@ -144,7 +180,7 @@ function update() {
     if(autoAnim==3) {
         clickTimer=3;
     }
-    drawSprite(s.piston,380,pistonPos);
+    if(buttons.length>5) {drawSprite(s.piston,380,pistonPos);}
 
     for(var i=0;i<buttons.length;i++) { // buttons
         buttons[i].draw();
@@ -170,10 +206,17 @@ function update() {
         rect(0,340,20,40,"#303030");
         rect(3,345+(30*(1-volume)),14,5,"#404040");
     }
+    if(gameOver) {
+        rect(95,170,210,60,"#2d2d2d");
+    }
+    if(!started) {
+        rect(22,236,256,128,"#2d2d2d");
+        drawSprite(s.tut,150,300);
+    }
 }
 
 function input(clickButtons) {
-    if(!pause&&started&&clickButtons) {
+    if(!pause&&started&&clickButtons&&!gameOver) {
         for(var i=0;i<buttons.length;i++) { //buttons
             buttons[i].update(false);
         }
@@ -216,7 +259,12 @@ function input(clickButtons) {
 }
 
 function physics() {
-    if(!pause&&started) {
+    if(gameOver) {
+        if(keyPress[k.SPACE]) {
+            resetGame();
+        }
+    }
+    if(!pause&&started&&!gameOver) {
         if(gameDone>1) {
             gameDone--;
         }
@@ -291,6 +339,39 @@ function physics() {
             buttons[i].update(true);
         }
         spawnSlime();
+        switch(buttons.length) {
+            case 2:
+                if(money>25) {
+                    buttons.push(new button(320,70,"txt","sps"));
+                    for(let i=0;i<75;i++) {
+                        particles.push(new particle(rand(320,420),rand(70,120),"purchace"));
+                    }
+                    if(sound){play(a.buy);}
+                }
+                break;
+            case 3:
+                if(money>75) {
+                    buttons.push(new button(310,5,"img","dmg"));
+                    buttons.push(new button(405,5,"img","spd"));
+                    for(let i=0;i<40;i++) {
+                        particles.push(new particle(rand(310,350),rand(5,45),"purchace"));
+                    }
+                    for(let i=0;i<40;i++) {
+                        particles.push(new particle(rand(405,445),rand(5,45),"purchace"));
+                    }
+                    if(sound){play(a.buy);}
+                }
+                break;
+            case 5:
+                if(money>400) {
+                    buttons.push(new button(320,280,"txt","auto"));
+                    for(let i=0;i<40;i++) {
+                        particles.push(new particle(rand(320,420),rand(280,330),"purchace"));
+                    }
+                    if(sound){play(a.buy);}
+                }
+                break;
+        }
     }
 }
 function buyUpgrade(button)  {
@@ -304,7 +385,7 @@ function buyUpgrade(button)  {
                 if(upgrades.sps.stat==0) {
                     upgrades.sps.stat=5;
                 } else {
-                    upgrades.sps.stat+=upgrades.sps.stat*2;
+                    upgrades.sps.stat+=Math.round(upgrades.sps.stat*2 );
                 }
                 wasPurchaceSuccesful=true;
             }
@@ -319,10 +400,10 @@ function buyUpgrade(button)  {
             }
             break;
         case "auto": // auto clicker
-            if(money>=upgrades.auto.price) {
+            if(money>=upgrades.auto.price&&upgrades.auto.stat!=maxes.auto) {
                 money-=upgrades.auto.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.auto.price)}`,[200,0,0,255]));
-                upgrades.auto.price+=Math.round(upgrades.auto.price*2);
+                upgrades.auto.price+=Math.round(upgrades.auto.price*3);
                 upgrades.auto.stat++;
                 wasPurchaceSuccesful=true;
             }
@@ -332,16 +413,16 @@ function buyUpgrade(button)  {
                 money-=upgrades.dmg.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.dmg.price)}`,[200,0,0,255]));
                 upgrades.dmg.stat++;
-                upgrades.dmg.price*=1.25;
+                upgrades.dmg.price*=3.5;
                 wasPurchaceSuccesful=true;
             }
             break;
         case "spd":
-            if(money>=upgrades.spd.price) {
+            if(money>=upgrades.spd.price&&upgrades.spd.stat!=maxes.spd) {
                 money-=upgrades.spd.price;
                 PriotextAnims.push( new textAnim(175,5,"large1",`-$${parseNum(~~upgrades.spd.price)}`,[200,0,0,255]));
                 upgrades.spd.stat-=100;
-                upgrades.spd.price*=1.25;
+                upgrades.spd.price*=3.5;
                 wasPurchaceSuccesful=true;
             }
             break;
@@ -401,4 +482,18 @@ function changeVolume() {
     for(var i in volumeList) {
         volumeList[i].gain.value=volume;
     }
+}
+
+function rectrect(object1,object2) {
+    if(object1.x + object1.w/2 >= object2.x - object2.w/2 &&
+       object1.x - object1.w/2 <= object2.x + object2.w/2 &&
+       object1.y + object1.h/2 >= object2.y - object2.h/2 &&
+       object1.y - object1.h/2 <= object2.y + object2.h/2) {
+           return true;
+       }
+}
+function dist(object1,object2) {
+    var one = (object2.x - object1.x);
+    var two = (object2.y - object1.y);
+    return Math.sqrt((one*one)+(two*two));
 }

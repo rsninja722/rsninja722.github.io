@@ -83,10 +83,11 @@ class button {
         }
     }
 }
-buttons.push(new button(310,5,"img","dmg"));buttons.push(new button(405,5,"img","spd"));
-buttons.push(new button(320,70,"txt","sps"));
+//buttons.push(new button(310,5,"img","dmg"));
+//buttons.push(new button(405,5,"img","spd"));
+//buttons.push(new button(320,70,"txt","sps"));
 buttons.push(new button(320,140,"big","click"));
-buttons.push(new button(320,280,"txt","auto"));
+//buttons.push(new button(320,280,"txt","auto"));
 buttons.push(new button(320,340,"txt","spc"));
 
 

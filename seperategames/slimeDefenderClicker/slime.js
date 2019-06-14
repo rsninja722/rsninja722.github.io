@@ -11,15 +11,15 @@ class slime {
         this.animFrame=0;
         this.dmgTime=0;
         switch(type) {
-            case 0: this.health=this.maxHealth=2; break;
-            case 1: this.health=this.maxHealth=4; break;
+            case 0: this.health=this.maxHealth=3; break;
+            case 1: this.health=this.maxHealth=5; break;
             case 2: this.health=this.maxHealth=7; break;
-            case 3: this.health=this.maxHealth=15; break;
-            case 4: this.health=this.maxHealth=25; break;
-            case 5: this.health=this.maxHealth=80; break;
-            case 6: this.health=this.maxHealth=200; break;
-            case 7: this.health=this.maxHealth=500; break;
-            case 8: this.health=this.maxHealth=5000; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
+            case 3: this.health=this.maxHealth=10; break;
+            case 4: this.health=this.maxHealth=15; break;
+            case 5: this.health=this.maxHealth=25; break;
+            case 6: this.health=this.maxHealth=40; break;
+            case 7: this.health=this.maxHealth=60; break;
+            case 8: this.health=this.maxHealth=1000; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
         }
     }
 
@@ -144,13 +144,23 @@ class slime {
         // turn
         if(this.jumptime==(this.type==8?80:45)) {
             if(this.angle>pointTo(this,{x:300,y:225})-1.57079632) {
-                this.angle+=rand(-7,1)/10;
+                this.angle+=rand(-7,-1)/10;
             } else {
-                this.angle+=rand(-1,7)/10;
+                this.angle+=rand(1,7)/10;
             }
             this.v={x:Math.sin(this.angle),y:Math.cos(this.angle)};
         }
+        if(dist(this,{x:300,y:225})<30+this.w) {
+            gameOver=true;
+            textAnims=[];
+            PriotextAnims=[];
+            turrot=0;
+            kms();
+        }
     }
+}
+function kms() {
+    slimes=[];
 }
 var slimes=[];
 var slimeColors = [
@@ -190,17 +200,17 @@ var waves = [
         {type:1,interval:3000,amount:2},
         {type:0,interval:1500,amount:2},
         {type:1,interval:3000,amount:2},
-        {type:"wait",interval:5000,amount:1}
+        {type:"wait",interval:10000,amount:1}
     ],
     [
         {type:1,interval:2500,amount:6},
         {type:0,interval:500,amount:10},
-        {type:"wait",interval:5000,amount:1}
+        {type:"wait",interval:10000,amount:1}
     ],
     [ // wave 5
         {type:1,interval:2000,amount:8},
         {type:2,interval:4000,amount:2},
-        {type:"wait",interval:5000,amount:1}
+        {type:"wait",interval:10000,amount:1}
     ],
     [
         {type:2,interval:3000,amount:1},
@@ -209,26 +219,103 @@ var waves = [
         {type:1,interval:2000,amount:3},
         {type:2,interval:3000,amount:1},
         {type:1,interval:2000,amount:4},
-        {type:"wait",interval:5000,amount:1}
+        {type:"wait",interval:10000,amount:1}
     ],
     [
         {type:2,interval:3000,amount:4},
-        {type:"wait",interval:5000,amount:1}
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:2,interval:2000,amount:7},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:2,interval:1500,amount:5},
+        {type:3,interval:3000,amount:2},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:3,interval:2500,amount:3},
+        {type:3,interval:3000,amount:2},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:3,interval:2000,amount:8},
+        {type:4,interval:3000,amount:1},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:4,interval:1000,amount:2},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:4,interval:3000,amount:6},
+        {type:4,interval:2000,amount:2},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:4,interval:2500,amount:6},
+        {type:5,interval:2000,amount:1},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:5,interval:3000,amount:1},
+        {type:4,interval:2000,amount:3},
+        {type:5,interval:3000,amount:1},
+        {type:4,interval:2000,amount:3},
+        {type:5,interval:3000,amount:1},
+        {type:4,interval:2000,amount:4},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:5,interval:2500,amount:6},
+        {type:5,interval:1000,amount:3},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:5,interval:2000,amount:4},
+        {type:6,interval:3000,amount:1},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:6,interval:2000,amount:3},
+        {type:5,interval:3000,amount:5},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:5,interval:2000,amount:1},
+        {type:6,interval:3000,amount:1},
+        {type:5,interval:2000,amount:1},
+        {type:6,interval:3000,amount:1},
+        {type:5,interval:2000,amount:1},
+        {type:6,interval:3000,amount:1},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:6,interval:1500,amount:5},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:6,interval:2000,amount:4},
+        {type:7,interval:3000,amount:1},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:7,interval:2000,amount:2},
+        {type:6,interval:1500,amount:8},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:7,interval:2000,amount:4},
+        {type:"wait",interval:10000,amount:1}
+    ],
+    [
+        {type:7,interval:1500,amount:10},
+        {type:"wait",interval:15000,amount:1}
     ],
     [
         {type:8,interval:2000,amount:1},
-        {type:"wait",interval:500000,amount:1}
-    ],
-    [
-        {type:0,interval:2000,amount:2},
-        {type:"wait",interval:5000,amount:1}
-    ],
-    [ // wave 10
-        {type:0,interval:2000,amount:2},
-        {type:"wait",interval:5000,amount:1}
-    ],
-    [ // boss
-        {type:8,interval:5000,amount:1}
+        {type:"wait",interval:Infinity,amount:1}
     ]
 ]
 
@@ -249,7 +336,7 @@ function spawnSlime() {
             if(s.length>1) {setTimeout(function() {textAnims.push( new textAnim(290,210,"large1",s[1],[40,200,40,255],"wave"));},700);}
             if(s.length>2) {setTimeout(function() {textAnims.push( new textAnim(305,210,"large1",s[2],[40,200,40,255],"wave"));},800);}
 
-            setTimeout(function() {if(sound){play(a.nextWave);}},1000);
+            setTimeout(function() {if(sound){play(a.nextWave);}save();},1000);
         } else {
             slimes.push(new slime(0,rand(60,400),curSpawn().type));
         }
