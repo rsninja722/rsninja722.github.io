@@ -114,6 +114,7 @@ function resetGame() {
     localStorage.gamesave = "";
     slimeTime = Date.now();
     buttons=[];
+    buttons.push(new button(320,140,"big","click"));
     primeSlimeTime = waves[0][0].interval;
 }
 
@@ -125,7 +126,9 @@ function onImagesReady() {
     doFontStuff();// does things with fonts
 }
 
-
+function resetSave() {
+    localStorage.gamesave="";
+}
 function update() {
     camera.x=screenShake[curShake];
     if(curShake>0) {
