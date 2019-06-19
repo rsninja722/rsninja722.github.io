@@ -121,9 +121,9 @@ function parseNum(num) {
         case 17: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}q`; break;
         case 16: txt = `${num[0]}.${num[1]}${num[2]}${num[3]}q`; break;
 
-        case 15: txt = `${num[0]}${num[1]}${num[2]}tr`; break;
-        case 14: txt = `${num[0]}${num[1]}.${num[2]}tr`; break;
-        case 13: txt = `${num[0]}.${num[1]}${num[2]}tr`; break;
+        case 15: txt = `${num[0]}${num[1]}${num[2]}t`; break;
+        case 14: txt = `${num[0]}${num[1]}.${num[2]}t`; break;
+        case 13: txt = `${num[0]}.${num[1]}${num[2]}t`; break;
 
         case 12: txt = `${num[0]}${num[1]}${num[2]}.${num[3]}b`; break;
         case 11: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}b`; break;
@@ -133,9 +133,9 @@ function parseNum(num) {
         case 8: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}m`; break;
         case 7: txt = `${num[0]}.${num[1]}${num[2]}${num[3]}m`; break;
 
-        case 6: txt = `${num[0]}${num[1]}${num[2]}.${num[3]}t`; break;
-        case 5: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}t`; break;
-        case 4: txt = `${num[0]}.${num[1]}${num[2]}t`; break;
+        case 6: txt = `${num[0]}${num[1]}${num[2]}.${num[3]}k`; break;
+        case 5: txt = `${num[0]}${num[1]}.${num[2]}${num[3]}k`; break;
+        case 4: txt = `${num[0]}.${num[1]}${num[2]}k`; break;
     
         case 3:case 2: case 1: txt = num; break;
     }

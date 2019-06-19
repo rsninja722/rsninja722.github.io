@@ -14,12 +14,12 @@ class slime {
             case 0: this.health=this.maxHealth=3; break;
             case 1: this.health=this.maxHealth=5; break;
             case 2: this.health=this.maxHealth=7; break;
-            case 3: this.health=this.maxHealth=10; break;
-            case 4: this.health=this.maxHealth=15; break;
-            case 5: this.health=this.maxHealth=25; break;
-            case 6: this.health=this.maxHealth=40; break;
-            case 7: this.health=this.maxHealth=60; break;
-            case 8: this.health=this.maxHealth=1000; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
+            case 3: this.health=this.maxHealth=15; break;
+            case 4: this.health=this.maxHealth=30; break;
+            case 5: this.health=this.maxHealth=60; break;
+            case 6: this.health=this.maxHealth=120; break;
+            case 7: this.health=this.maxHealth=250; break;
+            case 8: this.health=this.maxHealth=5000; this.bossState=0; this.w=46; this.h=46; this.changeTime=-1;break;
         }
     }
 
@@ -222,15 +222,15 @@ var waves = [
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:2,interval:3000,amount:4},
+        {type:2,interval:2000,amount:8},
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:2,interval:2000,amount:7},
+        {type:2,interval:1500,amount:7},
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:2,interval:1500,amount:5},
+        {type:2,interval:1000,amount:5},
         {type:3,interval:3000,amount:2},
         {type:"wait",interval:10000,amount:1}
     ],
@@ -240,7 +240,7 @@ var waves = [
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:3,interval:2000,amount:8},
+        {type:3,interval:1500,amount:8},
         {type:4,interval:3000,amount:1},
         {type:"wait",interval:10000,amount:1}
     ],
@@ -249,21 +249,21 @@ var waves = [
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:4,interval:3000,amount:6},
+        {type:4,interval:2500,amount:6},
         {type:4,interval:2000,amount:2},
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:4,interval:2500,amount:6},
+        {type:4,interval:2000,amount:6},
         {type:5,interval:2000,amount:1},
         {type:"wait",interval:10000,amount:1}
     ],
     [
-        {type:5,interval:3000,amount:1},
+        {type:5,interval:2000,amount:1},
         {type:4,interval:2000,amount:3},
-        {type:5,interval:3000,amount:1},
+        {type:5,interval:2000,amount:1},
         {type:4,interval:2000,amount:3},
-        {type:5,interval:3000,amount:1},
+        {type:5,interval:2000,amount:1},
         {type:4,interval:2000,amount:4},
         {type:"wait",interval:10000,amount:1}
     ],
@@ -284,11 +284,11 @@ var waves = [
     ],
     [
         {type:5,interval:2000,amount:1},
-        {type:6,interval:3000,amount:1},
+        {type:6,interval:2000,amount:1},
         {type:5,interval:2000,amount:1},
-        {type:6,interval:3000,amount:1},
+        {type:6,interval:2000,amount:1},
         {type:5,interval:2000,amount:1},
-        {type:6,interval:3000,amount:1},
+        {type:6,interval:2000,amount:1},
         {type:"wait",interval:10000,amount:1}
     ],
     [

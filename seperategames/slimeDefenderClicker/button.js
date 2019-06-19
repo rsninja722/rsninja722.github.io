@@ -88,7 +88,7 @@ class button {
 //buttons.push(new button(320,70,"txt","sps"));
 buttons.push(new button(320,140,"big","click"));
 //buttons.push(new button(320,280,"txt","auto"));
-buttons.push(new button(320,340,"txt","spc"));
+//buttons.push(new button(320,340,"txt","spc"));
 
 
 function pointRect(obj1, obj2) {

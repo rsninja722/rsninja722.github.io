@@ -21,7 +21,7 @@ images = [
     "Boss00.png","Boss01.png","Boss10.png","Boss11.png",
     "rock1.png","rock2.png",
     "sound1.png","sound0.png","expand1.png","expand0.png","pause0.png","pause1.png",
-    "bullet1.png","bullet2.png","bullet3.png","bullet4.png","bullet5.png","bullet6.png",
+    "bullet0.png","bullet1.png","bullet2.png","bullet3.png","bullet4.png","bullet5.png","bullet6.png",
     "tut.png"
 ];
 
@@ -71,11 +71,6 @@ function load() {
         wdat=saveData[4];
     }
 }
-/*
-    art to do
-        -thumbnail
-    -balencing
-*/
 var started = false;
 var money = 0;
 var upgrades = {
@@ -118,6 +113,7 @@ function resetGame() {
     gameOver = false;money = 0;upgrades = {sps:{stat:0,price:50},spc:{stat:1,price:10},dmg:{stat:1,price:100},spd:{stat:1000,price:100},auto:{stat:0,price:500},scrollClick:{stat:false}};timers = {ps:{start:Date.now(),cur:Date.now()},auto:{start:Date.now(),cur:Date.now()},gun:{start:Date.now(),cur:Date.now()}};spsAnim=0;autoAnim=0;clickTimer=0;recoil=0;wdat = {wave:0,pos:0,count:0};slimes=[];bullets=[];particles=[];orbs=[];
     localStorage.gamesave = "";
     slimeTime = Date.now();
+    buttons=[];
     primeSlimeTime = waves[0][0].interval;
 }
 
@@ -277,6 +273,7 @@ function physics() {
             setTimeout(function() {textAnims.push( new textAnim(240,230,"large1",`i`,[18,235,255,255],"wave"));},400);
             setTimeout(function() {textAnims.push( new textAnim(260,230,"large1",`n`,[18,235,255,255],"wave"));},400);
             setTimeout(function() {textAnims.push( new textAnim(280,230,"large1",`!`,[18,235,255,255],"wave"));},400);
+            slimes = [];
         }
         //update timers
         timers.ps.cur = Date.now();
@@ -340,8 +337,16 @@ function physics() {
         }
         spawnSlime();
         switch(buttons.length) {
+            case 1:
+                if(money>5) {
+                    buttons.push(new button(320,340,"txt","spc"));
+                    for(let i=0;i<75;i++) {
+                        particles.push(new particle(rand(320,420),rand(340,390),"purchace"));
+                    }
+                    if(sound){play(a.buy);}
+                }
             case 2:
-                if(money>25) {
+                if(money>35) {
                     buttons.push(new button(320,70,"txt","sps"));
                     for(let i=0;i<75;i++) {
                         particles.push(new particle(rand(320,420),rand(70,120),"purchace"));
