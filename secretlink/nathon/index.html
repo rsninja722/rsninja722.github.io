@@ -1,0 +1,39 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Slime Defender Clicker</title>
+    <link rel="shortcut icon" type="image/png" href="assets/icon.png"/>
+    <style>
+        html{
+            background-color: #2d2d2d;  
+        }
+        canvas {
+            position:absolute;
+            top:0;bottom:0;right:0;left:0;
+            margin:auto;
+            border: 5px solid rgb(63, 63, 63); 
+            border-radius: 10px;
+        }
+        button {
+            background-color: #2d2d2d;
+            border: 2px solid #333333;
+            border-radius: 5px;
+            color: #0ea4d1
+        }
+    </style>
+</head>
+<body>
+    <button onclick="resetSave()">reset Save</button>
+    <canvas id="game" width="500" height="400"></canvas>
+    <script src="game.js"></script>
+    <script src="button.js"></script>
+    <script src="slime.js"></script>
+    <script src="bullet.js"></script>
+    <script src="orb.js"></script>
+    <script src="turret.js"></script>
+    <script src="particle.js"></script>
+    <script src="text.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
