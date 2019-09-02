@@ -14,12 +14,12 @@
             #preveiw {
                 position: absolute;
                 left:450px;
-                top:100px;
+                top:1750px;
             }
             #tbl {
                 position: absolute;
                 left: 430px;
-                top: 100px
+                top: 175px
             }
             input {
                 -webkit-appearance: none;
@@ -77,8 +77,15 @@
 
         </style>
     </head>
-    <body>
-        <canvas id="main" width="400" height="300"></canvas><canvas id="preveiw" style="background-color: black"></canvas><table id="tbl" style="border: 1px solid #aaaaaa"><tr><td></td></tr></table>
+    <body style="margin: 0 0 0 0;">
+        <div style="width: 100%; height: 75px; background-color: #313131;">
+            <a href="/index.html" style="position:absolute;left:0;height: 75px;">
+                <img src="/home.png" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            </a>
+            <img src="/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        </div>
+        <div>
+        <canvas id="main" width="400" height="300"></canvas><canvas id="preveiw" style="background-color: black;left:450px;top:175px;position: absolute"></canvas><table id="tbl" style="border: 1px solid #aaaaaa"><tr><td></td></tr></table>
         
         <div id="colors">
             <button id="delete" onclick="deleteColor()">- color</button><button id="add" onclick="addColor()" style="margin-right: 10px">+ color</button>
@@ -90,7 +97,7 @@
             </div>
         </div>
 
-        <div id="genType" style="position: absolute;left:100px;top:350px;">
+        <div id="genType" style="position: absolute;left:100px;top:425px;">
             gen type:<select id="genSelect">
                 <option>random</option>
                 <option>random + probability</option>
@@ -98,17 +105,17 @@
             </select>
         </div>
 
-        <div id="preSize" style="position: absolute;left:430px;top:10px;">
+        <div id="preSize" style="position: absolute;left:430px;top:85px;">
             <button id="-" onclick="minus()" style="padding-left:8px;padding-right:8px;">-</button>    
             <input type="number" style="width:30px;" value="1" id="psize">
             <button id="+" onclick="plus()">+</button>
         </div>
-        <button style="position: absolute;left:430px;top:50px;" onclick="downloadPicture()">Download</button>
+        <button style="position: absolute;left:430px;top:125px;" onclick="downloadPicture()">Download</button>
 
-        <div id="groups" style="position:absolute; left:250px; top:400px;">
+        <div id="groups" style="position:absolute; left:250px; top:475px;">
         </div>
-        <button onclick="toggle()" style="position: absolute;left:550px;top:10px;">bindings</button>
-        <div id="keyBindings" style="position: absolute;left:100px;top:370px;display:none;">
+        <button onclick="toggle()" style="position: absolute;left:550px;top:85px;">bindings</button>
+        <div id="keyBindings" style="position: absolute;left:100px;top:445px;display:none;">
             <pre>
 q - delete color
 w - add color
@@ -131,6 +138,7 @@ Modes:
     groups | 0 = no group, use any non zero number to set groups of pixels
             </pre>
         </div>
+    </div>
         <script src="input.js"></script>
         <script src="main.js"></script>
     </body>

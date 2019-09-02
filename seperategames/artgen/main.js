@@ -393,10 +393,10 @@ function deleteColor() {
 
 function toggle() {
     if(bindingState) {
-        document.getElementById("keyBindings").style = "position: absolute;left:100px;top:370px;display:none;";
+        document.getElementById("keyBindings").style = "position: absolute;left:100px;top:445px;display:none;";
         bindingState=false;
     } else {
-        document.getElementById("keyBindings").style = "position: absolute;left:100px;top:370px;";
+        document.getElementById("keyBindings").style = "position: absolute;left:100px;top:445px;";
         bindingState=true;
     }
 }
