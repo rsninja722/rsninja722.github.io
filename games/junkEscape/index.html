@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" type="image/gif" href="icon.png"/>
+        <title>Junk Escape</title>
+        <style>
+            html {
+                background-color: #242424;
+                color: white;
+            }
+            canvas {
+                position:absolute;
+                top:0;bottom:0;right:0;left:0;
+                margin:auto;
+                border: 5px solid rgb(63, 63, 63); 
+                border-radius: 10px;
+            }
+            video {
+                position:absolute;
+                top:0;bottom:0;right:0;left:0;
+                margin:auto;
+                border: 5px solid rgb(63, 63, 63); 
+                border-radius: 10px;
+                display: none;
+            }
+        </style>
+    </head>
+    <body style="margin: 0 0 0 0;">
+        <div style="width: 100%; height: 75px; background-color: #313131;">
+            <a href="/index.html" style="position:absolute;left:0;height: 75px;">
+                <img src="/home.png" style="height: 75px;image-rendering: pixelated;">
+            </a>
+            <img src="/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;">
+        </div>
+        <canvas width="640" height="480" id="game"></canvas>
+        <video id="intro" width="auto">
+            <source src="assets/CUTSCENE_INTRO.mp4" type="video/mp4">
+        </video>
+        <video id="end" width="auto">
+            <source src="assets/CUTSCENE_END.mp4" type="video/mp4">
+        </video>
+        <script src="game.js"></script>
+        <script src="scripts/modules.js"></script>
+        <script src="scripts/player.js"></script>
+        <script src="scripts/enemy.js"></script>
+        <script src="scripts/bullet.js"></script>
+        <script src="scripts/particles.js"></script>
+        <script src="scripts/map.js"></script>
+        <script src="scripts/collision.js"></script>
+        <script src="index.js"></script>
+        <p style="position: absolute;bottom:0px;left:0px;">Check out the artist <a href="https://www.instagram.com/nathandsjrdns.art/">NDS</a></p>
+    </body>
+</html>
