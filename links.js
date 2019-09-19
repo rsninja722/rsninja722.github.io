@@ -4,7 +4,8 @@ var links = [
     {title:"Slime Defender Clicker",desc:"Clicker/idle game where you allot currency to upgrade your slime shootin' turret.",thumb:"thumbnails/slime.PNG",link:"seperategames/slimeDefenderClicker/index.html"},
     {title:"Car Demo",desc:"really crappy car demo. WASD to move.",thumb:"thumbnails/car.PNG",link:"games/racing/index.html"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
-    {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"}
+    {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"},
+    {title:"archive",desc:"Links to all my old stuff that sucks too much to be on this page.",thumb:"thumbnails/archive.PNG",link:"archive.html"}
 ]
 /*
 don't forget to add to games

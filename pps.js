@@ -1,6 +1,6 @@
 var canvas = document.getElementById("cvs");
     var ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
+    canvas.width = document.getElementById("topbar").clientWidth;
     canvas.height = window.innerHeight;
     var cw = canvas.width;
     var ch = canvas.height;
@@ -18,21 +18,25 @@ var canvas = document.getElementById("cvs");
     var particles = [];
 
 
-    for(var i=0;i<types.length;i++) {
-        types[i].range = rand(16,24);
-        for(var j=0;j<types.length;j++) {
-            types[i].reactions[j] = randDec(-2,2);
+    window.onload = function() {
+        canvas.height = document.body.offsetHeight;
+        ch = canvas.height;
+        for(var i=0;i<types.length;i++) {
+            types[i].range = rand(16,24);
+            for(var j=0;j<types.length;j++) {
+                types[i].reactions[j] = randDec(-2,2);
+            }
         }
-    }
-    for(var y=0;y<ch;y+=10) {
-        for(var x=0;x<cw;x+=10) {
-            if(!rand(0,10)){particles.push(new particle(x,y,rand(0,types.length-1)));}
-        }   
+        for(var y=0;y<ch;y+=10) {
+            for(var x=0;x<cw;x+=10) {
+                if(!rand(0,20)){particles.push(new particle(x,y,rand(0,types.length-1)));}
+            }   
+        }
     }
     requestAnimationFrame(update);
     function update() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = document.getElementById("topbar").clientWidth;
+        canvas.height = document.body.offsetHeight;
         var cw = canvas.width;
         var ch = canvas.height;
         ctx.clearRect(0,0,cw,ch);
