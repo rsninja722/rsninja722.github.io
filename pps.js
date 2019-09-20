@@ -19,10 +19,10 @@ var canvas = document.getElementById("cvs");
 
 
     window.onload = function() {
-        canvas.height = document.body.offsetHeight;
+        canvas.height = document.body.offsetHeight < window.innerHeight ?  window.innerHeight : document.body.offsetHeight;
         ch = canvas.height;
         for(var i=0;i<types.length;i++) {
-            types[i].range = rand(16,24);
+            types[i].range = rand(24,32);
             for(var j=0;j<types.length;j++) {
                 types[i].reactions[j] = randDec(-2,2);
             }
@@ -33,13 +33,11 @@ var canvas = document.getElementById("cvs");
             }   
         }
     }
-    requestAnimationFrame(update);
     function update() {
         canvas.width = document.getElementById("topbar").clientWidth;
-        canvas.height = document.body.offsetHeight;
-        var cw = canvas.width;
-        var ch = canvas.height;
-        ctx.clearRect(0,0,cw,ch);
+        canvas.height = document.body.offsetHeight < window.innerHeight ?  window.innerHeight : document.body.offsetHeight
+        cw = canvas.width;
+        ch = canvas.height;
         counter++;
         if(mousePress[0]) {particles.push(new particle(mousePos.x,mousePos.y,rand(0,types.length-1)));}
         for(var i=0;i<particles.length;i++) {
@@ -82,14 +80,18 @@ var canvas = document.getElementById("cvs");
         for(var i=0;i<particles.length;i++) {
             particles[i].move();
         }
+        
+        for(var i=0;i<mousePress.length;i++){if(mousePress[i]){mousePress[i]=0}}
+        resetInput();
+    }
+
+    function draw() {
+        ctx.clearRect(0,0,cw,ch);
         for(var i=0;i<particles.length;i++) {
             particles[i].draw();
         }
-        for(var i=0;i<mousePress.length;i++){if(mousePress[i]){mousePress[i]=0}}
-        resetInput();
-        requestAnimationFrame(update);
+        requestAnimationFrame(draw);
     }
-
 
     function particle(x,y,type) {
         this.x = x;
@@ -147,3 +149,5 @@ var canvas = document.getElementById("cvs");
     function randDec(min,max) {
         return (Math.floor(((Math.random() * (max - min + 1)) + min) * 100)) / 100;
     }
+    setInterval(update,16.66);
+    requestAnimationFrame(draw);
