@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>tinytris</title>
+    <link rel="icon" type="image/gif" href="icon.png"/>
+    <style>
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            background-color: #2d2d2d;
+            position:absolute;
+            left:20%;
+            top: 20%;
+        }
+        html {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #212121;
+            color: #dddddd;
+        }
+        h3 {
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+        }
+        p {
+            padding: 5px;
+            color: #dddddd;
+            font-size: 20px;
+        }
+        a {
+            color: red;
+        }
+        a:visited {
+            color: rgb(168, 54, 54);
+        }
+        input {
+            background: #313131;
+            color: white;
+            width:50px;
+        }
+    </style>
+</head>
+<body style="margin: 0 0 0 0;">
+    <div style="width: 100%; height: 75px; background-color: #313131;">
+        <a href="/index.html" style="position:absolute;left:0;height: 75px;">
+            <img src="/home.png" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        </a>
+        <img src="/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+    </div>
+    <p>options<span style="font-size: 12px;"> (hover over option for more detail)</span></p>
+    <div id="setup">
+    <span><b>board:</b> <span title="width of board in blocks">width</span> </span><input type="number" value="10" id="fw">
+    <span title="height of board in blocks">height </span><input type="number" value="20" id="fh"><br>
+    <span title="how many pixels wide and tall each block is"><b>pixels per block: </b></span><input type="number" value="16" id="scale"><br>
+    </div>
+    <span title="delay before shifting left or right while key is held (ms)"><b>auto repeat time: </b></span><input type="number" value="100" id="das"><br>
+    <span title="time between each shift (ms) 0 = instant "><b>auto repeat rate: </b></span><input type="number" value="20" id="arr"><br>
+    <span title="time before blocks place when on ground (frames)"><b>block stick delay: </b></span><input type="number" value="100" id="slide"><br>
+    <span title="time between drops when down is held (frames)"><b>soft drop speed: </b></span><input type="number" value="5" id="drop"><br>
+    <span title="time in between each auto drop (frames)"><b>auto drop speed: </b></span><input type="number" value="150" id="autodrop"><br>
+
+    <p>current time</p>
+    <p id="timer" style="font-family: Arial, Helvetica, sans-serif;font-size: 12px;">00:00:000</p>
+    <p>Times</p>
+    <p id="times" style="font-family: Arial, Helvetica, sans-serif;font-size: 12px;"></p>
+    <button onclick="toggleControls()" style="position: absolute;left:300px;top:100px;background-color: #313131;color: #666666;border: 2px solid #666666;">show controls</button>
+    <pre id="controls" style="display: none;">
+left arrow  - left
+right arrow - right
+down arrow  - soft drop
+space       - hard drop
+z           - rotate ccw
+x           - rotate cw
+c           - hold piece
+f4          - restart
+    </pre>
+    <canvas id="cvs" onclick="startEverything()"></canvas>
+    <script src="../../input.js"></script>
+    <script>
+        function toggleControls() {
+            var e = document.getElementById("controls");
+            if(e.style.display=="block") {
+                e.style = "display: none;";
+            } else {
+                e.style = "display: block;";
+            }
+        }
+        var started = false;
+        var canvas = document.getElementById("cvs");
+        var ctx = canvas.getContext("2d");
+
+        var scale = 16;
+
+        var fh=20;
+        var fw=10;
+
+        var DAS=100;
+        var DAScount=Infinity;
+
+        var ARR=2;
+        var ARRcount=0;
+
+        var DAScooldown = 25;
+
+        var ARRcoolL=0;
+        var ARRcoolR=0;
+
+        var groundSlideTime=100;
+
+        var dropRate=5;
+        var dropTime=0;
+
+        var linesCleared=0;
+
+        var times = [];
+
+        var game = [];
+        
+        ready = false;
+        //izsotlj
+        var minos=[[0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0],[1,1,0,0,1,1,0,0,0],[0,1,1,1,1,0,0,0,0],[1,1,1,1],[0,2,0,1,1,1,0,0,0],[1,0,0,1,1,1,0,0,0],[0,0,1,1,1,1,0,0,0]];
+        var sizes=[4,3,3,2,3,3,3];
+        var colors = ["#36d1d1","#cc3a2c","#2bcc59","#f2e200","#dd00d2","#405cff","#dd7500"];
+        var ghostColors = ["#42a3a3","#a0433b","#3ba559","#c1b724","#6b1b66","#3348bd","#a56824"];
+        var dropSpeed = 150;
+        var dropCounter = 0;
+
+        var curmino = {
+            x:Math.floor(fw/2)-2,
+            y:0,
+            rot:0,
+            mino:rand(0,6)
+        };
+        var holdmino = {filled:false};
+
+        var groundCount = -1;
+
+        var usedminos = [];
+
+        var preview = [];
+
+        var winMsg = false;
+
+        var preferences = {w:10,h:20,s:16,das:100,arr:20,slide:100,drop:5,auto:100};
+
+        if(localStorage.prefs===undefined) {
+            localStorage.prefs = JSON.stringify(preferences);
+        } else {
+            preferences = JSON.parse(localStorage.prefs);
+            document.getElementById("fw").value = preferences.w;
+            document.getElementById("fh").value = preferences.h;
+            document.getElementById("scale").value = preferences.s;
+            document.getElementById("das").value = preferences.das;
+            document.getElementById("arr").value = preferences.arr;
+            document.getElementById("slide").value = preferences.slide;
+            document.getElementById("drop").value = preferences.drop;
+            document.getElementById("autodrop").value = preferences.auto;
+        }
+
+        function savePrefs() {
+            preferences.w=fw;
+            preferences.h=fh;
+            preferences.s=scale;
+            preferences.das=DAS;
+            preferences.arr=ARR;
+            preferences.slide=groundSlideTime;
+            preferences.drop=dropRate;
+            preferences.auto=dropSpeed;
+            localStorage.prefs = JSON.stringify(preferences);
+        }
+
+        var srs = {
+            norm01:	[[ 0, 0],[-1, 0],[-1, 1],[0,-2],[-1,-2]],
+            norm10:	[[ 0, 0],[ 1, 0],[ 1,-1],[0, 2],[ 1, 2]],
+            norm12:	[[ 0, 0],[ 1, 0],[ 1,-1],[0, 2],[ 1, 2]],
+            norm21:	[[ 0, 0],[-1, 0],[-1, 1],[0,-2],[-1,-2]],
+            norm23:	[[ 0, 0],[ 1, 0],[ 1, 1],[0,-2],[ 1,-2]],
+            norm32:	[[ 0, 0],[-1, 0],[-1,-1],[0, 2],[-1, 2]],
+            norm30:	[[ 0, 0],[-1, 0],[-1,-1],[0, 2],[-1, 2]],
+            norm03:	[[ 0, 0],[ 1, 0],[ 1, 1],[0,-2],[ 1,-2]],
+            line01:	[[0, 0],[-2, 0],[ 1, 0],[-2,-1],[ 1, 2]],
+            line10:	[[0, 0],[ 2, 0],[-1, 0],[ 2, 1],[-1,-2]],
+            line12:	[[0, 0],[-1, 0],[ 2, 0],[-1, 2],[ 2,-1]],
+            line21:	[[0, 0],[ 1, 0],[-2, 0],[ 1,-2],[-2, 1]],
+            line23:	[[0, 0],[ 2, 0],[-1, 0],[ 2, 1],[-1,-2]],
+            line32:	[[0, 0],[-2, 0],[ 1, 0],[-2,-1],[ 1, 2]],
+            line30:	[[0, 0],[ 1, 0],[-2, 0],[ 1,-2],[-2, 1]],
+            line03:	[[0, 0],[-1, 0],[ 2, 0],[-1, 2],[ 2,-1]]
+        }
+        time = Date.now();
+        function start() {
+            winMsg=false;
+            dropCounter = 0;
+            curmino = {
+                x:Math.floor(fw/2)-2,
+                y:0,
+                rot:0,
+                mino:rand(0,6)
+            };
+            holdmino = {filled:false};
+            groundCount = -1;
+            usedminos = [];
+            preview = [];
+            resetGame();
+            time = Date.now();
+            newMino(true);
+        }
+
+        updateScale(scale);
+        addListenersTo(canvas);
+
+        ctx.fillStyle = "white";
+        ctx.font = `24px PixelArial11`;
+        ctx.fillText("click to start",100,150);
+
+        var gameloop;
+
+        function startEverything() {
+            if(!started) {
+                fw = parseInt(document.getElementById("fw").value);
+                fh = parseInt(document.getElementById("fh").value);
+                if(fw<3) {fw=3;}
+                if(fh<3) {fh=3;}
+                scale = parseInt(document.getElementById("scale").value);
+                if(scale<0.5) {scale=0.5;}
+                DAS = parseInt(document.getElementById("das").value);
+                if(DAS<0) {DAS=0;}
+                ARR = parseInt(document.getElementById("arr").value);
+                if(ARR<0) {ARR=0;}
+                groundSlideTime = parseInt(document.getElementById("slide").value);
+                dropRate = parseInt(document.getElementById("drop").value);
+                if(dropRate<0) {dropRate=0;}
+                dropSpeed = parseInt(document.getElementById("autodrop").value);
+                if(dropSpeed<0) {dropSpeed=0;}
+                for(var y=0;y<fh+2;y++) {
+                    game.push([]);
+                    for(var x=0;x<fw;x++) {
+                        game[y].push(0);
+                    }   
+                }
+                start();
+                updateScale(scale);
+                gameloop = setInterval(update,5);
+                requestAnimationFrame(show);
+                document.getElementById("cvs").focus();
+                started = true;
+                document.body.removeChild(document.getElementById("setup"));
+                savePrefs();
+            }
+        }
+
+        function update() {
+            DAS = parseInt(document.getElementById("das").value);
+            if(DAS<0) {DAS=0;}
+            ARR = parseInt(document.getElementById("arr").value);
+            if(ARR<0) {ARR=0;}
+            groundSlideTime = parseInt(document.getElementById("slide").value);
+            dropRate = parseInt(document.getElementById("drop").value);
+            if(dropRate<0) {dropRate=0;}
+            dropSpeed = parseInt(document.getElementById("autodrop").value);
+            if(dropSpeed<0) {dropSpeed=0;}
+            dropTime--;
+            ARRcoolL-=ARRcoolL>0?1:0;
+            ARRcoolR-=ARRcoolR>0?1:0;
+            dropCounter++;
+            if(dropCounter>=dropSpeed) {drop();dropCounter=0;}
+            if(keyPress[67]) {
+                hold();
+            }
+            if(keyPress[37]) {
+                if(doesMinoFit(curmino.mino,curmino.x-1,curmino.y,curmino.rot)) {
+                    curmino.x--;
+                    resetGroundCount();
+                    ARRcoolR=DAScooldown;
+                }
+                DAScount=Date.now();
+            }
+            if(keyDown[37]) {
+                if(Date.now()-DAScount>=DAS&&ARRcoolL==0) {
+                    if(ARR==0) {
+                        while(doesMinoFit(curmino.mino,curmino.x-1,curmino.y,curmino.rot)) {
+                            curmino.x--;
+                            resetGroundCount();
+                        }
+                    } else {
+                        var hereandnow = Date.now()
+                        if(hereandnow-ARRcount>=ARR) {
+                            if(doesMinoFit(curmino.mino,curmino.x-1,curmino.y,curmino.rot)) {
+                                curmino.x--;
+                                resetGroundCount();
+                            }
+                            ARRcount=hereandnow;
+                        }
+                    }
+                }
+            }
+            if(keyPress[39]) {
+                if(doesMinoFit(curmino.mino,curmino.x+1,curmino.y,curmino.rot)) {
+                    curmino.x++;
+                    resetGroundCount();
+                    ARRcoolL=DAScooldown;
+                }
+                DAScount=Date.now();
+            }
+            if(keyDown[39]) {
+                if(Date.now()-DAScount>=DAS&&ARRcoolR==0) {
+                    if(ARR==0) {
+                        while(doesMinoFit(curmino.mino,curmino.x+1,curmino.y,curmino.rot)) {
+                            curmino.x++;
+                            resetGroundCount();
+                        }
+                    } else {
+                        var hereandnow = Date.now()
+                        if(hereandnow-ARRcount>=ARR) {
+                            if(doesMinoFit(curmino.mino,curmino.x+1,curmino.y,curmino.rot)) {
+                                curmino.x++;
+                                resetGroundCount();
+                            }
+                            ARRcount=hereandnow;
+                        }
+                    }
+                }
+            }
+            if(keyDown[40]) {
+                if(dropTime<=0) {
+                    if(doesMinoFit(curmino.mino,curmino.x,curmino.y+1,curmino.rot)) {
+                        curmino.y++;
+                    }
+                    dropTime = dropRate;
+                }
+            }
+            if(keyPress[90]) {
+                var tempRot = curmino.rot-1<0?3:curmino.rot-1;
+                rotateMino(tempRot);
+                /*if(doesMinoFit(curmino.mino,curmino.x,curmino.y,tempRot)) {
+                    curmino.rot=tempRot;
+                    resetGroundCount();
+                }*/
+            }
+            if(keyPress[88]) {
+                var tempRot = (curmino.rot+1)%4;
+                rotateMino(tempRot);
+                /*if(doesMinoFit(curmino.mino,curmino.x,curmino.y,tempRot)) {
+                    curmino.rot=tempRot;
+                    resetGroundCount();
+                }*/
+            }
+            if(keyPress[32]) {while(drop()){}setPiece();}
+
+            
+            if(!doesMinoFit(curmino.mino,curmino.x,curmino.y+1,curmino.rot)) {
+                if(groundCount==-1) {
+                    groundCount = groundSlideTime;
+                }
+                if(groundCount>0) {
+                    groundCount--;
+                } else {
+                    setPiece();
+                    groundCount=-1;
+                }
+            } else {
+                groundCount=-1;
+            }
+            if(keyPress[115]) {ready=true;setTimeout(function(){ready=false;start();},1000)};
+            resetInput();
+        }
+        function show() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            draw();
+            requestAnimationFrame(show);
+        }
+        function hold() {
+            if(!holdmino.filled) {
+                holdmino.x = Math.floor(fw/2)-2+(curmino.mino==3?1:0);
+                holdmino.y = 0;
+                holdmino.rot = 0;
+                holdmino.mino = curmino.mino;
+                holdmino.filled=true;
+                newMino();
+            } else {
+                var tempObject = {};
+                tempObject.x = holdmino.x;
+                tempObject.y = holdmino.y;
+                tempObject.rot = holdmino.rot;
+                tempObject.mino = holdmino.mino;
+                holdmino.x = Math.floor(fw/2)-2+(curmino.mino==3?1:0);
+                holdmino.y = 0;
+                holdmino.rot = 0;
+                holdmino.mino = curmino.mino;
+                curmino.x = tempObject.x;
+                curmino.y = tempObject.y;
+                curmino.rot = tempObject.rot;
+                curmino.mino = tempObject.mino;
+            }
+        }
+        function rotateMino(newRotation) {
+            var idk;
+            if(curmino.mino==0) {
+                idk = srs[`line${curmino.rot}${newRotation}`] //line uses normal kick table cus line kick table broke
+            } else {
+                idk = srs[`norm${curmino.rot}${newRotation}`]
+            }
+            for(let i=0;i<5;i++) {
+                let cursrs = idk[i];
+                //console.log(cursrs[0]+""+cursrs[1])
+                if(doesMinoFit(curmino.mino,curmino.x+cursrs[0],curmino.y-cursrs[1],newRotation)) {
+                    curmino.rot=newRotation;
+                    curmino.x+=cursrs[0];
+                    curmino.y-=cursrs[1];
+                    resetGroundCount();
+                    i=5;
+                }
+            }
+        }
+        function drop() {
+            if(doesMinoFit(curmino.mino,curmino.x,curmino.y+1,curmino.rot)) {
+                curmino.y++;
+                return true;
+            } else {
+                //setPiece();
+                return false;
+            }
+        }
+        function resetGroundCount() {
+            if(groundCount!=-1) {groundCount=groundSlideTime;}
+        }
+        function doesMinoFit(mino,newX,newY,newRot) {
+            for(var y=0;y<sizes[curmino.mino];y++) {
+                for(var x=0;x<sizes[curmino.mino];x++) {
+                    if(minos[curmino.mino][Rotate(x,y,newRot,sizes[curmino.mino])]) {
+                        //console.log([x,y]);
+                        if(newX+x<0||newX+x>=fw) {
+                            return false;
+                        }
+                        if(newY+y>fh+1) {
+                            return false;
+                        }
+                        if(game[newY+y][newX+x]) {
+                            return false;
+                        }
+                    }
+                }
+            }   
+            return true;
+        }
+        function setPiece() {
+            for(var y=0;y<sizes[curmino.mino];y++) {
+                for(var x=0;x<sizes[curmino.mino];x++) {
+                    if(minos[curmino.mino][Rotate(x,y,curmino.rot,sizes[curmino.mino])]) {
+                        game[curmino.y+y][curmino.x+x] = curmino.mino+1;
+                    }
+                }
+            }
+            clearLines();
+            for(let i=0;i<fw;i++) {
+                if(game[1][i]!=0) {resetGame();ready=true;setTimeout(function(){ready=false;start();},1000);i=fw;}
+            }
+            newMino();
+            if(linesCleared>=40) {
+                linesCleared=0;
+                times.push((Date.now()-time)/1000);
+                updateTimes();
+                clearInterval(gameloop);
+                winMsg=true;
+                setTimeout(function(){start();gameloop=setInterval(update,5);},1000);}
+        }
+        function updateTimes() {
+            let temp="";
+            for(let i=0;i<times.length;i++) {
+                temp+=times[i]+"<br>";
+            }
+            document.getElementById("times").innerHTML=temp;
+        }
+        function resetGame() {
+            game = [];
+            for(var y=0;y<fh+2;y++) {
+                game.push([]);
+                for(var x=0;x<fw;x++) {
+                    game[y].push(0);
+                }   
+            }
+            linesCleared=0;
+        }
+        function newMino(isnew) {
+            if(isnew) {
+                var temprand = rand(0,6);
+
+                curmino = {
+                    x:Math.floor(fw/2)-2+(temprand==3?1:0),
+                    y:0,
+                    rot:0,
+                    mino:temprand
+                };
+                if(temprand==0) {
+                    curmino.rot = 2;
+                }
+                usedminos.push(temprand);
+            } else {
+                curmino = {
+                    x:Math.floor(fw/2)-2+(temprand==3?1:0),
+                    y:0,
+                    rot:0,
+                    mino:preview[0]
+                };
+                if(preview[0]==3) {
+                    curmino.x++;
+                } 
+                if(preview[0]==0) {
+                    curmino.rot = 2;
+                }
+                preview.splice(0,1);
+            }
+            while(preview.length<5) {
+                if(usedminos.length==7) {for(let i=0;i<7;i++) {usedminos.splice(0,1);}}
+                var temprand = rand(0,6);
+                while(usedminos.includes(temprand)) {
+                    temprand = rand(0,6);
+                }
+                usedminos.push(temprand);
+                preview.push(temprand);
+            }
+        }
+        function clearLines() {
+            for(let y=0;y<fh+2;y++) {
+                var minos = 0;
+                for(let x=0;x<fw;x++) {
+                    if(game[y][x]!=0) {minos++;}
+                }
+                if(minos==fw) {
+                    game.splice(y,1);
+                    var newLine = [];
+                    for(let i=0;i<fw;i++) {
+                        newLine.push(0);
+                    }
+                    game.unshift(newLine);
+                    linesCleared++;
+                }
+            }
+        }
+        function draw() {
+            if(ready) {
+                rect(0,0,canvas.width,canvas.height,"#111111");
+            } else {
+                let curT = `${Date.now() - time}`;
+                document.getElementById("timer").innerHTML = `${`${curT.length>4?curT[curT.length-5]:0}${curT.length>3?curT[curT.length-4]:0}`}:${`${curT[curT.length-3]}${curT[curT.length-2]}${curT[curT.length-1]}`}`
+                for(var y=0;y<fh+2;y++) {
+                    for(var x=0;x<fw;x++) {
+                        if(game[y][x]!=0) {rect((5+x)*scale,(y-2)*scale,scale,scale,colors[game[y][x]-1]);}
+                    }
+                }
+            
+                var tempmino = {
+                    x:curmino.x,
+                    y:curmino.y,
+                    rot:curmino.rot,
+                    mino:curmino.mino
+                };
+                var atlowestpos = false;
+                while(!atlowestpos) {
+                    if(doesMinoFit(tempmino.mino,tempmino.x,tempmino.y+1,tempmino.rot)) {
+                        tempmino.y++;
+                    } else {
+                        atlowestpos=true;
+                    }
+                }
+                for(var y=0;y<sizes[curmino.mino];y++) {
+                    for(var x=0;x<sizes[curmino.mino];x++) {
+                        if(minos[tempmino.mino][Rotate(x,y,tempmino.rot,sizes[curmino.mino])]) {rect((5+x+tempmino.x)*scale,(y+tempmino.y-2)*scale,scale,scale,ghostColors[tempmino.mino]);}
+                    }
+                } 
+                for(var y=0;y<sizes[curmino.mino];y++) {
+                    for(var x=0;x<sizes[curmino.mino];x++) {
+                        if(minos[curmino.mino][Rotate(x,y,curmino.rot,sizes[curmino.mino])]) {rect((5+x+curmino.x)*scale,(y+curmino.y-2)*scale,scale,scale,colors[curmino.mino]);}
+                    }
+                }
+                for(var y=0;y<sizes[holdmino.mino];y++) {
+                    for(var x=0;x<sizes[holdmino.mino];x++) {
+                        if(minos[holdmino.mino][Rotate(x,y,holdmino.rot,sizes[holdmino.mino])]) {rect((x)*scale,(y)*scale,scale,scale,colors[holdmino.mino]);}
+                    }
+                }
+                for(let i=0;i<preview.length;i++) {
+                    for(var y=0;y<sizes[preview[i]];y++) {
+                        for(var x=0;x<sizes[preview[i]];x++) {
+                            if(minos[preview[i]][Rotate(x,y,0,sizes[preview[i]])]) {rect((x+(fw+6))*scale,(y+i*4)*scale,scale,scale,colors[preview[i]]);}
+                        }
+                    }
+                }
+                rect(4*scale,0,scale,fh*scale,"grey");
+                rect((fw+5)*scale,0,scale,fh*scale,"grey");
+                rect(4*scale,fh*scale,(fw+2)*scale,scale,"grey");
+                ctx.fillStyle = "#bbbbbb";
+                ctx.font = `${scale}px PixelArial11`;
+                ctx.fillText(40-linesCleared+"",scale/2,scale*6);
+                if(winMsg==true) {
+                    ctx.fillStyle = "#444444";
+                    ctx.fillRect(0,0,scale*5,scale*3);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = `${scale}px PixelArial11`;
+                    ctx.fillText("40 cleared!",0,scale);
+                }
+            }
+        }
+        function rect(x,y,w,h,color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x,y,w,h);
+        }
+        function Rotate(px,py,r,size)
+        {
+            var pi = 0;
+            switch(size) {
+                case 4:
+                    switch (r % 4)
+                    {
+                    case 0: // 0 degrees			// 0  1  2  3
+                        pi = py * 4 + px;			// 4  5  6  7
+                        break;						// 8  9 10 11
+                                                    //12 13 14 15
+
+                    case 1: // 90 degrees			//12  8  4  0
+                        pi = 12 + py - (px * 4);	//13  9  5  1
+                        break;						//14 10  6  2
+                                                    //15 11  7  3
+
+                    case 2: // 180 degrees			//15 14 13 12
+                        pi = 15 - (py * 4) - px;	//11 10  9  8
+                        break;						// 7  6  5  4
+                                                    // 3  2  1  0
+
+                    case 3: // 270 degrees			// 3  7 11 15
+                        pi = 3 - py + (px * 4);		// 2  6 10 14
+                        break;						// 1  5  9 13
+                    }								// 0  4  8 12
+                    break;
+                case 3:
+                    switch (r % 4)
+                    {
+                    case 0: // 0 degrees			
+                        pi = py * 3 + px;			
+                        break;						
+                    case 1: // 90 degrees			
+                        pi = 6 + py - (px * 3);	
+                        break;						
+                    case 2: // 180 degrees			
+                        pi = 8 - (py * 3) - px;	
+                        break;						
+                    case 3: // 270 degrees			
+                        pi = 2 - py + (px * 3);		
+                        break;						
+                    }								
+                    break;
+                case 2:
+                    pi = py * 2 + px;
+                    break;
+            }
+            return pi;
+        }
+        function resize(gamewidth,gameheight) {
+            fw=gamewidth;
+            fh=gameheight;
+            game = [];
+            for(var y=0;y<fh+2;y++) {
+                game.push([]);
+                for(var x=0;x<fw;x++) {
+                    game[y].push(0);
+                }   
+            }
+            curmino = {
+                x:Math.floor(fw/2)-2,
+                y:0,
+                rot:0,
+                mino:rand(0,6)
+            };
+            updateScale(scale);
+        }
+        function updateScale(scl) {
+            canvas.width=fw*scl+(10*scale);
+            if(fh<19) {
+                canvas.height=19*scl;
+            } else {
+                canvas.height=fh*scl;
+            }
+        }
+        function rand(min,max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
+    </script>
+</body>
+</html>

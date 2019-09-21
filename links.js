@@ -3,6 +3,7 @@ var links = [
     {title:"Ouro-fill-us",desc:"Puzzle game with the objective of eating your own snake tail. Made in 50hrs for Jim Jam #2.",thumb:"thumbnails/ouro.PNG",link:"seperategames/ouro/index.html"},
     {title:"Slime Defender Clicker",desc:"Clicker/idle game where you allot currency to upgrade your slime shootin' turret.",thumb:"thumbnails/slime.PNG",link:"seperategames/slimeDefenderClicker/index.html"},
     {title:"Car Demo",desc:"really crappy car demo. WASD to move.",thumb:"thumbnails/car.PNG",link:"games/racing/index.html"},
+    {title:"tinytris",desc:"Simple, fast generic block puzzle game, with a few options.",thumb:"thumbnails/tetris.PNG",link:"games/tetris/tinytris.html"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
     {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"},
     {title:"archive",desc:"Links to all my old stuff that sucks too much to be on this page.",thumb:"thumbnails/archive.PNG",link:"archive.html"}
