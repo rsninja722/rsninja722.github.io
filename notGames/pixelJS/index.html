@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ninja edit</title>
+        <link rel="icon" type="image/gif" href="tabthing.png"/>
+        <meta charset="utf-8"/>
+        <style>
+            html {font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;background-color: #1e1e1e;color: #4de1f5;}
+            .lightBack {background-color: #353535;}
+            canvas {position: absolute;image-rendering: pixelated;image-rendering: -moz-crisp-edges;z-index:-420;}
+            input {background-color: #353535;border: 2px solid #555555;border-radius: 2px;color: #4de1f5;}
+            button {background-color: #353535;border-color: #555555;color: #4de1f5; margin: 5px;border-style: outset;cursor: pointer;}
+            button:hover {background-color: #555555;}
+            button:active {border-style: inset;}
+            a {color:#ffb730;}
+            a:visited {color:#ffb730;}
+            .colorInput {font-size: 12px;width:40px;height:16px;padding: 0;}
+            table, th, td {border: 1px solid #555555;border-collapse: collapse;}
+            th, td {padding: 2px;}
+            .l{color:#ffffff;}
+            .r{color:#4de1f5;}
+            ::-webkit-scrollbar {width: 10px;}
+            ::-webkit-scrollbar-track {background: #1e1e1e; }
+            ::-webkit-scrollbar-thumb {background: #444444; }
+            ::-webkit-scrollbar-thumb:hover {background: #666666; }
+            .rngHide {position:relative;top:-3px;width:50px;display: none;}
+            .rngShow {position:relative;top:-3px;width:50px;}
+            .groupHide {position:relative;top:-3px;width:30px;display: none;}
+            .groupShow {position:relative;top:-3px;width:30px;}
+            #main {
+                border: 1px solid #777777;
+            }
+            #preveiw {
+                position: absolute;
+                left:450px;
+                top:175px;
+            }
+            #tbl {
+                position: absolute;
+                left: 430px;
+                top: 175px
+            }
+            .number {
+                width:75px;
+                padding-left: 5px;
+            }
+        </style>
+    </head>
+    <body style="margin: 0 0 0 0;">
+        
+        <!--bottom rect-->
+        <canvas id="bottom" style="z-index: -1000000;display:none;"></canvas>
+        
+    	<!--layers container-->
+        <div id="layers"></div>
+
+        <!--undo container-->
+        <div id="undo"></div>
+
+        <!--download render-->
+        <canvas id="download" style="position: absolute;left:0;top:0;display: none;"></canvas>
+        
+        <canvas id="game" style="position: absolute;left:250px;top:30px;border: 1px solid #555555;"></canvas>
+
+    	<!--base canvas-->
+        <canvas id="base"></canvas>
+        
+        <!--color selector-->
+        <div id="colorDiv" style="z-index: -419;position:absolute;top:220px;left:0px;">
+            <canvas id="color" width="130" height="190" style="position: absolute;"></canvas>
+        </div>
+        
+        <!--canvas that takes all input-->
+        <canvas id="inputEater" style="z-index: -69;"></canvas>
+
+        <!--color selector-->
+        <div style="position:absolute;top:220px;left:0px;">
+            <div style="position:absolute;left:25px;top:110px;width:60px;"><span style="color: #3162cc">h</span><input type="number" value="0" id="h" class="colorInput"></div>
+            <div style="position:absolute;left:25px;top:128px;width:60px;"><span style="color: #3162cc">s</span><input type="number" value="100" id="s" class="colorInput"></div>
+            <div style="position:absolute;left:25px;top:146px;width:60px;"><span style="color: #3162cc">v</span><input type="number" value="100" id="v" class="colorInput"></div>
+            <div style="position:absolute;left:25px;top:164px;width:60px;"><span style="color: #3162cc">a</span><input type="number" value="100" id="a" class="colorInput"></div>
+            <input value="#ff0000" type="text" style="font-size: 10px;width:40px;padding: 0;height:16px;position: absolute;top:150px;left:83px;" id="hex">
+            <div style="position:absolute;left:0px;top:190px;width:60px;"><span style="color: #3162cc;font-size: 10px;">back color</span><br><input value="#353535" type="text" style="font-size: 10px;width:40px;padding: 0;height:16px;color: #3162cc;" id="backColor"></div>
+        </div>
+
+        <!--number inputs-->
+        <div id="numberInputs"></div>
+
+        <input style="position: absolute;left:135px;top:5px;width:100px;" type="text" value="picture name" id="name" onkeydown="checkEnter(this)" onClick="selectAll(this)">
+
+        <!--upload image-->
+        <div id="upload" class="lightBack">
+            <input type="file" accept="image/*" id="fileUpload">
+            <button onclick="uploadUpload()">upload</button>
+            <button onclick="uploadCancel()">cancel</button>
+            <img id="uploadCache" src="#" style="display: none;">
+        </div>
+
+        <!--new image-->
+        <div id="new" class="lightBack">
+            <span>w:</span><input type="number" value="16" id="newW" style="width: 100px;">
+            <span>h:</span><input type="number" value="16" id="newH" style="width: 100px;"><br>
+            <button onclick="newImgCreate()">create</button>
+            <button onclick="newImgCancel()">cancel</button>
+        </div>
+
+        <!--import save-->
+        <div id="import" class="lightBack">
+            <input type="file" accept="application/json" id="fileImport">
+            <button onclick="importCancel()">cancel</button>
+        </div>
+
+        <!--export save-->
+        <div id="export" class="lightBack">
+            <a id="exportA" download="ninjaeditSave"></a>
+            <button onclick="exportCancel()">cancel</button>
+        </div>
+
+        <!--help-->
+        <div id="help" class="lightBack">
+            <h4 style="display: inline-block;">key bindings</h4> 
+            <button style="position: sticky;left:300px;top:0;" onclick="helpCancel()">close</button>
+            <pre style="color: #ffb730;">
+general<table>
+    <tr><td class="l">1</td><td class="r">lmb</td></tr>
+    <tr><td class="l">2</td><td class="r">rmb</td></tr>
+    <tr><td class="l">shift, rmb</td><td class="r">select color</td></tr>
+    <tr><td class="l">z</td><td class="r">undo</td></tr>
+    <tr><td class="l">y</td><td class="r">redo</td></tr>
+    <tr><td class="l">esc</td><td class="r">escape</td></tr>
+    <tr><td class="l">space s</td><td class="r">save</td></tr>
+    <tr><td class="l">space l</td><td class="r">focus on file name</td></tr>
+    <tr><td class="l">space d</td><td class="r">download</td></tr>
+</table>
+navigation<table>
+    <tr><td class="l">wasd, arrowkeys</td><td class="r">move canvas</td></tr>
+    <tr><td class="l">+ -</td><td class="r">zoom</td></tr>
+</table>
+palette<table>
+    <tr><td class="l">ijkl, Home del end pg dn, lmb</td><td class="r">move head</td></tr>
+    <tr><td class="l">o, pg up, rmb</td><td class="r">read</td></tr>
+    <tr><td class="l">u, insert, dbl lmb</td><td class="r">write</td></tr>
+</table>
+tools
+    eraser<table>
+        <tr><td class="l">x, mmb</td><td class="r">toggle</td></tr>
+    </table>
+    pen<table>
+        <tr><td class="l">c</td><td class="r">switch</td></tr>
+        <tr><td class="l">&lt;, &gt;</td><td class="r">resize</td></tr>
+        <tr><td class="l">lmb</td><td class="r">draw</td></tr>
+        <tr><td class="l">space lmb</td><td class="r">draw line</td></tr>
+    </table>
+    pixel perfect pen<table>
+        <tr><td class="l">v</td><td class="r">switch</td></tr>
+    </table>
+    rectangle<table>
+        <tr><td class="l">b</td><td class="r">toggle</td></tr>
+        <tr><td class="l">&lt;, &gt;, scroll</td><td class="r">resize height</td></tr>
+        <tr><td class="l">space  &lt;, &gt;, scroll</td><td class="r">resize width</td></tr>
+        <tr><td class="l">lmb</td><td class="r">draw</td></tr>
+    </table>
+    circle<table>
+        <tr><td class="l"> </td><td class="r">toggle</td></tr>
+        <tr><td class="l">&lt;, &gt;, scroll</td><td class="r">resize</td></tr>
+        <tr><td class="l">lmb</td><td class="r">draw</td></tr>
+    </table>
+    bucket<table>
+        <tr><td class="l"> </td><td class="r">toggle</td></tr>
+        <tr><td class="l">&lt;</td><td class="r">sides</td></tr>
+        <tr><td class="l">&gt;</td><td class="r">sides + corners</td></tr>
+        <tr><td class="l">&sol;</td><td class="r">all</td></tr>
+    </table>
+            </pre>
+        </div>
+
+        <!--    art gen    -->
+        <div id="artGen" class="lightBack">
+            <canvas id="artMain" width="200" height="150" style="position: relative;z-index: 420;"></canvas><canvas id="preveiw" style="background-color: black;position: absolute;left: 230px; top: 50px;z-index: 420;"></canvas>
+            <div id="colors">
+                <button id="delete" onclick="deleteColor()">- color</button><button id="add" onclick="addColor()" style="margin-right: 10px">+ color</button>
+                <button id="gen" onclick="gen()" style="margin-right: 10px">GEN</button>
+                w:<input type="number" class="number" id="imgw" value="10">h:<input type="number" class="number"id="imgh" value="10">
+                <br><br><br>
+                <div id="c1">
+                    <input type="color" id="s1"> <input type="number" class="rngHide" id="r1" value="1"> <input type="number" class="groupHide" id="g1" value="0">
+                </div>
+            </div>
+
+            <div id="genType" style="position: absolute;left:150px;top:225px;">
+                gen type:<select id="genSelect">
+                    <option>random</option>
+                    <option>random + probability</option>
+                    <option>groups</option>
+                </select>
+            </div>
+
+            <div id="preSize" style="position: absolute;left:230px;top:15px;">
+                <button id="-" onclick="minus()" style="padding-left:8px;padding-right:8px;">-</button>    
+                <input type="number" style="width:30px;" value="1" id="psize">
+                <button id="+" onclick="plus()">+</button>
+            </div>
+            <button style="position: absolute;left:375px;top:15px;" onclick="importPicture()">Import</button>
+            <button style="position: absolute;left:425px;top:15px;" onclick="artCancel()">Cancel</button>
+
+            <div id="groups" style="position:absolute; left:150px; top:300px;">
+            </div>
+        </div>
+        
+
+
+        <!--scripts-->
+        <script src="scripts/boring/game.js"></script>
+        <script src="scripts/boring/input.js"></script>
+        <script src="scripts/boring/gamejsmini.js"></script>
+        <script src="scripts/boring/artgen.js"></script>
+        <script src="scripts/variables.js"></script>
+        <script src="scripts/color.js"></script>
+        <script src="scripts/palette.js"></script>
+        <script src="scripts/tools.js"></script>
+        <script src="scripts/buttons.js"></script>
+        <script src="scripts/numberInput.js"></script>
+        <script src="scripts/importExport.js"></script>
+        <script src="scripts/ui.js"></script>
+        <script src="scripts/layers.js"></script>
+        <script src="scripts/undo.js"></script>
+        <script src="scripts/draw.js"></script>
+        <script src="scripts/main.js"></script>
+    </body>
+</html>

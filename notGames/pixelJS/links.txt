@@ -1,0 +1,4 @@
+https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+https://rickyhan.com/jekyll/update/2018/11/22/pixel-art-algorithm-pixel-perfect.html
+https://stackoverflow.com/questions/1201200/fast-algorithm-for-drawing-filled-circles
+https://stackoverflow.com/questions/10878209/midpoint-circle-algorithm-for-filled-circles?noredirect=1&lq=1
