@@ -47,6 +47,11 @@ function repositionDown(index) {
 function removeLayer(position) {
     document.getElementById("layers").removeChild(layers[position].cvs);
     layers.splice(position,1);
+    toolData.selection.mode = "off";
+    switchTool("pen");
+    if(curLayer >= layers.length) {
+    	curLayer = layers.length-1;
+    }
 }
 
 // delete old layer and put new one in place
@@ -140,7 +145,7 @@ function drawLayerUI() {
     var limit = (layers.length-3)*45;
     limit = limit < 0 ? 0 : limit;
 
-    var ypos = 100 * (-layerScroll / limit); 
+    var ypos = 100 * (-layerScroll / limit);
 
     rect2(232,70+ypos,10,30,(layerScrollHover?"#666666":"#444444"));
 }
@@ -172,18 +177,18 @@ function handleLayerUI() {
             if(rectpoint2({x:180,y:yoff+20,w:30,h:20},mousePos)) {
                 layerButtonsHover = {index:i,button:"down",hovering:true};
                 if(mousePress[0]) {repositionDown(i);clickSound.play();}
-            } else 
+            } else
             // show hide
             if(rectpoint2({x:210,y:yoff,w:20,h:40},mousePos)) {
                 layerButtonsHover = {index:i,button:"visibility",hovering:true};
                 if(mousePress[0]) {layers[i].show = !layers[i].show;clickSound.play();}
-            } else 
+            } else
             // rename
             if(rectpoint2({x:50,y:yoff+10,w:120,h:20},mousePos)&&mousePress[0]&&doubleClick) {
                 typingString = "";
                 typingMode = true;
                 layerNameTarget = i;
-            } else 
+            } else
             // select
             if(mousePress[0]) {
                 if(rectpoint2({x:10,y:yoff,w:220,h:40},mousePos)) {

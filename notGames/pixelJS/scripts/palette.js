@@ -11,12 +11,13 @@ class paletteNode {
 
 paletteNode.prototype.draw = function(x,y) {
     if(paletteSelection[0] === x && paletteSelection[1] === y) {
-        rect2(this.x,this.y,this.w,this.h,"#ffffff");
-    } else {
         rect2(this.x,this.y,this.w,this.h,"#555555");
+    } else {
+        rect2(this.x,this.y,this.w,this.h,"#101010");
+        rect2(this.x+1,this.y+this.h-1,this.w-2,1,"#222222");
     }
     
-    rect2(this.x+1,this.y+1,this.w-2,this.h-2,"#1e1e1e");
+    rect2(this.x+1,this.y+1,this.w-2,this.h-2,"#181818");
     
     baseCtx.globalAlpha = this.c.a/100;
     rect2(this.x+1,this.y+1,this.w-2,this.h-2,`rgb(${this.c.r}, ${this.c.g}, ${this.c.b})`);
@@ -24,10 +25,14 @@ paletteNode.prototype.draw = function(x,y) {
 }
 
 paletteNode.prototype.update = function(x,y) {
-    if(mousePress[0] && rectpoint2(this,mousePos)) {
+    var hovering = rectpoint2(this,mousePos);
+    if(hovering) {
+        cursor = "cell";
+    }
+    if(mousePress[0] && hovering) {
         paletteSelection = [x,y];
     }
-    if(mousePress[2] && rectpoint2(this,mousePos)) {
+    if(mousePress[2] && hovering) {
         this.getColor();
     }
     if(paletteSelection[0] === x && paletteSelection[1] === y) {

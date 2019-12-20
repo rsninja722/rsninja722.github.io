@@ -218,6 +218,7 @@ f4          - restart
 
         function startEverything() {
             if(!started) {
+                loadSounds();
                 fw = parseInt(document.getElementById("fw").value);
                 fh = parseInt(document.getElementById("fh").value);
                 if(fw<3) {fw=3;}
@@ -346,7 +347,11 @@ f4          - restart
                     resetGroundCount();
                 }*/
             }
-            if(keyPress[32]) {while(drop()){}setPiece();}
+            if(keyPress[32]) {
+                while(drop()){}
+                setPiece();
+                play(sounds.harddrop);
+            }
 
             
             if(!doesMinoFit(curmino.mino,curmino.x,curmino.y+1,curmino.rot)) {
@@ -683,5 +688,6 @@ f4          - restart
         }
         function rand(min,max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
     </script>
+    <script src="sound.js"></script>
 </body>
 </html>

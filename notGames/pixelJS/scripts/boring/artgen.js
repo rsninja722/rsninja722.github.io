@@ -1,4 +1,5 @@
-var artIdCount = 1;
+var artIdCount = 0;
+var selectedColor = 0;
 
 // big screen
 var artGenCanvas = document.getElementById("artMain");
@@ -12,8 +13,8 @@ precvs.height = 10;
 
 // colors and scales of image
 var preSize=1;
-var colors = ["#000000"];
-var lastColors  = ["#000000"];
+var colors = [];
+var lastColors  = [];
 var pic = [];
 var lastSize = {x:10,y:10};
 var cursorTime = 0;
@@ -27,6 +28,12 @@ requestAnimationFrame(updateArtGen);
 
 // main loop
 function updateArtGen() {
+    // update color selectors
+    if(document.getElementById(`s${selectedColor}`) != undefined) {
+        document.getElementById(`s${selectedColor}`).style.backgroundColor = color.hex;
+    }
+
+
     // type handling
     if(document.getElementById("genSelect").value=="random + probability") {
         for(var i=0;i<colors.length;i++) {
@@ -88,7 +95,7 @@ function updateArtGen() {
     // re draw when color changes
     var draw = false;
     for(var i=0;i<colors.length;i++) {
-        colors[i] = document.getElementById(`s${i+1}`).value;
+        colors[i] = document.getElementById(`s${i+1}`).style.backgroundColor;
         if(colors[i]!=lastColors[i]) {
             draw=true;
             lastColors[i]=colors[i];
@@ -284,12 +291,19 @@ function deleteGroup(gid) {
 function addColor() {
     var newDiv = document.createElement("div");
     newDiv.id = `c${++artIdCount}`;
-    newDiv.innerHTML=`<input type="color" id="s${artIdCount}"> <input type="number" class="rngHide" id="r${artIdCount}" value="1"> <input type="number" class="groupHide" id="g${artIdCount}" value="0">`;
+    newDiv.innerHTML=`<div class="color" id="s${artIdCount}"> </div> <input type="number" class="rngHide" id="r${artIdCount}" value="1"> <input type="number" class="groupHide" id="g${artIdCount}" value="0">`;
     document.getElementById("colors").appendChild(newDiv);
-    var colorToAdd = colors[colors.length-1];
+    var colorToAdd = colors.length === 0 ? "#000000" : colors[colors.length-1];
     colors.push(colorToAdd);
     lastColors.push(colorToAdd);
-    document.getElementById(`s${artIdCount}`).value = colors[colors.length-1];
+    document.getElementById(`s${artIdCount}`).style.backgroundColor = colorToAdd;
+    document.getElementById(`s${artIdCount}`).onclick = function() {
+        for(var i=0;i<colors.length;i++) {
+            document.getElementById(`s${i+1}`).style.borderColor = "";
+        }
+        this.style.borderColor = "#39b7bd";
+        selectedColor = this.id[1];
+    }
 }
 
 function deleteColor() {
@@ -306,3 +320,5 @@ function importPicture() {
     layers[curLayer].ctx.drawImage(artGenCanvas,0,0);
     htmlUI.artGen.state = false;
 }
+
+addColor();

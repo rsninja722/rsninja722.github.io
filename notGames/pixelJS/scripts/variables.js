@@ -67,6 +67,10 @@ var UI = {
         border: {
             numbers:[],
             buttons:[]
+        },
+        selection: {
+            numbers:["transformX","transformY","transformAngle","transformSX","transformSY"],
+            buttons:[]
         }
     }
 }
@@ -87,6 +91,8 @@ var scrollBarHeld = true;
 var mouseCords;
 
 var tool = "pen";
+
+var toolCache = "";
 
 var toolData = {
 	pen:{
@@ -111,8 +117,20 @@ var toolData = {
     },
     border:{
         mode:"one layer"
+    },
+    selection:{
+        mode:"off",
+        layer:0,
+        startPos:{x:0,y:0},
+        endPos:{x:0,y:0},
+        transforms:{x:0,y:0,angle:0,scaleX:0,scaleY:0,w:0,h:0},
+        boundingBox:{x:0,y:0,w:0,h:0}
     }
 }
+
+var selectionData;
+var copyData;
+var copyTransform = {x:0,y:0,angle:0,scaleX:0,scaleY:0};
 
 var previewList = [];
 

@@ -4,6 +4,8 @@ function mainDraw() {
     inputCvs.style.cursor = cursor;
     // clear base canvas
     baseCtx.clearRect(0,0,baseCvs.clientWidth,baseCvs.height);
+    
+    drawSelection();
 
     // UI drawing
     drawLayerUI();
@@ -16,14 +18,18 @@ function mainDraw() {
         drawPreview();
     }
 
+    if(cursor==="none") {
+        img2(sprites.rot.spr,mousePos.x,mousePos.y,baseCtx,-toolData.selection.transforms.angle+Math.PI/2);
+    }
+
     // loop
     requestAnimationFrame(mainDraw);
 }
 
 // renders layers onto screen
 function draw() {
-    // background color
-    rect(-camera.x,-camera.y,cw,ch,"#1e1e1e");
+    var blendMode = document.getElementById("blendSelect").value;
+    curCtx.globalCompositeOperation = blendMode;
 
     var xoff=0;
     var yoff=0;
@@ -32,17 +38,13 @@ function draw() {
         yoff = Math.round(layers[0].cvs.height/2);
     }
 
-    // draw background of layers
-    bottomCtx.fillStyle = projectInfo.backColor;
-    bottomCtx.fillRect(0,0,bottomCvs.width,bottomCvs.height);
-    if(layers.length>0) {
-        imgIgnoreCutoff({spr:bottomCvs,drawLimitSize:0},xoff,yoff);
-    }
-
     // draw layers
     for(var i=layers.length-1;i>-1;i--) {
         if(layers[i].show) {
             imgIgnoreCutoff({spr:layers[i].cvs,drawLimitSize:0},xoff,yoff);
+            if(toolData.selection.mode === "selected" && toolData.selection.layer === i) {
+                drawSelectContent(xoff,yoff,"show");
+            }
         }
     }
 
@@ -63,6 +65,8 @@ function draw() {
         }
     }
 
+    curCtx.globalCompositeOperation = "source-over";
+
     //previews
     if(colorSelectRequest === false) {
         curCtx.globalAlpha = 0.5;
@@ -76,6 +80,20 @@ function draw() {
         }
         curCtx.globalAlpha = 1;
     }
+
+    curCtx.globalCompositeOperation = "destination-over";
+
+    // draw background of layers
+    bottomCtx.fillStyle = projectInfo.backColor;
+    bottomCtx.fillRect(0,0,bottomCvs.width,bottomCvs.height);
+    if(layers.length>0) {
+        imgIgnoreCutoff({spr:bottomCvs,drawLimitSize:0},xoff,yoff);
+    }
+    
+    // background color
+    rect(-camera.x,-camera.y,cw,ch,"#1e1e1e");
+
+    curCtx.globalCompositeOperation = "source-over";
 }
 
 function absoluteDraw() {
@@ -96,6 +114,26 @@ function update() {}
 // handle user input
 function canvasUpdate() {
     cursor = "crosshair";
+   
+    curLayer = limitNum(curLayer,0,layers.length-1);
+    mouseCords = getMouse();
+    var inDraw = mousePos.x > 250 && mousePos.y > 30;
+    drawMode = 1;
+    count++;
+    if(message.time>0) {
+        message.time--;
+    }
+    // left and right click with keys
+    
+    if(!typingMode) {
+        if(keyPress[k["1"]]) {mousePress[0] = 1;}
+        if(keyPress[k["2"]]) {mousePress[2] = 1;}
+        if(keyPress[k["3"]]) {mousePress[1] = 1;}
+        if(keyDown[k["1"]]) {mouseDown[0] = 1;}
+        if(keyDown[k["2"]]) {mouseDown[2] = 1;}
+        if(keyDown[k["3"]]) {mouseDown[1] = 1;}
+    }
+    
     if(doubleClickTime>0) {
         doubleClickTime--;
     }
@@ -107,22 +145,7 @@ function canvasUpdate() {
             doubleClick = 1;
         }
     }
-    curLayer = limitNum(curLayer,0,layers.length-1);
-    mouseCords = getMouse();
-    var inDraw = mousePos.x > 250 && mousePos.y > 30;
-    drawMode = 1;
-    count++;
-    if(message.time>0) {
-        message.time--;
-    }
-
-    // left and right click with keys
-    if(!typingMode) {
-        if(keyPress[k["1"]]) {mousePress[0] = 1;}
-        if(keyPress[k["2"]]) {mousePress[2] = 1;}
-        if(keyDown[k["1"]]) {mouseDown[0] = 1;}
-        if(keyDown[k["2"]]) {mouseDown[2] = 1;}
-    }
+    
     manageUI();
 
     if(!typingMode) {
@@ -155,6 +178,21 @@ function canvasUpdate() {
 
             // focus
             if(keyPress[k.l]) {document.getElementById("name").focus();selectAll(document.getElementById("name"));}
+
+            // selection
+            if(layers.length>0) {
+                if(layers[curLayer].show) {
+                    if(keyPress[k.c] && keyDown[k.SPACE]) {copySelection(false);}
+                    if(keyPress[k.x] && keyDown[k.SPACE]) {copySelection(true);}
+                    if(keyPress[k.v] && keyDown[k.SPACE]) {trackUndo(curLayer);pasteSelection();}
+                }
+            }
+
+            // layers
+            if(keyPress[k.EQUALS]) {addLayer(curLayer);}
+            if(keyPress[k.MINUS]) {removeLayer(curLayer);}
+            if(keyPress[k.OPENSQUARE]) {replaceLayerWithNew(curLayer);}
+            if(keyPress[k.ENDSQUARE]) {mergeLayers(curLayer);}
         } else {
             // layers
             var layerScrollAmount = 0;
@@ -175,10 +213,17 @@ function canvasUpdate() {
 
             // pan
             if(count%(Math.round(camera.zoom/2))===0) {
-                if(keyDown[k.LEFT]||keyDown[k.a]) {moveCamera(-1,0);}
-                if(keyDown[k.RIGHT]||keyDown[k.d]) {moveCamera(1,0);}
-                if(keyDown[k.UP]||keyDown[k.w]) {moveCamera(0,-1);}
-                if(keyDown[k.DOWN]||keyDown[k.s]) {moveCamera(0,1);}
+                if(keyDown[k.a]) {moveCamera(-1,0);}
+                if(keyDown[k.d]) {moveCamera(1,0);}
+                if(keyDown[k.w]) {moveCamera(0,-1);}
+                if(keyDown[k.s]) {moveCamera(0,1);}
+
+                if(tool !== "selection") {
+                    if(keyDown[k.LEFT]) {moveCamera(-1,0);}
+                    if(keyDown[k.RIGHT]) {moveCamera(1,0);}
+                    if(keyDown[k.UP]) {moveCamera(0,-1);}
+                    if(keyDown[k.DOWN]) {moveCamera(0,1);}
+                }
             }
 
             //zoom
@@ -208,7 +253,7 @@ function canvasUpdate() {
             }
 
             // eraser
-            if(keyPress[k.x]||mousePress[1]) {
+            if(keyPress[k.x]) {
                 buttons.eraser.click();
             }
 
@@ -216,6 +261,19 @@ function canvasUpdate() {
             if(keyPress[k.c]) {buttons.pen.click();}
             if(keyPress[k.v]) {buttons.pp.click();}
             if(keyPress[k.n]) {buttons.rect.click();}
+
+            // selection
+            if(layers.length>0) {
+                if(layers[curLayer].show) {
+                    if(mousePress[1]) {
+                        toolData.selection.mode = "selecting";
+                        var startXY = {x:mouseCords.x,y:mouseCords.y};
+                        startXY.x = startXY.x < 0 ? 0 : (startXY.x > projectInfo.w ? projectInfo.w : startXY.x);
+                        startXY.y = startXY.y < 0 ? 0 : (startXY.y > projectInfo.h ? projectInfo.h : startXY.y);
+                        toolData.selection.startPos = startXY;
+                    }
+                }
+            }
             
             // palette controls
             var p = paletteSelection;
@@ -272,10 +330,10 @@ function canvasUpdate() {
     }
 
     // undo recording
-    if(tool==="") {
+    if(tool==="selection") {
         
     } else {
-    	if(mousePress[0]&&inDraw) {
+    	if(mousePress[0] && inDraw && layers.length>0) {
             if(layers[curLayer].show) {
                 trackUndo(curLayer);
             } else {
@@ -284,11 +342,17 @@ function canvasUpdate() {
         }
     }
 
-    if(inDraw) {
-        handleTools();
+    if(layers.length>0) {
+        if(inDraw && layers[curLayer].show) {
+            handleSelectingStart();
+            handleTools();
+        }
+        if(layers[curLayer].show && toolData.selection.mode === "selected") {
+            handleSelectingMovement();
+        }
     }
-
     resetInput();
+    // delete mouseDown[1];
 }
 
 
@@ -358,7 +422,13 @@ images = [
     "visOn.png",
     "visOff.png",
     "borderOn.png",
-    "borderOff.png"
+    "borderOff.png",
+    "dropshadow.png",
+    "rot.png",
+    "flipX.png",
+    "flipY.png",
+    "rotCW.png",
+    "rotCCW.png"
 ]
 
 // initialize game.js
@@ -373,4 +443,5 @@ function onAssetsLoaded() {
     switchTool("pen");
     addListenersTo(inputCvs);
     loadPalette();
+    document.getElementById("loadingScreen").style.display = "none";
 }

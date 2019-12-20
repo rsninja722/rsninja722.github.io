@@ -37,6 +37,13 @@ function drawUIBottom() {
         case "bucket":
             text2("tolerance",325,20,"#3162cc",14,baseCtx);
             break;
+        case "selection":
+            text2("x",265,18,"#3162cc",14,baseCtx);
+            text2("y",340,18,"#3162cc",14,baseCtx);
+            text2("θ",415,18,"#3162cc",14,baseCtx);
+            text2("sx",480,18,"#3162cc",14,baseCtx);
+            text2("sy",560,18,"#3162cc",14,baseCtx);
+            break;
     }
 
     var i; // used to cache what we are drawing
@@ -78,8 +85,16 @@ function drawPreview() {
     rect2(px-10,30,pw+10,ph+10,"#262626",baseCtx);
     border2(px-10,30,pw+10,ph+10,"#555555",baseCtx);
     baseCtx.setTransform(projectInfo.previewSize, 0, 0, projectInfo.previewSize, px-5, 35);
-    for(var i=0;i<layers.length;i++) {
-        baseCtx.drawImage(layers[i].cvs,0,0);
+    for(var i=layers.length-1;i>-1;i--) {
+        if(layers[i].show) {
+            baseCtx.drawImage(layers[i].cvs,0,0);
+        }
     }
     baseCtx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+function reverseMousePos(mPos) {
+    var xoff = canvases.cvs.width/2;
+    var yoff = canvases.cvs.height/2;
+    return {x:(((mPos.x-xoff+camera.x)*camera.zoom)+251+xoff),y:(((mPos.y-yoff+camera.y)*camera.zoom)+31+yoff)};
 }

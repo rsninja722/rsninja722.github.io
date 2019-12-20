@@ -50,3 +50,8 @@ numbers.rectH = new numberInput(350,5,"rectH",3,1,1000);numbers.rectH.state=fals
 numbers.circleSize = new numberInput(285,5,"circleSize",6,2,1000);numbers.circleSize.state=false;
 numbers.fillTolerance = new numberInput(400,5,"fillTolerance",0,0,1000);numbers.fillTolerance.state=false;
 numbers.exportScale = new numberInput(75,540,"exportScale",1,1,16);
+numbers.transformX = new numberInput(275,5,"transformX",1,-10000,10000);
+numbers.transformY = new numberInput(350,5,"transformY",1,-10000,10000);
+numbers.transformAngle = new numberInput(425,5,"transformAngle",0,-360,360);
+numbers.transformSX = new numberInput(500,5,"transformSX",1,-100,100);
+numbers.transformSY = new numberInput(575,5,"transformSY",1,-100,100);

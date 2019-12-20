@@ -38,6 +38,7 @@ button.prototype.update = function(noneHit) {
     if(this.condition()) {
         if(rectpoint2(this,mousePos)&&noneHit) {
             this.hover = true;
+            cursor = "pointer";
             if(mousePress[0]&&(!uiFocus)) {
                this.click();
             }
@@ -45,6 +46,8 @@ button.prototype.update = function(noneHit) {
         } else {
             this.hover = false;
         }
+    } else {
+        this.hover = false;
     }
     return false;
 }
@@ -63,8 +66,14 @@ function updateButtons() {
 
 function drawButtons() {
     var keys = Object.keys(buttons);
+    drawLast = -1;
     for(let i=keys.length-1;i>-1;i--) {
-        buttons[keys[i]].draw();
+        if(buttons[keys[i]].hover) {drawLast = i;} else {
+            buttons[keys[i]].draw();
+        }
+    }
+    if(drawLast!==-1) {
+        buttons[keys[drawLast]].draw();
     }
 }
 
@@ -80,7 +89,7 @@ buttons.file = new button(
             UI.file.state = false;
         }
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {text2("File",this.x+5,this.y+20,"#ffb730",16,baseCtx);},
     function() {text2("File",this.x+5,this.y+20,"#4de1f5",16,baseCtx);},function() {}
 );
@@ -237,7 +246,7 @@ buttons.edit = new button(
             UI.edit.state = false;
         }
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {text2("Edit",this.x+5,this.y+20,"#ffb730",16,baseCtx);},
     function() {text2("Edit",this.x+5,this.y+20,"#4de1f5",16,baseCtx);},function() {}
 );
@@ -270,28 +279,28 @@ buttons.download = new button(
         this.state = false;
         download();
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},function() {},function() {},
+    function() {backgroundRect(this);},function() {},function() {},
     function() {buttonImg("download",this);} // top
 );
 
 // ----undo----
 buttons.undo = new button(
-    70,430,30,20,false,
+    70,432,30,20,false,
     function() { // on click
         this.state = false;
         undo();
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {},function() {buttonImg("undo",this);},function() {}
 );
 // ----redo----
 buttons.redo = new button(
-    100,430,30,20,false,
+    100,432,30,20,false,
     function() { // on click
         this.state = false;
         redo();
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {},function() {buttonImg("redo",this);},function() {}
 );
 
@@ -339,7 +348,7 @@ buttons.redo = new button(
         function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#444444":"#363636",baseCtx);},
         function() {buttonImg("delete",this);},
         function() {buttonImg("delete",this);},function() {}
-    ); 
+    );
 
     // ----replace----
     buttons.replaceLayer = new button(
@@ -378,7 +387,7 @@ buttons.redo = new button(
 
 // ----eraser----
 buttons.eraser = new button(
-    70,410,60,20,false,
+    70,412,60,20,false,
     function() { // on click
         if(this.state) {
             alphaCache = color.hsv.a;
@@ -389,7 +398,7 @@ buttons.eraser = new button(
             colorInput.a.value = alphaCache;
         }
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {text2("erase",this.x+12,this.y+12,"#ffb730",12,baseCtx);},
     function() {text2("erase",this.x+12,this.y+12,"#4de1f5",12,baseCtx);},function() {}
 );
@@ -400,7 +409,7 @@ buttons.circle = new button(
     function() { // on click
         switchTool("circle");
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {buttonImg("circleOn",this);},
     function() {buttonImg("circleOff",this);},function() {}
 );
@@ -411,7 +420,7 @@ buttons.rect = new button(
     function() { // on click
         switchTool("rect");
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {buttonImg("rectOn",this);},
     function() {buttonImg("rectOff",this);},function() {}
 );
@@ -422,18 +431,18 @@ buttons.pp = new button(
     function() { // on click
         switchTool("pp");
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {buttonImg("ppOn",this);},
     function() {buttonImg("ppOff",this);},function() {}
 );
 
 // ----pen----
 buttons.pen = new button(
-    140,295,30,30,true,
+    140,295,30,30,false,
     function() { // on click
         switchTool("pen");
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {buttonImg("penOn",this);},
     function() {buttonImg("penOff",this);},function() {}
 );
@@ -444,7 +453,7 @@ buttons.bucket = new button(
     function() { // on click
         switchTool("bucket");
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {buttonImg("fillOn",this);},
     function() {buttonImg("fillOff",this);},function() {}
 );
@@ -457,7 +466,7 @@ buttons.bucket = new button(
             toolData.bucket.mode="8";
             this.state = true;
         },
-        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+        function() {backgroundRect(this);},
         function() {buttonImg("bucket4On",this);},
         function() {buttonImg("bucket4Off",this);},function() {},
         function() {return tool==="bucket";}
@@ -471,7 +480,7 @@ buttons.bucket = new button(
             toolData.bucket.mode="8";
             this.state = true;
         },
-        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+        function() {backgroundRect(this);},
         function() {buttonImg("bucket8On",this);},
         function() {buttonImg("bucket8Off",this);},function() {},
         function() {return tool==="bucket";}
@@ -485,7 +494,7 @@ buttons.bucket = new button(
             toolData.bucket.mode="all";
             this.state = true;
         },
-        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+        function() {backgroundRect(this);},
         function() {buttonImg("bucketAllOn",this);},
         function() {buttonImg("bucketAllOff",this);},function() {},
         function() {return tool==="bucket";}
@@ -497,7 +506,7 @@ buttons.border = new button(
     function() { // on click
         switchTool("border");
     },
-    function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);},
+    function() {backgroundRect(this);},
     function() {buttonImg("borderOn",this);},
     function() {buttonImg("borderOff",this);},function() {}
 );
@@ -543,8 +552,72 @@ buttons.border = new button(
         function() {return tool==="border";}
     );
 
+// ----transforms----
+	buttons.flipX = new button(
+	    650,1,25,25,false,
+	    function() {
+	        numbers.transformSX.value = -(numbers.transformSX.value)
+	        this.state = false;
+	    },
+	    function() {backgroundRect(this);},
+	    function() {buttonImg("flipX",this);},
+	    function() {buttonImg("flipX",this);},function() {},
+	    function() {return tool==="selection";}
+	);
+	
+	buttons.flipY = new button(
+	    680,1,25,25,false,
+	    function() {
+	        numbers.transformSY.value = -(numbers.transformSY.value)
+	        this.state = false;
+	    },
+	    function() {backgroundRect(this);},
+	    function() {buttonImg("flipY",this);},
+	    function() {buttonImg("flipY",this);},function() {},
+	    function() {return tool==="selection";}
+    );
+    
+    buttons.rotCW = new button(
+	    710,1,25,25,false,
+	    function() {
+            numbers.transformAngle.value -= 90;
+            if(numbers.transformAngle.value < -180) {
+                numbers.transformAngle.value += 360;
+            }
+	        this.state = false;
+	    },
+	    function() {backgroundRect(this);},
+	    function() {buttonImg("rotCW",this);},
+	    function() {buttonImg("rotCW",this);},function() {},
+	    function() {return tool==="selection";}
+    );
+    
+    buttons.rotCCW = new button(
+	    740,1,25,25,false,
+	    function() {
+            numbers.transformAngle.value += 90;
+            if(numbers.transformAngle.value > 180) {
+                numbers.transformAngle.value -= 360;
+            }
+	        this.state = false;
+	    },
+	    function() {backgroundRect(this);},
+	    function() {buttonImg("rotCCW",this);},
+	    function() {buttonImg("rotCCW",this);},function() {},
+	    function() {return tool==="selection";}
+	);
+
+
 function buttonImg(img,btn) {
     if(sprites[img]) {
         img2(sprites[img].spr,btn.x+btn.w/2,btn.y+btn.h/2,baseCtx);
     }
+}
+
+function backgroundRect(b) {
+	var xadd = (b.w%2);
+	var yadd = (b.h%2);
+    rect2(b.x-(b.hover?2:1)+xadd,b.y-(b.hover?2:1)+yadd,b.w+(b.hover?4:2),b.h+(b.hover?4:2),"#151515",baseCtx);
+    rect2(b.x+xadd,b.y+yadd,b.w,b.h,b.hover?"#565656":"#363636",baseCtx);
+    if(sprites.dropshadow!==undefined){ img2(sprites.dropshadow.spr,b.x+b.w/2+xadd,b.y+b.h+1+yadd,baseCtx,0,b.w/2);}
 }

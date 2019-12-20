@@ -8,6 +8,7 @@ function newImgCreate() {// create a new project
     projectInfo.h = parseInt(document.getElementById("newH").value);
     document.getElementById("imgw").value = projectInfo.w < 50 ? projectInfo.w : 50;
     document.getElementById("imgh").value = projectInfo.h < 50 ? projectInfo.h : 50;
+    toolData.selection.mode="off";
     addLayer(0);
 
     resizeBottom();
@@ -31,6 +32,7 @@ document.getElementById("uploadCache").onload = function() {// detect when image
     projectInfo.h = parseInt(document.getElementById("uploadCache").height);
     document.getElementById("imgw").value = projectInfo.w < 50 ? projectInfo.w : 50;
     document.getElementById("imgh").value = projectInfo.h < 50 ? projectInfo.h : 50;
+    toolData.selection.mode="off";
 
     addLayer(0);
 
@@ -48,6 +50,7 @@ document.getElementById("fileImport").onchange = function () {// detect when JSO
         projectInfo = loadedJSON.info;
         document.getElementById("imgw").value = projectInfo.w < 50 ? projectInfo.w : 50;
         document.getElementById("imgh").value = projectInfo.h < 50 ? projectInfo.h : 50;
+        toolData.selection.mode="off";
 
         handleProjectInfo();
         var l = loadedJSON.layers;
@@ -77,6 +80,7 @@ function load() {// attempts to load a project from localStorage
         projectInfo = loadedJSON.info;
         document.getElementById("imgw").value = projectInfo.w < 50 ? projectInfo.w : 50;
         document.getElementById("imgh").value = projectInfo.h < 50 ? projectInfo.h : 50;
+        toolData.selection.mode="off";
         
         handleProjectInfo();
         document.getElementById("backColor").value = projectInfo.backColor;
@@ -107,7 +111,7 @@ function save() {// saves a project to localStorage
         }
 
         localStorage.projectSave =  JSON.stringify(obj);
-        message={text:"saved",time:100}
+        message={text:"saved",time:100};
     }
 }
 

@@ -63,6 +63,7 @@ function kup(e) {
     var h=e.keyCode;
     if(e.keyCode==k["1"]) {delete mouseDown[0];}
     if(e.keyCode==k["2"]) {delete mouseDown[2];}
+    if(e.keyCode==k["3"]) {delete mouseDown[1];}
     delete keyPress[h];
     delete keyDown[h];
 }
@@ -100,6 +101,7 @@ function blurAll() {
     document.getElementById("hex").blur();
     document.getElementById("name").blur();
     document.getElementById("backColor").blur();
+    document.getElementById("blendSelect").blur();
 }
 
 function mup(e) {
