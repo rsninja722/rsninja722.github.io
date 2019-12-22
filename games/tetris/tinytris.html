@@ -76,7 +76,7 @@ c           - hold piece
 f4          - restart
     </pre>
     <canvas id="cvs" onclick="startEverything()"></canvas>
-    <script src="../../input.js"></script>
+    <script src="input.js"></script>
     <script>
         function toggleControls() {
             var e = document.getElementById("controls");
@@ -268,12 +268,14 @@ f4          - restart
             if(dropCounter>=dropSpeed) {drop();dropCounter=0;}
             if(keyPress[67]) {
                 hold();
+                play(sounds.hold);
             }
             if(keyPress[37]) {
                 if(doesMinoFit(curmino.mino,curmino.x-1,curmino.y,curmino.rot)) {
                     curmino.x--;
                     resetGroundCount();
                     ARRcoolR=DAScooldown;
+                    play(sounds.move);
                 }
                 DAScount=Date.now();
             }
@@ -283,6 +285,7 @@ f4          - restart
                         while(doesMinoFit(curmino.mino,curmino.x-1,curmino.y,curmino.rot)) {
                             curmino.x--;
                             resetGroundCount();
+                            play(sounds.move);
                         }
                     } else {
                         var hereandnow = Date.now()
@@ -290,6 +293,7 @@ f4          - restart
                             if(doesMinoFit(curmino.mino,curmino.x-1,curmino.y,curmino.rot)) {
                                 curmino.x--;
                                 resetGroundCount();
+                                play(sounds.move);
                             }
                             ARRcount=hereandnow;
                         }
@@ -301,6 +305,7 @@ f4          - restart
                     curmino.x++;
                     resetGroundCount();
                     ARRcoolL=DAScooldown;
+                    play(sounds.move);
                 }
                 DAScount=Date.now();
             }
@@ -310,6 +315,7 @@ f4          - restart
                         while(doesMinoFit(curmino.mino,curmino.x+1,curmino.y,curmino.rot)) {
                             curmino.x++;
                             resetGroundCount();
+                            play(sounds.move);
                         }
                     } else {
                         var hereandnow = Date.now()
@@ -317,6 +323,7 @@ f4          - restart
                             if(doesMinoFit(curmino.mino,curmino.x+1,curmino.y,curmino.rot)) {
                                 curmino.x++;
                                 resetGroundCount();
+                                play(sounds.move);
                             }
                             ARRcount=hereandnow;
                         }
@@ -327,6 +334,7 @@ f4          - restart
                 if(dropTime<=0) {
                     if(doesMinoFit(curmino.mino,curmino.x,curmino.y+1,curmino.rot)) {
                         curmino.y++;
+                        play(sounds.softdrop);
                     }
                     dropTime = dropRate;
                 }
@@ -338,6 +346,7 @@ f4          - restart
                     curmino.rot=tempRot;
                     resetGroundCount();
                 }*/
+                play(sounds.rotate);
             }
             if(keyPress[88]) {
                 var tempRot = (curmino.rot+1)%4;
@@ -346,10 +355,12 @@ f4          - restart
                     curmino.rot=tempRot;
                     resetGroundCount();
                 }*/
+                play(sounds.rotate);
             }
             if(keyPress[32]) {
                 while(drop()){}
                 setPiece();
+                setVolume(sounds.harddrop,0.4);
                 play(sounds.harddrop);
             }
 
@@ -527,6 +538,7 @@ f4          - restart
             }
         }
         function clearLines() {
+            var audioPlay = 0;
             for(let y=0;y<fh+2;y++) {
                 var minos = 0;
                 for(let x=0;x<fw;x++) {
@@ -540,7 +552,11 @@ f4          - restart
                     }
                     game.unshift(newLine);
                     linesCleared++;
+                    audioPlay++;
                 }
+            }
+            if(audioPlay!==0) {
+                play(sounds[audioPlay]);
             }
         }
         function draw() {

@@ -1,6 +1,17 @@
 audio=[
     "sounds/",
-    "harddrop.wav"
+    "harddrop.wav",
+    "hold.wav",
+    "move.wav",
+    "rotate.wav",
+    "softdrop.wav",
+    [
+        "clears/",
+        "1.wav",
+        "2.wav",
+        "3.wav",
+        "4.wav"
+    ]
 ], // put audio paths here
 audioPaths=[],
 sounds={}, // loaded sounds
