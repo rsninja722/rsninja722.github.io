@@ -127,7 +127,7 @@ function updateEnemies() {
             soundsLimitCounter = 0;
         }
     }
-    if (updateIndex === -1) {
+    if (updateIndex <= -1) {
         updateIndex = enemies.length-1;
         if (!enemies.length < 15 && !pause) {
             play(sounds[`move${soundCycle}`]);
