@@ -5,7 +5,8 @@ var links = [
     {title:"Mandelbrot",desc:"Fractal zoomer and renders",thumb:"thumbnails/mandel.png",link:"notGames/mandelbrot/mandelbrot.html"},
     {title:"Slime Defender Clicker",desc:"Clicker/idle game where you allot currency to upgrade your slime shootin' turret.",thumb:"thumbnails/slime.PNG",link:"seperategames/slimeDefenderClicker/index.html"},
     {title:"Car Demo",desc:"really crappy car demo. WASD to move.",thumb:"thumbnails/car.PNG",link:"games/racing/index.html"},
-    {title:"tinytris",desc:"Simple, fast generic block puzzle game, with a few options. Desktop and mobile versions available",thumb:"thumbnails/tetris.PNG",link:"games/tetris/selectPlatform.html"},
+    {title:"tinytris",desc:"Simple, fast generic block puzzle game, with a few options. Desktop and mobile versions available",thumb:"thumbnails/tetris.PNG",link:"https://www.youtube.com/channel/UCUaN_LJvvRGZPvV-sHRfp5w?sub_confirmation=1"},//link:"games/tetris/selectPlatform.html"},
+    {title:"Space Invaders",desc:"A game worse than tetris",thumb:"thumbnails/space.png",link:"games/spaceInvaders/index.html"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
     {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"},
     {title:"archive",desc:"Links to all my old stuff that sucks too much to be on this page.",thumb:"thumbnails/archive.PNG",link:"archive.html"}

@@ -530,7 +530,7 @@ function drawOptionsMenu() {
             b = optionsButtons.sfx;
             rect(b.x,b.y,b.w,b.h-10,"#444444");
             rect((b.x-60)+(volume.sfx*120),b.y,8,20,"#444444");
-        text("bmg",pos.x+2,pos.y+60,"white",2);
+        text("bgm",pos.x+2,pos.y+60,"white",2);
             b = optionsButtons.bmg;
             rect(b.x,b.y,b.w,b.h-10,"#444444");
             rect((b.x-60)+(volume.bgm*120),b.y,8,20,"#444444");

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" type="image/gif" href="assets/icon.png"/>
+        <title>space invaders</title>
+        <style>
+            html {
+                background-color: #242424;
+                color: white;
+            }
+            canvas {
+                position:absolute;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: pixelated;
+                top:0;bottom:0;right:0;left:0;
+                margin:auto;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas width="512" height="448" id="game"></canvas>
+        <script src="../game.js"></script>
+        <script src="block.js"></script>
+        <script src="enemy.js"></script>
+        <script src="enemyLaser.js"></script>
+        <script src="player.js"></script>
+        <script src="index.js"></script>
+    </body>
+</html>
