@@ -9,6 +9,7 @@ var links = [
     {title:"Car Demo",desc:"really crappy car demo. WASD to move.",thumb:"thumbnails/car.PNG",link:"games/racing/index.html"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
     {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"},
+    {title:"PPS",desc:"The thing you see in the background. Primordial particle simulator",thumb:"thumbnails/pps.png",link:"notGames/pps.html"},
     {title:"archive",desc:"Links to all my old stuff that sucks too much to be on this page.",thumb:"thumbnails/archive.PNG",link:"archive.html"}
 ]
 /*

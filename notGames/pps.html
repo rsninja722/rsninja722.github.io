@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>pps</title>
+    <style>
+        html {
+            background-color: #202020;
+            color: white;
+        }
+        canvas {
+            border: 1px solid grey;
+            background-color: #252525;
+        }
+        .slider {
+            -webkit-appearance: none;  /* Override default CSS styles */
+            appearance: none;
+            width: 100%; /* Full-width */
+            height: 25px; /* Specified height */
+            background: #252525; /* Grey background */
+            outline: none; /* Remove outline */
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 15px; /* Set a specific slider handle width */
+            height: 15px; /* Slider handle height */
+            background: rgb(126, 126, 126); /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+        table {
+            border-collapse: collapse;
+        }
+        tr {
+            border: 0px solid white;
+        }
+        td {
+            padding: 2px;
+        }
+    </style>
+</head>
+<body style="margin: 0 0 0 0;">
+<div style="width: 100%; height: 75px; background-color: #313131;">
+    <a href="/index.html" style="position:absolute;left:0;height: 75px;">
+        <img src="/home.png" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+    </a>
+    <img src="/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+</div>
+<canvas id="cvs" width="1000" height = "800"></canvas>
+<table style="width:100%" id="tab">
+<input type="range" min="0" max="30" value="10" class="slider" id="sslider">
+</table>
+<script>
+    var canvas = document.getElementById("cvs");
+var mousePress = [];
+var mouseDown = [];
+var mousePos = {
+    x:0,
+    y:0
+}
+canvas.addEventListener("mousedown",mdown);
+canvas.addEventListener("mouseup",mup);
+canvas.addEventListener("mousemove",mmove);
+function mdown(e) {
+    var h=e.button;
+    mousePress[h]=mousePress[h]==[][[]]?1:0;
+    mouseDown[h]=1;
+}
+function mup(e) {
+    var h=e.button;
+    delete mousePress[h];
+    delete mouseDown[h];
+}
+function mmove(e) {
+    mousePos.x=e.offsetX;
+    mousePos.y=e.offsetY;
+}
+</script>
+<script>
+    
+    var ctx = canvas.getContext("2d");
+    var cw = canvas.width;
+    var ch = canvas.height;
+    var friction = 0.8;
+
+    var counter = 0;
+    var speed = 1;
+    var frameSpeed = 1;
+
+    var types = [
+        {color:"#ff0000",reactions:[],range:0},
+        {color:"#00ff00",reactions:[],range:0},
+        {color:"#0000ff",reactions:[],range:0},
+        {color:"#00ffff",reactions:[],range:0}//,
+        //{color:"#ff00ff",reactions:[],range:0}//,
+        //{color:"#ffff00",reactions:[],range:0}
+    ];
+    
+    var particles = [];
+
+
+    for(var i=0;i<types.length;i++) {
+        types[i].range = rand(16,24);
+        for(var j=0;j<types.length;j++) {
+            types[i].reactions[j] = randDec(-2,2);
+        }
+    }
+
+    for(var y=ch/4;y<ch-ch/4;y+=15) {
+        for(var x=cw/4;x<cw-cw/4;x+=15) {
+            particles.push(new particle(x,y,rand(0,types.length-1)));
+        }
+    }
+
+    requestAnimationFrame(update);
+    function update() {
+        counter++;
+        speed=document.getElementById("sslider").value/10;
+        if(!(counter%frameSpeed)) {
+            ctx.clearRect(0,0,cw,ch);
+        }
+
+        for(let y=0;y<types.length;y++) {
+            for(let x=0;x<types.length;x++) {
+                types[y].reactions[x] = document.getElementById(`${y}${x}`).value;
+                document.getElementById(`p${y}${x}`).innerHTML = document.getElementById(`${y}${x}`).value;
+            }
+            types[y].range = document.getElementById(`${y}${types.length}`).value;
+            document.getElementById(`p${y}${types.length}`).innerHTML = document.getElementById(`${y}${types.length}`).value;
+        }
+        //types[0].reactions[1] = document.getElementById("one").value/10;
+
+        if(mousePress[0]) {particles.push(new particle(mousePos.x,mousePos.y,rand(0,types.length-1)));}
+
+        for(var i=0;i<particles.length;i++) {
+            var curpart = particles[i];
+            var rang = types[curpart.t].range;
+            var vels = [];
+            for(var j=0;j<particles.length;j++) {
+                if(i==j) {continue;}
+                var dist = length(curpart,particles[j]);
+                if(dist<25) {
+                    if(dist<8) {
+                    if(dist==0) {curpart.x+=randDir();curpart.x+=randDir();curpart.y+=randDir();} else {
+                            var angle = pointTo(curpart,particles[j]) + Math.PI/2;
+                            curpart.v.x = (Math.sin(angle)/dist)*4*speed;
+                            curpart.v.y = (Math.cos(angle)/dist)*4*speed;
+                            curpart.x+=curpart.v.x;
+                            curpart.y+=curpart.v.y;
+                        }
+                    }
+                    if(dist<rang) {
+                        var dir = types[curpart.t].reactions[particles[j].t];
+                        var angle = pointTo(curpart,particles[j]) - Math.PI/2;
+                        vels.push([(Math.sin(angle)*dir)/2,(Math.cos(angle)*dir)/2]);
+                    }
+                }
+            }
+            if(vels.length>0) {
+                var finalx=0;
+                var finaly=0;
+                for(var g=0;g<vels.length;g++) {
+                    finalx+=vels[g][0];
+                    finaly+=vels[g][1];
+                }
+                //finalx+=curpart.v.x;
+                //finaly+=curpart.v.y;
+                finalx/=vels.length;
+                finaly/=vels.length;
+                curpart.v.x+=finalx*speed;
+                curpart.v.y+=finaly*speed;
+            }
+        }
+
+
+
+
+
+
+
+        for(var i=0;i<particles.length;i++) {
+            particles[i].move();
+        }
+        if(!(counter%frameSpeed)) {
+            for(var i=0;i<particles.length;i++) {
+                particles[i].draw();
+            }
+        }
+        
+        //setTimeout(function() {requestAnimationFrame(update);},1000);
+
+
+        for(var i=0;i<mousePress.length;i++){if(mousePress[i]){mousePress[i]=0}}
+        requestAnimationFrame(update);
+    }
+
+
+    function particle(x,y,type) {
+        this.x = x;
+        this.y = y;
+        this.v = {x:0,y:0};
+        this.t = type;
+        this.r = 4;
+        this.move = function() {
+            this.x+=this.v.x;
+            this.y+=this.v.y;
+            this.v.x*=friction;
+            this.v.y*=friction;
+            if(this.x-this.r>cw) {this.x=0;}
+            if(this.y-this.r>ch) {this.y=0;}
+            if(this.x+this.r<0) {this.x=cw;}
+            if(this.y+this.r<0) {this.y=ch;}
+        };
+        this.draw = function() {
+            drawCircle(this.x,this.y,this.r,types[this.t].color);
+            //rect(this.x,this.y,types[this.t].color);
+        }
+        return this;
+    }
+
+
+    function drawCircle(x,y,r,fillColor) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+        ctx.fillStyle = fillColor;
+        ctx.fill();
+    }
+    function rect(x,y,color) {
+        ctx.fillStyle=color;
+        ctx.fillRect(x,y,8,8);
+    }
+    function length(object1,object2) {
+        var one = (object2.x - object1.x);
+        var two = (object2.y - object1.y);
+        return Math.sqrt((one*one)+(two*two));
+    }
+    function pointTo(obj1,obj2) {
+        var adjacent = (obj1.x - obj2.x);
+        var opposite = (obj1.y - obj2.y);
+        var h = Math.atan2(opposite, adjacent);
+        return -h;
+    }
+    function rand(min,max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function randDir() {
+        if(rand(0,1)==1) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+    function randDec(min,max) {
+        return (Math.floor(((Math.random() * (max - min + 1)) + min) * 100)) / 100;
+    }
+    for(let y=0;y<types.length;y++) {
+        var tempTR = document.createElement("tr");
+        let c = types[y].color;
+        tempTR.style=`background: rgb(${~~parseInt(c[1]+c[2],16)/2},${~~parseInt(c[3]+c[4],16)/2},${~~parseInt(c[5]+c[6],16)/2})`;
+        for(let x=0;x<types[0].reactions.length;x++) {
+            var tempTD = document.createElement("td");
+            var tempSlide = document.createElement("input");
+            tempSlide.type = "range";
+            tempSlide.min = -20;
+            tempSlide.max = 20;
+            tempSlide.value = randDec(-2,2);
+            tempSlide.classList.add("slider");
+            tempSlide.style = `background: ${types[x].color}`;
+            tempSlide.id = `${y}${x}`;
+            tempTD.appendChild(tempSlide);
+            
+            tempTR.appendChild(tempTD);
+            tempTD = document.createElement("td");
+            tempTD.style = `width:50px;`;
+            var kek = document.createElement("p");
+            kek.id=`p${y}${x}`;
+            tempTD.appendChild(kek);
+            tempTR.appendChild(tempTD);
+        }
+        var tempTD = document.createElement("td");
+            var tempSlide = document.createElement("input");
+            tempSlide.type = "range";
+            tempSlide.min = 8;
+            tempSlide.max = 25;
+            tempSlide.value = randDec(8,25);
+            tempSlide.classList.add("slider");
+            tempSlide.id = `${y}${types.length}`;
+            tempTD.appendChild(tempSlide);
+            
+            tempTR.appendChild(tempTD);
+            tempTD = document.createElement("td");
+            var kek = document.createElement("p");
+            kek.id=`p${y}${types.length}`;
+            tempTD.appendChild(kek);
+            tempTR.appendChild(tempTD);
+
+        var thing = document.getElementById("tab");
+        thing.appendChild(tempTR);
+    }
+</script>
+</body>
+</html>
