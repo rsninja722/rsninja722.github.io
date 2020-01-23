@@ -37,6 +37,7 @@ var lives = 3;
 var score = 0;
 var gameState = "playing";
 var timer = 0;
+var now;
 
 function update() {
     if(gameState === "playing") {
@@ -97,11 +98,15 @@ function input() {
 }
 
 function draw() {
+    
+}
+
+function absoluteDraw() {
     rect(cw / 2, ch / 2, cw, ch, "black");
+    drawBlocks();
     drawEnemyLasers();
     drawEnemies();
     if(gameState !== "gameOver") {p1.draw();}
-    drawBlocks();
     rect(37.5, 256, 75, 512, "#242424");
     rect(cw - 37.5, 256, 75, 512, "#242424");
     for (var i = 0; i < lives; i++) {
@@ -115,16 +120,13 @@ function draw() {
     }
 }
 
-function absoluteDraw() {
-
-}
-
 function onAssetsLoaded() {
     generateEnemies();
     generateBlocks();
     setVolume(sounds.playerShoot,0.25);
     setVolume(sounds.die,0.25);
     p1 = new player(cw / 2, ch - 8);
+    now = Date.now();
 }
 
 setup(120);

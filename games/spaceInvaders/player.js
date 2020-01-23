@@ -57,16 +57,18 @@ player.prototype.update = function() {
 }
 
 player.prototype.input = function() {
+    var newNow = Date.now();
+    var dif = (newNow-now)/8;
     if(keyDown[k.RIGHT] || keyDown[k.d]) {
-        this.x+=0.5;
+        this.x+=0.5*dif;
         if(this.x > cw-wallWidth) {
-            this.x-=0.5;
+            this.x-=0.5*dif;
         }
     }
     if(keyDown[k.LEFT] || keyDown[k.a]) {
-        this.x-=0.5;
+        this.x-=0.5*dif;
         if(this.x < wallWidth) {
-            this.x+=0.5;
+            this.x+=0.5*dif;
         }
     }
     if(keyPress[k.SPACE] && this.laser.exist===0) {
@@ -75,6 +77,7 @@ player.prototype.input = function() {
         this.laser.exist = 1;
         play(sounds.playerShoot);
     }
+    now = newNow;
 }
 
 player.prototype.draw = function() {
