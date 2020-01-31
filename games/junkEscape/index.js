@@ -94,7 +94,9 @@ images = [
         "Arms_Skeleton.png",
         "Base_Skeleton.png",
         "Body_Skeleton.png",
-        "Eyes_Skeleton.png"
+        "Eyes_Skeleton.png",
+        "highlight0.png",
+        "highlight1.png"
     ],
     [
         "background/",
@@ -203,6 +205,10 @@ images = [
             "BOSS_HOVER_0000.png","BOSS_HOVER_0001.png","BOSS_HOVER_0002.png",
             "BOSS_TRIPOD.png",
             "BOSS_HEAD.png",
+        ],
+        [
+            "parts/part",
+            "0.png","1.png","2.png","3.png","4.png","5.png","6.png"
         ],
         "m-on.png",
         "m-off.png",
@@ -348,7 +354,8 @@ audio = [
     "hit.mp3",
     "oof.mp3",
     "intro.mp3",
-    "gg.mp3"
+    "gg.mp3",
+    "land.wav"
 ];
 
 var count = 0;
@@ -413,12 +420,12 @@ function update() {
         switchLevel(level+1);
     }
     if(transitionTime == 98) {
-        for(let i=0;i<4;i++) {
-            if(level==player.modules[i][1]) {
-                player.modules[i][5]();
-                player.damaged[i] = 350;
-            }
-        }
+        // for(let i=0;i<4;i++) {
+        //     if(level==player.modules[i][1]) {
+        //         player.modules[i][5]();
+        //         player.damaged[i] = 350;
+        //     }
+        // }
     }
     if(darkTime>0) {
         darkTime--;
@@ -427,6 +434,7 @@ function update() {
         enemies=[];
         bullets=[];
         particles=[];
+        parts=[];
         player.v={x:0,y:0};
         miniSpeed=15;
         player.health=player.maxHealth;
@@ -482,6 +490,8 @@ function update() {
                 i--;
             }
         }
+
+        updateParts();
 
         //bullets
         for(var i=0;i<bullets.length;i++) {
@@ -595,6 +605,8 @@ function draw() {
 
     bottomMapDraw();
 
+    drawParts();
+
     //modules
     for(var i=0;i<items.length;i++) {
         items[i].draw();
@@ -668,7 +680,7 @@ function draw() {
 }
 
 function absoluteDraw() {
-    switch(effect) {
+    switch(player.modules[0][0]) {
         case 1:
             imgIgnoreCutoff(sprites[`Grey_Haze_0000`],cw/2,ch/2);
             break;
@@ -701,34 +713,27 @@ function absoluteDraw() {
         switch(items[mi].m[4]) {
             case "head":
                 imgIgnoreCutoff(sprites.SCAN_text_SENS,550,160);
-                if(level>=items[mi].m[1]) {
-                    text("yes",545,215,"#8a2711",2);
-                } else {
-                    text("no",545,215,"#118a1b",2);
-                }
-                text(`${items[mi].m[7]}%`,580,245,"#cfcfcf",2);
+                // zoom
+                text(`zoom: ${items[mi].m[8]}`,480,215,"#cfcfcf",2);
+                // name
+                text(`${items[mi].m[7]}`,480,245,"#cfcfcf",2);
                 items[mi].m[6](550,125,0,2);
                 break;
             case "body":
                 imgIgnoreCutoff(sprites.SCAN_text_BODY,550,160);
-                text(`${items[mi].m[7]}%`,580,245,"#cfcfcf",2);
-                text(`${items[mi].m[0]}`,515,215,"#cfcfcf",2);
+                text(`${items[mi].m[9]}`,480,215,"#cfcfcf",2);
+                text(`health:${items[mi].m[0]}`,480,245,"#cfcfcf",2);
                 items[mi].m[6](550,125,0,2);
                 break;
             case "arms":
                 imgIgnoreCutoff(sprites.SCAN_text_ARMS,550,160);
-                if(level>=items[mi].m[1]) {
-                    text("yes",545,215,"#8a2711",2);
-                } else {
-                    text("no",545,215,"#118a1b",2);
-                }
-                text(`${items[mi].m[7]}%`,580,245,"#cfcfcf",2);
+                text(`${items[mi].m[7]}`,480,215,"#cfcfcf",2);
                 items[mi].m[6](550,125,0,1.5);
                 break;
             case "legs":
                 imgIgnoreCutoff(sprites.SCAN_text_BASE,550,160);
-                text(`${moveSpeeds[items[mi].m[0]*2]}`,515,215,"#cfcfcf",2);
-                text(`${items[mi].m[7]}%`,580,245,"#cfcfcf",2);
+                text(`${items[mi].m[9]}`,480,215,"#cfcfcf",2);
+                text(`top speed:${moveSpeeds[items[mi].m[0]*2]}`,480,245,"#cfcfcf",2);
                 items[mi].m[6](550,125,0,1.5);
                 break;
         }   
@@ -819,7 +824,7 @@ function onAssetsLoaded() {
     setVolume(sounds.bigBoom0,0.5);
     setVolume(sounds.bigBoom1,0.5);
     setVolume(sounds.bigBoom2,0.5);
-    setVolume(sounds.roll,0.75);
+    setVolume(sounds.roll,1.9);
     setVolume(sounds.warn,0.1);
     setVolume(sounds.open,0.1);
     setVolume(sounds.close,0.1);
@@ -840,8 +845,13 @@ function onAssetsLoaded() {
     setVolume(sounds.plasHit,0.5);
     setVolume(sounds.spid,1);
     setVolume(sounds.hit,0.5);
+    setVolume(sounds.hov,0.5);
+    setVolume(sounds.land,0.5);
     setVolume(sounds.gg,0.2);
     setType(sounds.gg,"bgm");
+
+    volume.sfx=0.5;
+    volume.bgm=0.5;
 
     sounds.gg.nodes[1].loop = true;
     play(sounds.gg);

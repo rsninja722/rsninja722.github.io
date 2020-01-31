@@ -1,4 +1,4 @@
-function part(x,y,dir,random,vel,type,moveType=0,xoff=0,yoff=0) {
+function addParticle(x,y,dir,random,vel,type,moveType=0,xoff=0,yoff=0) {
     particles.push(new particle(x,y,dir,random,vel,type,moveType,xoff,yoff));
 }
 

@@ -90,13 +90,13 @@ bullet.prototype.draw = function() {
         case 0:
             img(sprites.bullet0,this.x,this.y,this.dir);
             if(count%2) {
-                part(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,3,1);
+                addParticle(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,3,1);
             }
             break;
         case 1:
             img(sprites[this.pic],this.x,this.y,this.dir);
             if(rand(0,5)==0) {
-                part(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,4,1);
+                addParticle(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,4,1);
             }
             break;
         case 2:
@@ -104,24 +104,24 @@ bullet.prototype.draw = function() {
             break;
         case 3:
             img(sprites[`plas${Math.round(this.time/5)%3}`],this.x,this.y,this.dir);
-            part(this.x,this.y,degToRad(rand(0,359)),0,1,1,1);
+            addParticle(this.x,this.y,degToRad(rand(0,359)),0,1,1,1);
             break;
         case 4:
             img(sprites.gold,this.x,this.y,this.dir);
             if(count%2) {
-                part(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,4,1);
+                addParticle(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,4,1);
             }
             break;
         case 5:
             img(sprites.shot3,this.x,this.y,this.dir);
             if(count%2) {
-                part(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,5,1);
+                addParticle(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,5,1);
             }
             break;
         case 6:
             img(sprites.shell,this.x,this.y,this.dir);
             if(count%2) {
-                part(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,5,1);
+                addParticle(this.x,this.y,this.dir+degToRad(rand(-10,10)),0,1,5,1);
             }
             break;
         case 10:
@@ -158,12 +158,12 @@ bullet.prototype.update = function() {
                 if(!this.hitList.includes(i)) {
                     enemies[i].health-=this.dmg;
                     if(this.type==10) {
-                        part(this.x,this.y,0,degToRad(rand(0,359)),3,0);
-                        part(this.x,this.y,0,degToRad(rand(0,359)),3,0);
-                        part(this.x,this.y,0,degToRad(rand(0,359)),3,0);
-                        part(this.x,this.y,0,degToRad(rand(0,359)),3,0);
-                        part(this.x,this.y,0,degToRad(rand(0,359)),3,0);
-                        part(this.x,this.y,0,degToRad(rand(0,359)),3,0);
+                        addParticle(this.x,this.y,0,degToRad(rand(0,359)),3,0);
+                        addParticle(this.x,this.y,0,degToRad(rand(0,359)),3,0);
+                        addParticle(this.x,this.y,0,degToRad(rand(0,359)),3,0);
+                        addParticle(this.x,this.y,0,degToRad(rand(0,359)),3,0);
+                        addParticle(this.x,this.y,0,degToRad(rand(0,359)),3,0);
+                        addParticle(this.x,this.y,0,degToRad(rand(0,359)),3,0);
                     }
                     if(this.type==10&&sawTime>20) {
                         play(sounds.buzzing);

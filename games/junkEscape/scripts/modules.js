@@ -85,30 +85,33 @@ var worldDraw = {
 //[ stat, fail level, side draw func index, top draw func index]
 var modules = {
     heads:{
-        stock:[0,0,sideDraw.heads.stock,topDraw.heads.stock,"head",function(){effect=2;},worldDraw.heads.stock,100],
-        oneBreak:[1,1,sideDraw.heads.grey,topDraw.heads.grey,"head",function(){effect=1;},worldDraw.heads.grey,99],
-        oneWork:[2,10,sideDraw.heads.yellow,topDraw.heads.yellow,"head",function(){},worldDraw.heads.yellow,1],
-        purp:[3,10,sideDraw.heads.purple,topDraw.heads.purple,"head",function(){},worldDraw.heads.purple,25]
+        stock:[2,0,sideDraw.heads.stock,topDraw.heads.stock,"head",function(){effect=2;},worldDraw.heads.stock,"busted eyes",1.2],
+        oneBreak:[1,1,sideDraw.heads.grey,topDraw.heads.grey,"head",function(){effect=1;},worldDraw.heads.grey,"grey eyes",1],
+        oneWork:[0,10,sideDraw.heads.yellow,topDraw.heads.yellow,"head",function(){},worldDraw.heads.yellow,"yellow eyes",1.2],
+        purp:[0,10,sideDraw.heads.purple,topDraw.heads.purple,"head",function(){},worldDraw.heads.purple,"purple eyes",1]
     },
     bodies:{
-        stock:[15,3,sideDraw.bodies.stock,topDraw.bodies.stock,"body",function(){},worldDraw.bodies.stock,100,15],
-        tanky:[25,2,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){player.health/=2;},worldDraw.bodies.tanky,15,25],
-        skinny:[10,10,sideDraw.bodies.skinny,topDraw.bodies.skinny,"body",function(){},worldDraw.bodies.skinny,0,10],
-        tankyTwo:[25,10,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){},worldDraw.bodies.tanky,0,25],
-        skinnyTwo:[10,10,sideDraw.bodies.skinny,topDraw.bodies.skinny,"body",function(){},worldDraw.bodies.skinny,0,10]
+        stock:[15,3,sideDraw.bodies.stock,topDraw.bodies.stock,"body",function(){},worldDraw.bodies.stock,100,15,"old core"],
+        tanky:[25,2,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){player.health/=2;},worldDraw.bodies.tanky,15,25,"heavy core"],
+        skinny:[10,10,sideDraw.bodies.skinny,topDraw.bodies.skinny,"body",function(){},worldDraw.bodies.skinny,0,10,"light core"],
+        tankyTwo:[25,10,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){},worldDraw.bodies.tanky,0,25,"heavy core"],
+        tankyThree:[25,10,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){},worldDraw.bodies.tanky,0,25,"heavy core"],
+        tankyFour:[25,10,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){},worldDraw.bodies.tanky,0,25,"heavy core"],
+        tankyFive:[25,10,sideDraw.bodies.tanky,topDraw.bodies.tanky,"body",function(){},worldDraw.bodies.tanky,0,25,"heavy core"],
+        skinnyTwo:[20,10,sideDraw.bodies.skinny,topDraw.bodies.skinny,"body",function(){},worldDraw.bodies.skinny,0,20,"light core"]
     },
     arms:{
-        stock:[0,2,sideDraw.arms.stock,topDraw.arms.stock,"arms",function(){speeds[0]=60;player.attackSpeed=60;},worldDraw.arms.stock,100],
-        saw:[1,10,sideDraw.arms.saw,topDraw.arms.saw,"arms",function(){},worldDraw.arms.saw,85],
-        gun:[2,2,sideDraw.arms.gun,topDraw.arms.gun,"arms",function(){speeds[2]=60;player.attackSpeed=60;},worldDraw.arms.gun,10],
-        shot:[3,3,sideDraw.arms.shot,topDraw.arms.shot,"arms",function(){speeds[3]=150;player.attackSpeed=150;},worldDraw.arms.shot,20],
-        mini:[4,5,sideDraw.arms.mini,topDraw.arms.mini,"arms",function(){maxMin=5;},worldDraw.arms.mini,95],
-        plasma:[5,10,sideDraw.arms.plasma,topDraw.arms.plasma,"arms",function(){},worldDraw.arms.plasma,50]
+        stock:[0,2,sideDraw.arms.stock,topDraw.arms.stock,"arms",function(){speeds[0]=60;player.attackSpeed=60;},worldDraw.arms.stock,"sythe"],
+        saw:[1,10,sideDraw.arms.saw,topDraw.arms.saw,"arms",function(){},worldDraw.arms.saw,"saw"],
+        gun:[2,2,sideDraw.arms.gun,topDraw.arms.gun,"arms",function(){},worldDraw.arms.gun,"cannon"],
+        shot:[3,3,sideDraw.arms.shot,topDraw.arms.shot,"arms",function(){speeds[3]=150;player.attackSpeed=150;},worldDraw.arms.shot,"shotgun"],
+        mini:[4,5,sideDraw.arms.mini,topDraw.arms.mini,"arms",function(){maxMin=5;},worldDraw.arms.mini,"minigun"],
+        plasma:[5,10,sideDraw.arms.plasma,topDraw.arms.plasma,"arms",function(){},worldDraw.arms.plasma,"plasma blaster"]
     },
     legs:{
-        stock:[0,10,sideDraw.legs.stock,topDraw.legs.stock,"legs",function(){},worldDraw.legs.stock,100],
-        spider:[1,3,sideDraw.legs.spider,topDraw.legs.spider,"legs",function(){moveSpeeds[2]=1;moveSpeeds[3]=0.07;},worldDraw.legs.spider,100],
-        hover:[2,10,sideDraw.legs.hover,topDraw.legs.hover,"legs",function(){},worldDraw.legs.hover,100]
+        stock:[0,10,sideDraw.legs.stock,topDraw.legs.stock,"legs",function(){},worldDraw.legs.stock,100,1.5,"roller base"],
+        spider:[1,3,sideDraw.legs.spider,topDraw.legs.spider,"legs",function(){},worldDraw.legs.spider,100,2,"walker base"],
+        hover:[2,10,sideDraw.legs.hover,topDraw.legs.hover,"legs",function(){},worldDraw.legs.hover,100,3.5,"hover plate"]
     }
 };
 
@@ -195,11 +198,18 @@ class module {
         this.x=x;
         this.y=y;
         this.m=m;
+        this.pulseTime=0;
     }
 }
 
 module.prototype.draw = function() {
     if(this.m[6]!==undefined) {
+        this.pulseTime++;
+        if(this.pulseTime%60 < 10) {
+            img(sprites.highlight1,this.x,this.y);
+        } else {
+            img(sprites.highlight0,this.x,this.y);
+        }
         this.m[6](this.x,this.y);
     }
 }

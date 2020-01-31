@@ -61,16 +61,23 @@ function playerMovement() {
             if(keyDown[k.s]) {player.v.y+=moveSpeeds[1];ymove=true;}
             if(keyDown[k.a]) {player.v.x-=moveSpeeds[1];xmove=true;}
             if(keyDown[k.d]) {player.v.x+=moveSpeeds[1];xmove=true;}
+            // if(keyDown[k.w]) {player.y-=5;ymove=true;}
+            // if(keyDown[k.s]) {player.y+=5;ymove=true;}
+            // if(keyDown[k.a]) {player.x-=5;xmove=true;}
+            // if(keyDown[k.d]) {player.x+=5;xmove=true;}
+            // if(keyPress[k.e]) {console.log(`${player.x},${player.y}`);}
             }
             if(!ymove){frictiony(0.1);}
             if(!xmove){frictionx(0.1);}
             limitVel(moveSpeeds[0]);
             if(count%60==0 && (xmove||ymove)) {
+                setVolume(sounds.spid,1.9);
                 play(sounds[`roll`]);
                 stopSound=0;
             }
             if(xmove == false && ymove == false && stopSound==0) {
-                stop(sounds.roll);
+                // stop(sounds.roll);
+                setVolume(sounds.spid,0);
                 stopSound=1;
             }
             break;
@@ -85,11 +92,13 @@ function playerMovement() {
             }
             if(xmove||ymove) {
                 if(spidTime>115) {
+                    setVolume(sounds.spid,1);
                     play(sounds.spid);
                     spidTime=0;
                 }
             } else {
-                stop(sounds.spid);
+                // stop(sounds.spid);
+                setVolume(sounds.spid,0);
             }
             if(!ymove){frictiony(0.2);}
             if(!xmove){frictionx(0.2);}
@@ -106,12 +115,12 @@ function playerMovement() {
             }
             if(player.v.x!=0&&player.v.y!=0) {
                 if(hovTime>115) {
-                    play(sounds.hov);console.log(true)
+                    play(sounds.hov);
                     hovTime=0;
                 }
             } else {
                 hovTime=115;
-                stop(sounds.hov);
+                // stop(sounds.hov);
             }
             if(!ymove){frictiony(0.025);}
             if(!xmove){frictionx(0.025);}
@@ -134,11 +143,15 @@ function playerMovement() {
     
     var targetAngle=0;
     if(level!==6) {
-        targetAngle = pointTo(player,mousePosition());
+        if(player.modules[2][7] == "sythe") {
+            targetAngle = pointTo(player,mousePosition()) - 0.6;
+        } else {
+            targetAngle = pointTo(player,mousePosition());
+        }
     }
 
     player.dir.legs = turn(player.dir.legs,pointTo({x:0,y:0},{x:player.v.x,y:player.v.y}),0.06);
-    player.dir.head = turn(player.dir.head,targetAngle,0.06);
+    player.dir.head = turn(player.dir.head,((player.modules[2][7] == "sythe") ? targetAngle + 0.6 : targetAngle),0.06);
     player.dir.arms = turn(player.dir.arms,targetAngle,0.08);
 
     if(circlerect(player,curLvl.exit)) {
@@ -247,8 +260,8 @@ function playerUpdate() {
                 shoot(player.x,player.y,player.dir.arms,15,2,1,player.v,1,20,10);
                 shoot(player.x,player.y,player.dir.arms,15,2,1,player.v,1,20,-10);
                 knockBack(3,2);
-                part(player.x,player.y,player.dir.arms+Math.PI/2,rand(-5,5)/10,3,2,0,20,-20);
-                part(player.x,player.y,player.dir.arms-Math.PI/2,rand(-5,5)/10,3,2,0,20,20);
+                addParticle(player.x,player.y,player.dir.arms+Math.PI/2,rand(-5,5)/10,3,2,0,20,-20);
+                addParticle(player.x,player.y,player.dir.arms-Math.PI/2,rand(-5,5)/10,3,2,0,20,20);
                 if(player.v.y==0) { player.v.y=Math.sin(player.dir.arms) * -1; }
                 if(player.v.x==0) { player.v.x=Math.cos(player.dir.arms) * -1; }
                 player.attackCount = 0;
@@ -258,6 +271,7 @@ function playerUpdate() {
                 screenShake=1;
                 if(miniSpeed==3) {
                     if(miniTime>85) {
+                        setVolume(sounds.mini,0.5);
                         play(sounds.mini);
                         miniTime=0;
                     }
@@ -268,7 +282,8 @@ function playerUpdate() {
             } 
         } else {
             miniSpeed = 15;
-            stop(sounds.mini);
+            // stop(sounds.mini);
+            setVolume(sounds.mini,0)
         }
     }
     miniTime++;
@@ -301,7 +316,7 @@ function cameraMovement() {
     if(closeToModule()) {
         camera.zoom = lerp(camera.zoom,1.5,0.05);
     } else {
-        camera.zoom = lerp(camera.zoom,1,0.1);
+        camera.zoom = lerp(camera.zoom,player.modules[0][8],0.1);
     }
 
     var m = mousePosition();

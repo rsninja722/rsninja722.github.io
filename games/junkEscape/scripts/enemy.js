@@ -9,7 +9,7 @@ enemyDraw = {
         if(s==95) {
             for(let i=0;i<20;i++) {
                 let r = rand(0,1);
-                part(x,y,e.dir,degToRad(rand(0,359)),3,0,0,20);
+                addParticle(x,y,e.dir,degToRad(rand(0,359)),3,0,0,20);
             }
         }
     },
@@ -86,7 +86,7 @@ class enemy {
         if(weapon==0||weapon==1) {
             this.seeDist=250;
         }
-        if(weapon==3||weapon==6) {
+        if(weapon==3||weapon==6||weapon==4) {
             this.seeDist=400;
         }
     }
@@ -101,6 +101,12 @@ enemy.prototype.draw = function() {
 
 enemy.prototype.update = function(index) {
     if(this.health<=0) {
+        var l=rand(4,7);
+        var ii=0;
+        while(ii<l) {
+            addPart(this);
+            ii++;
+        }
         pauseTime=8;
         exps.push({x:this.x,y:this.y,time:14,type:`big${rand(1,3)}`});
         play(sounds[`bigBoom${rand(0,2)}`]);
@@ -131,13 +137,13 @@ enemy.prototype.update = function(index) {
         case 1:
             if(dist(this,this.target)<150/this.speed&&this.see) {
                 let t = pointTo(this,this.target);
-                this.dir = turn(this.dir,t,0.06);
+                this.dir = turn(this.dir,t,0.02);
                 this.v.x=Math.cos(this.dir)*this.vel*-1;
                 this.v.y=Math.sin(this.dir)*this.vel*-1;
                 if(this.vel<this.speed){this.vel+=0.01;}
             } else if(dist(this,this.target)>this.r*2) {
                 let t = pointTo(this,this.target);
-                this.dir = turn(this.dir,t,0.06);
+                this.dir = turn(this.dir,t,0.02);
                 this.v.x=Math.cos(this.dir)*this.vel;
                 this.v.y=Math.sin(this.dir)*this.vel;
                 if(this.vel<this.speed){this.vel+=0.01;}
@@ -150,7 +156,7 @@ enemy.prototype.update = function(index) {
         case 2:
             if(this.see) {
                 let t = pointTo(this,this.target);
-                this.dir = turn(this.dir,t,0.06);
+                this.dir = turn(this.dir,t,0.03);
             }
             break;
         case 3:
@@ -177,13 +183,13 @@ enemy.prototype.update = function(index) {
             break;
     }
 
-    switch(this.weapon) {
-        case 1:
-            if(Math.abs(this.shootTime%80)==5) {
-                play(sounds.sawing);
-            }
-            break;
-    }
+    // switch(this.weapon) {
+    //     case 1:
+    //         if(Math.abs(this.shootTime%80)==5) {
+    //             play(sounds.sawing);
+    //         }
+    //         break;
+    // }
     switch(this.weapon) {
         case 0:
             if(this.shootTime==25) {
@@ -199,7 +205,9 @@ enemy.prototype.update = function(index) {
             if(this.shootTime<1&&this.see) {
                 shoot(this.x,this.y,this.dir,0,12,0,this.v,1);
                 play(sounds.saw);
-                
+                if(Math.abs(this.shootTime%80)==5) {
+                    
+                }
                 this.shootTime=80;
             }
             if(this.shootTime==50) {shoot(this.x,this.y,this.dir,0,12,0,this.v,1);}
@@ -219,9 +227,9 @@ enemy.prototype.update = function(index) {
             break;
         case 4:
             if(this.shootTime<1&&this.see) {
-                shoot(this.x,this.y,this.dir,7,5,0,this.v,1,10);
-                shoot(this.x,this.y,this.dir,7,5,0,this.v,1,10,-5);
-                shoot(this.x,this.y,this.dir,7,5,0,this.v,1,10,5);
+                shoot(this.x,this.y,this.dir,5,5,0,this.v,1,10);
+                shoot(this.x,this.y,this.dir,5,5,0,this.v,1,10,-5);
+                shoot(this.x,this.y,this.dir,5,5,0,this.v,1,10,5);
                 this.shootTime=100;
             }
             break;
@@ -249,9 +257,9 @@ enemy.prototype.update = function(index) {
             break;
         case 8:
             if(this.shootTime<1&&this.see) {
-                shoot(this.x,this.y,this.dir,5,3,0,player.v,3,20,-10);
-                shoot(this.x,this.y,this.dir,5,3,0,player.v,3,20);
-                shoot(this.x,this.y,this.dir,5,3,0,player.v,3,20,10);
+                shoot(this.x,this.y,this.dir,3+(rand(-1,4)/10),3,0,player.v,3,20,-10);
+                shoot(this.x,this.y,this.dir,3+(rand(-1,4)/10),3,0,player.v,3,20);
+                shoot(this.x,this.y,this.dir,3+(rand(-1,4)/10),3,0,player.v,3,20,10);
                 this.shootTime=150;
                 play(sounds.plasma);
             }
@@ -284,12 +292,14 @@ enemy.prototype.update = function(index) {
 
 enemy.prototype.movex = function(index) {
     this.x += this.v.x;
-    if(colliding(this)||circlecircle(this,player)||this.hittingEnemy(index)) {this.x -= this.v.x;this.v.x=0;return true;}
+    if(colliding(this)||this.hittingEnemy(index)) {this.x -= this.v.x;this.v.x=0;return true;}
+    if(circlecircle(this,player)) {this.x -= this.v.x;this.v.x=0;this.vel=0;return true;}
 }
 
 enemy.prototype.movey = function(index) {
     this.y += this.v.y;
-    if(colliding(this)||circlecircle(this,player)||this.hittingEnemy(index)) {this.y -= this.v.y;this.v.y=0;return true;}
+    if(colliding(this)||this.hittingEnemy(index)) {this.y -= this.v.y;this.v.y=0;return true;}
+    if(circlecircle(this,player)) {this.y -= this.v.y;this.v.y=0;this.vel=0;return true;}
 }
 
 enemy.prototype.canSeePlayer = function() {
