@@ -185,6 +185,7 @@ function handleLayerUI() {
             } else
             // rename
             if(rectpoint2({x:50,y:yoff+10,w:120,h:20},mousePos)&&mousePress[0]&&doubleClick) {
+                console.log(doubleClick);
                 typingString = "";
                 typingMode = true;
                 layerNameTarget = i;

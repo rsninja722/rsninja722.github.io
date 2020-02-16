@@ -55,3 +55,5 @@ numbers.transformY = new numberInput(350,5,"transformY",1,-10000,10000);
 numbers.transformAngle = new numberInput(425,5,"transformAngle",0,-360,360);
 numbers.transformSX = new numberInput(500,5,"transformSX",1,-100,100);
 numbers.transformSY = new numberInput(575,5,"transformSY",1,-100,100);
+numbers.mirrorX = new numberInput(30,575,"mirrorX",8,-0.5,10000);
+numbers.mirrorY = new numberInput(30,600,"mirrorY",8,-0.5,10000);

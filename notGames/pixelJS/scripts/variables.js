@@ -90,6 +90,11 @@ var scrollBarHeld = true;
 
 var mouseCords;
 
+var mirror = {x:{on:false,pos:5},y:{on:false,pos:5}};
+var mirrorMode = false;
+var repositionMode = false;
+var repositionToolCache = "";
+
 var tool = "pen";
 
 var toolCache = "";

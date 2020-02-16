@@ -74,6 +74,9 @@ function selectColor() {
     var d = canvases.ctx.getImageData(m.x-251,m.y-31,1,1);
     d = d.data;
     setColor(d[0],d[1],d[2]);
+    if(buttons.eraser.state) {
+        buttons.eraser.click();
+    }
 }
 
 function setColor(r,g,b) {

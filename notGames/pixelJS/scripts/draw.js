@@ -23,6 +23,11 @@ function drawUIBottom() {
     rect2(135,335,110,230,"#1e1e1e",baseCtx);
     border2(135,335,110,230,"#555555",baseCtx);
 
+    // palette
+    if(mirrorMode) {
+        rect2(0,570,130,75,"#1e1e1e",baseCtx);
+        border2(0,570,130,75,"#555555",baseCtx);
+    }
     switch(tool) {
         case "pen":
             text2("size",250,20,"#3162cc",14,baseCtx);

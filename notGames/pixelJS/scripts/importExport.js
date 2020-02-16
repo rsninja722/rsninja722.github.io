@@ -138,49 +138,54 @@ function download() {
     dcvs.width = projectInfo.w*s;
     dcvs.height = projectInfo.h*s;
 
+    var blendMode = document.getElementById("blendSelect").value;
+    dctx.globalCompositeOperation = blendMode;
+
     var drawData = dctx.getImageData(0, 0, dcvs.width, dcvs.height);
 
     // I hate image data
 
     // go through all layers
     for(var i=layers.length-1;i>-1;i--) {
-        layers[i].ctx.imageSmoothingEnabled = false;
+        if(layers[i].show) {
+            layers[i].ctx.imageSmoothingEnabled = false;
 
-        // get image data
-        var imgData = layers[i].ctx.getImageData(0, 0, projectInfo.w, projectInfo.h);
+            // get image data
+            var imgData = layers[i].ctx.getImageData(0, 0, projectInfo.w, projectInfo.h);
 
-        var drawPosition = 0;
-        var layerPosition = 0;
-        // go through every pixel in layer
-        for(var y=0,yl=imgData.height;y<yl;y++) {
-            for(var x=0,xl=imgData.width;x<xl;x++) {
+            var drawPosition = 0;
+            var layerPosition = 0;
+            // go through every pixel in layer
+            for(var y=0,yl=imgData.height;y<yl;y++) {
+                for(var x=0,xl=imgData.width;x<xl;x++) {
 
-                drawPosition = (x*s*4) + (y*s*drawData.width*4);
-                // set square of export scale size
-                for(var y2=0;y2<s;y2++) {
-                    for(var x2=0;x2<s;x2++) {
-                        drawData.data[drawPosition] = imgData.data[layerPosition];
-                        drawData.data[drawPosition+1] = imgData.data[layerPosition+1];
-                        drawData.data[drawPosition+2] = imgData.data[layerPosition+2];
-                        drawData.data[drawPosition+3] = imgData.data[layerPosition+3];
-                        drawPosition += 4;
+                    drawPosition = (x*s*4) + (y*s*drawData.width*4);
+                    // set square of export scale size
+                    for(var y2=0;y2<s;y2++) {
+                        for(var x2=0;x2<s;x2++) {
+                            drawData.data[drawPosition] = imgData.data[layerPosition];
+                            drawData.data[drawPosition+1] = imgData.data[layerPosition+1];
+                            drawData.data[drawPosition+2] = imgData.data[layerPosition+2];
+                            drawData.data[drawPosition+3] = imgData.data[layerPosition+3];
+                            drawPosition += 4;
+                        }
+                        drawPosition = (x*s*4) + (y*s*drawData.width*4) + (drawData.width*4*(y2+1));
                     }
-                    drawPosition = (x*s*4) + (y*s*drawData.width*4) + (drawData.width*4*(y2+1));
-                }
 
-                layerPosition+=4;
-            }   
+                    layerPosition+=4;
+                }   
+            }
+
+            var tempCanv = document.createElement("canvas");
+            tempCanv.width = dcvs.width;
+            tempCanv.height = dcvs.height;
+
+            var tempCtx = tempCanv.getContext("2d");
+
+            tempCtx.putImageData(drawData,0,0);
+
+            dctx.drawImage(tempCanv,0,0);
         }
-
-        var tempCanv = document.createElement("canvas");
-        tempCanv.width = dcvs.width;
-        tempCanv.height = dcvs.height;
-
-        var tempCtx = tempCanv.getContext("2d");
-
-        tempCtx.putImageData(drawData,0,0);
-
-        dctx.drawImage(tempCanv,0,0);
     }
 
     var link = document.createElement("a");

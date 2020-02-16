@@ -316,6 +316,19 @@ buttons.redo = new button(
         function() {buttonImg("tileOff",this);},function() {}
     );
 
+    // ----mirror----
+    buttons.mirror = new button(
+        30,465,20,20,false,
+        function() {
+            mirrorMode = this.state;
+            numbers.mirrorX.state = this.state;
+            numbers.mirrorY.state = this.state;
+        },
+        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#444444":"#363636",baseCtx);},
+        function() {buttonImg("mirrorOn",this);},
+        function() {buttonImg("mirrorOff",this);},function() {}
+    );
+
     // ----preview----
     buttons.preview = new button(
         55,465,20,20,false,
@@ -336,6 +349,43 @@ buttons.redo = new button(
         function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#444444":"#363636",baseCtx);},
         function() {buttonImg("limitOn",this);},
         function() {buttonImg("limitOff",this);},function() {}
+    );
+// ------------------------mirror------------------------
+    // ----reposition----
+    buttons.reposition = new button(
+        105,575,20,20,false,
+        function() {
+            repositionToolCache = tool;
+            switchTool("");
+            repositionMode = true;
+        },
+        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#444444":"#363636",baseCtx);},
+        function() {buttonImg("reposition",this);},
+        function() {buttonImg("reposition",this);},function() {},
+        function() {return mirrorMode;}
+    );
+
+    // ----mirrorX----
+    buttons.mirrorX = new button(
+        5,575,20,20,false,
+        function() {
+            mirror.x.on = !mirror.x.on;
+        },
+        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#444444":"#363636",baseCtx);},
+        function() {buttonImg("MXOn",this);},
+        function() {buttonImg("MXOff",this);},function() {},
+        function() {return mirrorMode;}
+    );
+    // ----mirrorY----
+    buttons.mirrorY = new button(
+        5,600,20,20,false,
+        function() {
+            mirror.y.on = !mirror.y.on;
+        },
+        function() {rect2(this.x,this.y,this.w,this.h,this.hover?"#444444":"#363636",baseCtx);},
+        function() {buttonImg("MYOn",this);},
+        function() {buttonImg("MYOff",this);},function() {},
+        function() {return mirrorMode;}
     );
 
 // ------------------------layer------------------------
