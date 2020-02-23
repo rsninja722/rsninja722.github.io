@@ -155,7 +155,7 @@ function canvasUpdate() {
     doubleClick = 0;
     if (mousePress[0]) {
         if (doubleClickTime === 0) {
-            doubleClickTime = 25;
+            doubleClickTime = 100;
         } else {
             doubleClick = 1;
         }

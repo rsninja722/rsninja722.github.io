@@ -9,10 +9,16 @@ var links = [
     {title:"Space Invaders",desc:"A game worse than tetris",thumb:"thumbnails/space.png",link:"games/spaceInvaders/index.html"},
     {title:"Car Demo",desc:"really crappy car demo. WASD to move.",thumb:"thumbnails/car.PNG",link:"games/racing/index.html"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
-    {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"},
-    {title:"PPS",desc:"The thing you see in the background. Primordial particle simulator",thumb:"thumbnails/pps.png",link:"notGames/pps.html"},
+    {title:"Smaller Projects",desc:"Random projects that aren't worthy of the main page.",thumb:"thumbnails/meta.png",link:"smallProjects.html"},
     {title:"archive",desc:"Links to all my old stuff that sucks too much to be on this page.",thumb:"thumbnails/archive.PNG",link:"archive.html"}
-]
+];
+
+var smallProjectLinks = [
+    {title:"evolution",desc:"Sorta working evolution simulator. Makes the squares go to the right",thumb:"thumbnails/evo.png",link:"notGames/pathEvolution/index.html"},
+    {title:"PPS",desc:"The thing you see in the background. Primordial particle simulator",thumb:"thumbnails/pps.png",link:"notGames/pps.html"},
+    {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"}
+];
+
 /*
 don't forget to add to games
 
