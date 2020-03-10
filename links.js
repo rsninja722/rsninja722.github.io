@@ -6,6 +6,7 @@ var links = [
     {title:"Mandelbrot",desc:"Fractal zoomer and renders",thumb:"thumbnails/mandel.png",link:"notGames/mandelbrot/mandelbrot.html"},
     {title:"Slime Defender Clicker",desc:"Clicker/idle game where you allot currency to upgrade your slime shootin' turret.",thumb:"thumbnails/slime.PNG",link:"seperategames/slimeDefenderClicker/index.html"},
     {title:"tinytris",desc:"Simple, fast generic block puzzle game, with a few options. Desktop and mobile versions available",thumb:"thumbnails/tetris.PNG",link:"games/tetris/selectPlatform.html"},
+    {title:"Mari Oh",desc:"Quick project for my grade 11 philosophy class.",thumb:"thumbnails/marioh.png",link:"../mari-oh/index.html"},
     {title:"Space Invaders",desc:"A game worse than tetris",thumb:"thumbnails/space.png",link:"games/spaceInvaders/index.html"},
     {title:"Car Demo",desc:"really crappy car demo. WASD to move.",thumb:"thumbnails/car.PNG",link:"games/racing/index.html"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
