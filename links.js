@@ -5,6 +5,7 @@ var links = [
     {title:"Scramble Clamble",desc:"WIP   Platformer with randomizing controls",thumb:"thumbnails/scramble.png",link:"games/scrambleRefactor/index.html"},
     {title:"Mandelbrot",desc:"Fractal zoomer and renders",thumb:"thumbnails/mandel.png",link:"notGames/mandelbrot/mandelbrot.html"},
     {title:"Slime Defender Clicker",desc:"Clicker/idle game where you allot currency to upgrade your slime shootin' turret.",thumb:"thumbnails/slime.PNG",link:"seperategames/slimeDefenderClicker/index.html"},
+    {title:"RPG",desc:"WIP rpg made with marshmarlows",thumb:"thumbnails/rpg.png",link:"https://rsninja-and-friends.github.io/RPG"},
     {title:"tinytris",desc:"Simple, fast generic block puzzle game, with a few options. Desktop and mobile versions available",thumb:"thumbnails/tetris.PNG",link:"games/tetris/selectPlatform.html"},
     {title:"Mari Oh",desc:"Quick project for my grade 11 philosophy class.",thumb:"thumbnails/marioh.png",link:"../mari-oh/index.html"},
     {title:"Space Invaders",desc:"A game worse than tetris",thumb:"thumbnails/space.png",link:"games/spaceInvaders/index.html"},
