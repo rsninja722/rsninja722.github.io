@@ -5,6 +5,7 @@ htmlUI.import.elem.style = "display:block;position:absolute;top:0;bottom:0;right
 htmlUI.export.elem.style = "display:block;position:absolute;top:0;bottom:0;right:0;left:0;margin:auto;padding:10px;width:250px;height:50px;border: 2px solid #555555;";
 htmlUI.help.elem.style = "display:block;position:absolute;top:0;bottom:0;right:0;left:0;margin:auto;padding:10px;width:500px;height:400px;border: 2px solid #555555;overflow-y: scroll;overflow-x: hidden;";
 htmlUI.artGen.elem.style = "display:block;position:absolute;top:0;right:0;padding:10px;width:500px;height:500px;border: 2px solid #555555;";
+htmlUI.layerUpload.elem.style = "display:block;position:absolute;top:0;bottom:0;right:0;left:0;margin:auto;padding:10px;width:250px;height:50px;border: 2px solid #555555;";
 
 function manageUI() {
 
@@ -197,6 +198,19 @@ function setElement(elem,state) {
         htmlUI.upload.state = false;
     }
 
+    // upload layer
+    function uploadLayerCancel() {
+        htmlUI.layerUpload.state = false;
+    }
+
+    function uploadLayerUpload() {
+        if(document.getElementById("fileUploadLayer").files[0]!==undefined) {
+            document.getElementById("uploadLayerCache").src = URL.createObjectURL(document.getElementById("fileUploadLayer").files[0]);  
+        }
+    
+        htmlUI.layerUpload.state = false;
+    }
+
     //import
     function importCancel() {
         htmlUI.import.state = false;
@@ -224,4 +238,5 @@ function hideAllHTMLUI() {
     htmlUI.export.state = false;
     htmlUI.artGen.state = false;
     htmlUI.help.state = false;
+    htmlUI.layerUpload.state = false;
 }

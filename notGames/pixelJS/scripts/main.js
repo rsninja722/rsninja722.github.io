@@ -160,7 +160,6 @@ function canvasUpdate() {
             doubleClick = 1;
         }
     }
-
     if (repositionMode) {
         var m = getMouse(2);
         if (m.x < -0.5) { m.x = -0.5; }

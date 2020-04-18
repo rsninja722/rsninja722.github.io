@@ -149,6 +149,14 @@
             <button onclick="exportCancel()">cancel</button>
         </div>
 
+        <!--upload image for layer-->
+        <div id="uploadLayer" class="lightBack">
+            <input type="file" accept="image/*" id="fileUploadLayer">
+            <button onclick="uploadLayerUpload()">upload</button>
+            <button onclick="uploadLayerCancel()">cancel</button>
+            <img id="uploadLayerCache" src="#" style="display: none;">
+        </div>
+
         <!--help-->
         <div id="help" class="lightBack">
             <h4 style="display: inline-block;">key bindings</h4> 

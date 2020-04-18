@@ -41,6 +41,20 @@ document.getElementById("uploadCache").onload = function() {// detect when image
     layers[0].ctx.drawImage(document.getElementById("uploadCache"),0,0);
 }
 
+// ----layer from upload
+document.getElementById("fileUploadLayer").onchange = function () {// cache image when uploaded
+    if(document.getElementById("fileUploadLayer").files[0]!==undefined) {
+        document.getElementById("uploadLayerCache").src = URL.createObjectURL(document.getElementById("fileUploadLayer").files[0]);  
+    }
+
+    htmlUI.layerUpload.state = false;
+}
+document.getElementById("uploadLayerCache").onload = function() {// detect when image is uploaded and create a new project
+    addLayer(curLayer);
+
+    layers[curLayer].ctx.drawImage(document.getElementById("uploadLayerCache"),0,0);
+}
+
 // ----import save----
 document.getElementById("fileImport").onchange = function () {// detect when JSON is uploaded and load project
     if(document.getElementById("fileImport").files[0]!==undefined) {

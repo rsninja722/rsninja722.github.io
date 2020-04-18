@@ -30,7 +30,8 @@ var htmlUI = {
     import:{elem:document.getElementById("import"),state:false},
     export:{elem:document.getElementById("export"),state:false},
     help:{elem:document.getElementById("help"),state:false},
-    artGen:{elem:document.getElementById("artGen"),state:false}
+    artGen:{elem:document.getElementById("artGen"),state:false},
+    layerUpload:{elem:document.getElementById("uploadLayer"),state:false}
 }
 
 var colorInput = {

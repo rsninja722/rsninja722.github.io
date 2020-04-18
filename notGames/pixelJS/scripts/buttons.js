@@ -272,6 +272,27 @@ buttons.edit = new button(
         function() {return UI.edit.state;}
     );
 
+    // ----gen texture----
+    buttons.layerFromUpload = new button(
+        50,60,150,30,false,
+        function() { // on click
+            UI.edit.state = false;
+            buttons.edit.state = false;
+            hideAllHTMLUI();
+            htmlUI.layerUpload.state = true;
+        },
+        function() {
+            rect2(this.x,this.y,this.w,this.h,this.hover?"#565656":"#363636",baseCtx);
+            if(this.hover) {
+                rect2(this.x+150,this.y,this.w,this.h,"#363636",baseCtx);
+                text2("Upload an image to add as a layer",this.x+155,this.y+13,"#14a800",12,baseCtx,140);
+            }
+        },
+        function() {text2("Layer From Upload",this.x+5,this.y+20,"#4de1f5",14,baseCtx);},
+        function() {text2("Layer From Upload",this.x+5,this.y+20,"#4de1f5",14,baseCtx);},function() {},
+        function() {return UI.edit.state;}
+    );
+
 // ----download----
 buttons.download = new button(
     100,0,30,30,false,
