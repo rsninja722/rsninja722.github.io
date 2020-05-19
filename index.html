@@ -118,7 +118,7 @@
             var hours = time.getHours();
             var minutes = time.getMinutes();
             var seconds = time.getSeconds();
-            document.getElementById("hours").style.transform = "rotate("+ ~~mapRange(hours,0,23,0,360) +"deg)";
+            document.getElementById("hours").style.transform = "rotate("+ ~~mapRange(hours,0,23,0,720) +"deg)";
             document.getElementById("minutes").style.transform = "rotate("+ ~~mapRange(minutes,0,59,0,360) +"deg)";
             document.getElementById("seconds").style.transform = "rotate("+ ~~mapRange(seconds,0,59,0,360) +"deg)";
         }
