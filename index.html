@@ -67,14 +67,22 @@
 </head>
 <body style="margin: 0 0 0 0;">
     <canvas id="cvs"style="position:absolute;top:0;left:0;z-index:-420;"></canvas>
-    <div style="width: 100%; height: 75px; background-color: #313131;box-shadow: 0px 5px 5px black;" id="topbar">
+    <div style="width: 100%; height: 75px; background-color: #313131;box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;" id="topbar">
         <a href="index.html" style="position:absolute;left:0;height: 75px;">
             <img src="home.png" alt="home" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
         </a>
         <img src="logo.png" alt="rsninja dev" style="position:absolute;left:150px;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        <a href="https://rsninja.dev/86400clock/86400clock.html" style="top:12px;position:absolute">
+            <img src="clockBack.png" alt="86400 clock" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            <img src="clockHours.png" id="hours" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="clockMinutes.png" id="minutes" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="clockSeconds.png" id="seconds" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            
+        </a>
         <a href="https://rsninja.itch.io" style="position:absolute;right:10px;top:10px;height:50px;">
             <img src="thumbnails/logo-white-new.svg" alt="itch.io page" style="height: 50px;">
         </a>
+        
         <a href="https://www.youtube.com/channel/UCUaN_LJvvRGZPvV-sHRfp5w?sub_confirmation=1" style="position:absolute;right:250px;top:10px;height:50px;">
             <img src="thumbnails/youtube_social_icon_red.png" alt="youtube" style="height: 50px;">
         </a>
@@ -104,6 +112,24 @@
     <script src="input.js"></script>
     <script src="pps.js"></script>
     <script src="links.js"></script>
+    <script>
+        function updateClock() {
+            var time = new Date();
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            var seconds = time.getSeconds();
+            document.getElementById("hours").style.transform = "rotate("+ ~~mapRange(hours,0,23,0,360) +"deg)";
+            document.getElementById("minutes").style.transform = "rotate("+ ~~mapRange(minutes,0,59,0,360) +"deg)";
+            document.getElementById("seconds").style.transform = "rotate("+ ~~mapRange(seconds,0,59,0,360) +"deg)";
+        }
+
+        function mapRange(value, valueLow, valueHigh, remappedLow, remappedHigh) {
+            return remappedLow + (remappedHigh - remappedLow) * (value - valueLow) / (valueHigh - valueLow);
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
     <script>
     for(var i=0;i<links.length;i++) {
         //<div class="game">
