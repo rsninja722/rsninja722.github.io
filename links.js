@@ -21,6 +21,7 @@ var links = [
 var smallProjectLinks = [
     {title:"evolution",desc:"Sorta working evolution simulator. Makes the squares go to the right",thumb:"thumbnails/evo.png",link:"notGames/pathEvolution/index.html"},
     {title:"PPS",desc:"The thing you see in the background. Primordial particle simulator",thumb:"thumbnails/pps.png",link:"notGames/pps.html"},
+    {title:"pixel PPS",desc:"Primordial particle simulator, but more, and with a quadtree",thumb:"thumbnails/pixelpps.png",link:"https://rsninja.dev/pixelPPS/index.html"},
     {title:"Art Gen",desc:"Simply tool to quickly generate pixel art tiles.",thumb:"thumbnails/art.PNG",link:"seperategames/artgen/index.html"}
 ];
 
