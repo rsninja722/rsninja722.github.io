@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/gif" href="tabthing.png" />
+    <meta charset="utf-8" />
+    <title>rsninjaphoto</title>
+    <meta name="description" content="photos taken by rsninja">
+    <style>
+        html {background-color: #1e1e1e;color: #4de1f5;}
+        button {background-color: #353535;border-color: #555555;color: #4de1f5; margin: 2px;border-style: outset;cursor: pointer; padding: 0, 3px, 0, 3px;border-width: 1px;}
+        button:hover {background-color: #555555;}
+        button:active {border-style: inset;}
+        ::-webkit-scrollbar {width: 5px;}
+        ::-webkit-scrollbar-track {background: #1e1e1e; }
+        ::-webkit-scrollbar-thumb {background: #444444; }
+        ::-webkit-scrollbar-thumb:hover {background: #666666; }
+    </style>
+</head>
+
+<body>
+    <a href="index.html?page=0" id="back"><button>back</button></a>
+    <button onclick="expand(this)">full size</button>
+    <div id="pic"></div>
+    <script>
+        var id = window.location.search;
+        if (id !== "") {
+            id = parseInt(id.substring(id.indexOf("id") + 3, id.length));
+
+            var img = document.createElement("img");
+            img.src = "photosLarge/" + id + ".JPG";
+            img.style.maxWidth = "100%";
+            img.style.maxHeight = window.innerHeight + "px";
+            img.style.padding = "0";
+            img.className = "block";
+            document.getElementById("pic").appendChild(img);
+
+            document.getElementById("back").href = "index.html?page=" + Math.floor(id/20);
+        }
+
+        function expand(e) {
+            var s = document.getElementById('pic').children[0].style;
+            s.maxWidth = "10000px";
+            s.maxHeight = "10000px";
+            e.parentElement.removeChild(e);
+        }
+    </script>
+</body>
+
+</html>
