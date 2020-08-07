@@ -13,5 +13,6 @@ var files = [
     "11.JPG",
     "12.JPG",
     "13.JPG",
-    "14.JPG"
+    "14.JPG",
+    "15.JPG"
 ];
