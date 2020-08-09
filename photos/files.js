@@ -14,5 +14,8 @@ var files = [
     "12.JPG",
     "13.JPG",
     "14.JPG",
-    "15.JPG"
+    "15.JPG",
+    "16.JPG", 
+    "17.JPG", 
+    "18.JPG",
 ];
