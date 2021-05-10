@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloadable</title>
+    <style>
+        html {
+            background-color: #092331;
+            color: #92ceff;
+            font-size: 16px;
+            font-family: consolas;
+            /* font-family: 'Orbitron', sans-serif; */
+        }
+
+        a {
+            color: #92ceff;
+            cursor: pointer;
+        }
+
+        a:hover {
+            color: #d9eeff;
+        }
+/* 
+        div {
+            display: flex;
+            border: 1px solid #92ceff;
+        } */
+
+        .container {
+            -ms-box-orient: horizontal;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -moz-flex;
+            display: -webkit-flex;
+            display: flex;
+        }
+
+        .section {
+            border-top: none;
+            border-bottom: none;
+            border-left: 1px solid #4e9edf;
+            border-right: 1px solid #4e9edf;
+            background-color: #00000099;
+            box-shadow: 0px 5px 3px 1px rgba(0,0,0,0.75);
+            padding: 1em;
+            margin: 2em;
+        }
+    </style>
+</head>
+
+<body style="margin: 0 0 0 0;">
+    <div style="width: 100%; height: 75px; background-color: #00000099;margin: none;">
+        <a href="/index.html" style="position:absolute;left:0;height: 75px;">
+            <img src="/assets/home.png" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        </a>
+        <img src="/assets/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+    </div>
+    <div class="container">
+        <div class="section">
+            <h2>Deep Breath</h2>
+            <a href="assets/deepBreath.zip">
+                <img src="assets/downloadButton.png">
+            </a>
+            <p>diving exploration game made for Ludem Dare 48 <a href="https://github.com/Ewpratten/ludum-dare-48/releases/tag/v1.0.0">github</a></p>
+            <p>to play:</p>
+            <ol>
+                <li>download zip file</li>
+                <li>extract zip file</li>
+                <li>run the .exe</li>
+            </ol>
+            <img src="assets/deepBreath.png">
+        </div>
+        <div class="section">
+            <h2>Animation Game</h2>
+            <a href="assets/AnimationGame.zip">
+                <img src="assets/downloadButton.png">
+            </a>
+            <p>game made for grade 11 comp sci</p>
+            <p>to play:</p>
+            <ol>
+                <li>download zip file</li>
+                <li>extract zip file</li>
+                <li>run the jar file ( make sure you have java installed)</li>
+            </ol>
+            <img src="assets/AnimGamePreview.png">
+        </div>
+    </div>
+</body>
+
+</html>

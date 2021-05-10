@@ -1,4 +1,7 @@
 var links = [
+    {title:"Photo Gallery",desc:`check out the pictures I've taken throughout my time doing photography`,thumb:"thumbnails/gallery.png",link:"photos/index.html"},
+    {title:"Blog",desc:`I write about various topics occasionally`,thumb:"thumbnails/blog.png",link:"blog"},
+    {title:"Downloadables",desc:`projects that have to be downloaded to play`,thumb:"thumbnails/download.png",link:"notGames/downloadable/index.html"},
     {title:"Junk Escape",desc:`Play as a modular robot in a top down shooter, and escape the junk yard you crash landed in. Made in 1 week with NDS for Community Game Jam.`,thumb:"thumbnails/junk.png",link:"games/junkEscape/index.html"},
     {title:"Ouro-fill-us",desc:"Puzzle game with the objective of eating your own snake tail. Made in 50hrs for Jim Jam #2.",thumb:"thumbnails/ouro.PNG",link:"seperategames/ouro/index.html"},
     {title:"Micromanaged Mike",desc:"multitasking platform/rage game made for Ludum Dare 46.",thumb:"thumbnails/mike.png",link:"https://rsninja.dev/LudumDare46"},
@@ -31,8 +34,8 @@ don't forget to add to games
 <body style="margin: 0 0 0 0;">
     <div style="width: 100%; height: 75px; background-color: #313131;">
         <a href="/index.html" style="position:absolute;left:0;height: 75px;">
-            <img src="/home.png" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            <img src="/assets/home.png" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
         </a>
-        <img src="/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        <img src="/assets/logo.png" style="position:absolute;right:0;left:0;margin:auto;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
     </div>
 */

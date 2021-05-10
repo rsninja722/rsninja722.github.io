@@ -10,7 +10,7 @@
     <style>
         html {
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #212121;
+            background-color: #092331;
             color: #dddddd;
         }
         img {
@@ -21,7 +21,7 @@
             margin: auto;
         }
         .game {
-            background-color: #1e1e1e;
+            background-color: #00000099;
             display: inline-block;
             margin: 1em 1em 1em 1em;
             height: 300px;width: 400px;
@@ -30,7 +30,7 @@
             box-shadow: 0px 5px 5px black;
         }
         .bar {
-            background-color: #1e1e1ea4;
+            background-color: #00000099;
             width: 400px;
             position: absolute;
         }
@@ -51,13 +51,13 @@
             font-size: 20px;
         }
         a {
-            color:#ff0000;
+            color:#00c3ff;
         }
         a:visited {
-            color: rgb(173, 50, 50);
+            color: rgb(50, 124, 173);
         }
         #footer {
-            background-color: #313131;
+            background-color: #00000099;
             text-align: center;
             height: 25px;
             width: 100%;
@@ -67,17 +67,16 @@
 </head>
 <body style="margin: 0 0 0 0;">
     <canvas id="cvs"style="position:absolute;top:0;left:0;z-index:-420;"></canvas>
-    <div style="width: 100%; height: 75px; background-color: #313131;box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;" id="topbar">
+    <div style="width: 100%; height: 75px; background-color: #00000099;box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;" id="topbar">
         <a href="index.html" style="position:absolute;left:0;height: 75px;">
-            <img src="home.png" alt="home" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            <img src="assets/home.png" alt="home" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
         </a>
-        <img src="logo.png" alt="rsninja dev" style="position:absolute;left:150px;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        <img src="assets/logo.png" alt="rsninja dev" style="position:absolute;left:150px;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
         <a href="https://rsninja.dev/86400clock/86400clock.html" style="top:12px;position:absolute">
-            <img src="clockBack.png" alt="86400 clock" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;">
-            <img src="clockHours.png" id="hours" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
-            <img src="clockMinutes.png" id="minutes" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
-            <img src="clockSeconds.png" id="seconds" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
-            
+            <img src="assets/clockBack.png" alt="86400 clock" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            <img src="assets/clockHours.png" id="hours" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="assets/clockMinutes.png" id="minutes" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="assets/clockSeconds.png" id="seconds" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
         </a>
         <a href="https://rsninja.itch.io" style="position:absolute;right:10px;top:10px;height:50px;">
             <img src="thumbnails/logo-white-new.svg" alt="itch.io page" style="height: 50px;">
@@ -85,14 +84,6 @@
         
         <a href="https://www.youtube.com/channel/UCUaN_LJvvRGZPvV-sHRfp5w?sub_confirmation=1" style="position:absolute;right:250px;top:10px;height:50px;">
             <img src="thumbnails/youtube_social_icon_red.png" alt="youtube" style="height: 50px;">
-        </a>
-
-        <a href="photos/index.html?page=0" style="position:absolute;right:340px;top:0px;height:75px;image-rendering: pixelated;image-rendering: crisp-edges;">
-            <img src="photos/tabthing.png" alt="photos" style="height: 75px;">
-        </a>
-
-        <a href="blog" style="position:absolute;right:430px;top:0px;height:75px;image-rendering: pixelated;image-rendering: crisp-edges;">
-            <img src="blog/icon.png" alt="blog" style="height: 75px;" style="image-rendering: -moz-crisp-edges;image-rendering: pixelated;">
         </a>
     </div>
     
@@ -143,6 +134,9 @@
         //<div class="game">
         var game = document.createElement("div");
         game.setAttribute("class","game");
+        if(i < 3) {
+            game.style.borderColor = "#82823b";
+        }
             //<a href="index.html">
             var lonk = document.createElement("a");
             lonk.href = links[i].link;

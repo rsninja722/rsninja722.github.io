@@ -10,9 +10,9 @@ var canvas = document.getElementById("cvs");
     var counter = 0;
 
     var types = [
-        {color:"#ff0000",reactions:[],range:0},
-        {color:"#ff6363",reactions:[],range:0},
-        {color:"#c40000",reactions:[],range:0}
+        {color:"#0466a6",reactions:[],range:0},
+        {color:"#018edb",reactions:[],range:0},
+        {color:"#5fc0eb",reactions:[],range:0}
     ];
     
     var particles = [];
