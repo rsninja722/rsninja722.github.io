@@ -19,23 +19,23 @@ var canvas = document.getElementById("cvs");
 
 
     window.onload = function() {
-        canvas.height = document.body.offsetHeight < window.innerHeight ?  window.innerHeight : document.body.offsetHeight;
+        canvas.height = window.innerHeight;
         ch = canvas.height;
         for(var i=0;i<types.length;i++) {
             types[i].range = rand(24,32);
             for(var j=0;j<types.length;j++) {
-                types[i].reactions[j] = randDec(-2,2);
+                types[i].reactions[j] = randDec(-1,1);
             }
         }
         for(var y=0;y<ch;y+=10) {
             for(var x=0;x<cw;x+=10) {
-                if(!rand(0,20)){particles.push(new particle(x,y,rand(0,types.length-1)));}
+                if(!rand(0,40)){particles.push(new particle(x,y,rand(0,types.length-1)));}
             }   
         }
     }
     function update() {
         canvas.width = document.getElementById("topbar").clientWidth;
-        canvas.height = document.body.offsetHeight < window.innerHeight ?  window.innerHeight : document.body.offsetHeight
+        // canvas.height = document.body.offsetHeight < window.innerHeight ?  window.innerHeight : document.body.offsetHeight
         cw = canvas.width;
         ch = canvas.height;
         counter++;
@@ -44,9 +44,13 @@ var canvas = document.getElementById("cvs");
             var curpart = particles[i];
             var rang = types[curpart.t].range;
             var vels = [];
+            var closest = [0,1000000];
             for(var j=0;j<particles.length;j++) {
                 if(i==j) {continue;}
                 var dist = length(curpart,particles[j]);
+                if(dist < closest[1]) {
+                    closest = [j,dist];
+                }
                 if(dist<25) {
                     if(dist<8) {
                     if(dist==0) {curpart.x+=randDir();curpart.x+=randDir();curpart.y+=randDir();} else {
@@ -73,8 +77,12 @@ var canvas = document.getElementById("cvs");
                 }
                 finalx/=vels.length;
                 finaly/=vels.length;
-                curpart.v.x+=finalx*0.5;
-                curpart.v.y+=finaly*0.5;
+                curpart.v.x+=finalx*0.2;
+                curpart.v.y+=finaly*0.2;
+            } else {
+                var angle = pointTo(curpart,particles[closest[0]]) + Math.PI/2;
+                curpart.v.x -= Math.sin(angle)*(1/closest[1]);
+                curpart.v.y -= Math.cos(angle)*(1/closest[1]);   
             }
         }
         for(var i=0;i<particles.length;i++) {
