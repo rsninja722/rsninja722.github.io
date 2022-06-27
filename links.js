@@ -4,7 +4,7 @@ var links = [
     {title:"Downloadables",desc:`Projects that have to be downloaded to play.`,thumb:"thumbnails/download.png",link:"notGames/downloadable/index.html"},
     {title:"Junk Escape",desc:`Play as a modular robot in a top down shooter, and escape the junk yard you crash landed in. Made in 1 week with NDS for Community Game Jam.`,thumb:"thumbnails/junk.png",link:"games/junkEscape/index.html"},
     {title:"Ouro-fill-us",desc:"Puzzle game with the objective of eating your own snake tail. Made in 50hrs for Jim Jam #2.",thumb:"thumbnails/ouro.PNG",link:"seperategames/ouro/index.html"},
-    {title:"Cellular Automata",desc:"Collection of quick and messy cellular automata programs.",thumb:"thumbnails/automata.png",link:"notgames/cellularAutomata/index.html"},
+    {title:"Cellular Automata",desc:"Collection of quick and messy cellular automata programs.",thumb:"thumbnails/automata.png",link:"notGames/cellularAutomata/index.html"},
     {title:"Textris",desc:"Text based generic block puzzle game that looks old, but plays like new.",thumb:"thumbnails/textris.png",link:"https://rsninja.dev/Textris/index.html"},
     {title:"Space Invaders",desc:"Defend your personal space from the Space Invaders, whoever they are...",thumb:"thumbnails/space.png",link:"games/spaceInvaders/index.html"},
     {title:"Minesweeper",desc:"Clean off those dusty mines in this desktop classic.",thumb:"thumbnails/minesweeperthumb.png",link:"https://rsninja.dev/minesweeper/index.html"},
