@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0 0 0 0;
+            overflow: hidden;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: white;
+        }
+
+        #cvs {
+            width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        #top {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            background-color: #000000cc;
+            border-radius: 5px;
+        }
+
+        #info {
+            width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="cvs"></canvas>
+    <div id="top">
+        <span>Speed:</span>
+        <input id="timeStep" type="range" min="10" max="500" value="470">
+        <details>
+            <summary>info</summary>
+            <p>Life</p>
+            <div id="info">
+                John Conway's Game of life. Every step, each living cell will stay alive if it has 2 or 3 living neighbors, otherwise it will die. Also, each dead cell with 3 living neighbors will become alive. Brightness is determined by how recently the cell changed states.
+            </div>
+        </details>
+    </div>
+    <script>
+        var cvs = document.getElementById("cvs");
+        var ctx = cvs.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        var width = cvs.width;
+        var height = cvs.height;
+        var timeStep = 30;
+
+        class cell {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.value = Math.random() > 0.5;
+                this.neighborCache = [];
+                this.next = this.value;
+                this.stepsSinceChange = 0;
+            }
+
+            static arr = [];
+
+            static init() {
+                for (var y = 0; y < height; y++) {
+                    var row = [];
+                    for (var x = 0; x < width; x++) {
+                        row.push(new cell(x, y));
+                    }
+                    cell.arr.push(row);
+                }
+            }
+
+            static update() {
+                var oldWidth = cell.arr[0].length;
+                var oldHeight = cell.arr.length;
+                if (width > oldWidth) {
+                    for (var y = 0; y < oldHeight; y++) {
+                        for (var x = oldWidth; x < width; x++) {
+                            cell.arr[y].push(new cell(x, y));
+                        }
+                    }
+                }
+
+                if (height > oldHeight) {
+                    for (var y = oldHeight; y < height; y++) {
+                        var row = [];
+                        for (var x = 0; x < width; x++) {
+                            row.push(new cell(x, y));
+                        }
+                        cell.arr.push(row);
+                    }
+                }
+
+                if (height < oldHeight) {
+                    cell.arr.splice(height);
+                    for (var x = 0; x < width; x++) {
+                        cell.arr[height - 1][x].neighborCache = [];
+                    }
+                }
+                
+                if (width < oldWidth) {
+                    for (var y = 0; y < height; y++) {
+                        cell.arr[y].splice(width);
+                        cell.arr[y][width - 1].neighborCache = [];
+                    }
+                }
+
+                var imgData = ctx.createImageData(width, height);
+                var dataOffset = 0;
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        var curCell = cell.arr[y][x];
+                        
+                        curCell.step();
+                    }
+                }
+
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        var curCell = cell.arr[y][x];
+                        
+                        curCell.step2();
+                        
+                        var c = curCell.color;
+                        
+                        imgData.data[dataOffset] = c[0];
+                        imgData.data[dataOffset + 1] = c[1];
+                        imgData.data[dataOffset + 2] = c[2];
+                        imgData.data[dataOffset + 3] = c[3];
+
+                        dataOffset += 4;
+                    }
+                }
+
+                ctx.putImageData(imgData, 0, 0);
+            }
+
+            step() {
+                this.stepsSinceChange++;
+                var sum = 0;
+                for (var n of this.neighbors) {
+                    if(n.value) {
+                        sum ++;
+                    }
+                }
+
+                if(this.value) {
+                    if(sum < 2 || sum > 3) {
+                        this.next = false;
+                        this.stepsSinceChange = 0;
+                    }
+                } else {
+                    if(sum === 3) {
+                        this.next = true;
+                        this.stepsSinceChange = 0;
+                    }
+                }
+            }
+            step2() {
+                this.value = this.next;
+            }
+
+            get neighbors() {
+                if (this.neighborCache.length === 0) {
+                    for (var i of [
+                        [-1, 1],
+                        [0, 1],
+                        [1, 1],
+                        [1, 0],
+                        [1, -1],
+                        [0, -1],
+                        [-1, -1],
+                        [-1, 0]
+                    ]) {
+                        var neighborX = this.x + i[0];
+                        var neighborY = this.y + i[1];
+
+                        if (neighborX < 0 || neighborY < 0 || neighborX >= width || neighborY >= height) {
+                            continue;
+                        }
+
+                        this.neighborCache.push(cell.arr[neighborY][neighborX]);
+                    }
+                }
+
+                return this.neighborCache;
+            }
+
+            get color() {
+                var c = 255 * (1/Math.pow(this.stepsSinceChange,0.5));
+                if(this.value) {
+                    return [0,Math.max(c,150),Math.max(c,150),255];
+                } else {
+                    return [0,0,c/3,255];
+                }
+            }
+        }
+
+        function update() {
+            timeStep = 500 - parseInt(document.getElementById("timeStep").value);
+
+            cvs.height = window.innerHeight / 2;
+            cvs.width = window.innerWidth / 2;
+            width = cvs.width;
+            height = cvs.height;
+
+            cell.update();
+
+            setTimeout(update, timeStep);
+        }
+
+        cell.init();
+
+    setTimeout(update, 30);
+    </script>
+</body>
+
+</html>

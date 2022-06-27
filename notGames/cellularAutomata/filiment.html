@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0 0 0 0;
+            overflow: hidden;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: white;
+        }
+
+        #cvs {
+            width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        #top {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            background-color: #000000cc;
+            border-radius: 5px;
+        }
+
+        #info {
+            width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="cvs"></canvas>
+    <div id="top">
+        <span>Self Change:</span>
+        <input id="additive" type="range" min="0" max="100" value="25">
+        <details>
+            <summary>info</summary>
+            <p>Filament</p>
+            <div id="info">
+                Sort of based of the fireflies automata. Each cell increases the value of its neighbors if it is close to fully charged, reverses how its charged once it maxes out, and then decreases the value of its neighbors if it is close to fully out, and then reverses again. There is also a passive amount of charge being added each step. I don't know if someone has made something like this before, so I made up the name.
+            </div>
+        </details>
+    </div>
+    <script>
+        var cvs = document.getElementById("cvs");
+        var ctx = cvs.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        var width = cvs.width;
+        var height = cvs.height;
+        var selfChange = 0.1;
+        const additive = 0.05;
+        const lightDuration = 1;
+        const colorMulti = 255 / lightDuration;
+
+        class cell {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.value = Math.random();
+                this.multi = Math.random() > 0.5 ? -1 : 1;
+                this.neighborIndex = 0;
+                this.neighborCache = [];
+            }
+
+            static arr = [];
+
+            static init() {
+                for (var y = 0; y < height; y++) {
+                    var row = [];
+                    for (var x = 0; x < width; x++) {
+                        row.push(new cell(x, y));
+                    }
+                    cell.arr.push(row);
+                }
+            }
+
+            static update() {
+                var oldWidth = cell.arr[0].length;
+                var oldHeight = cell.arr.length;
+                if (width > oldWidth) {
+                    for (var y = 0; y < oldHeight; y++) {
+                        for (var x = oldWidth; x < width; x++) {
+                            cell.arr[y].push(new cell(x, y));
+                        }
+                    }
+                }
+
+                if (height > oldHeight) {
+                    for (var y = oldHeight; y < height; y++) {
+                        var row = [];
+                        for (var x = 0; x < width; x++) {
+                            row.push(new cell(x, y));
+                        }
+                        cell.arr.push(row);
+                    }
+                }
+
+                if (height < oldHeight) {
+                    cell.arr.splice(height);
+                    for (var x = 0; x < width; x++) {
+                        cell.arr[height - 1][x].neighborCache = [];
+                        cell.arr[height - 1][x].neighborIndex = 0;
+                    }
+                }
+                
+                if (width < oldWidth) {
+                    for (var y = 0; y < height; y++) {
+                        cell.arr[y].splice(width);
+                        cell.arr[y][width - 1].neighborCache = [];
+                        cell.arr[y][width - 1].neighborIndex = 0;
+                    }
+                }
+
+                var imgData = ctx.createImageData(width, height);
+                var dataOffset = 0;
+
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        var curCell = cell.arr[y][x];
+
+                        curCell.step();
+
+                        var c = curCell.color;
+
+                        imgData.data[dataOffset] = c[0];
+                        imgData.data[dataOffset + 1] = c[1];
+                        imgData.data[dataOffset + 2] = c[2];
+                        imgData.data[dataOffset + 3] = c[3];
+
+                        dataOffset += 4;
+                    }
+                }
+
+                ctx.putImageData(imgData, 0, 0);
+            }
+
+            step() {
+                if (this.value > 1) {
+                    this.multi = -1;
+                }
+                if (this.value < 0) {
+                    this.multi = 1;
+                }
+
+                this.value += additive * this.multi * selfChange;
+
+                if (this.multi === 1 && this.value > 0.75 || this.multi === -1 && this.value < 0.25) {
+                    var cur = this.neighbors[this.neighborIndex];
+
+                    cur.value += additive * this.multi;
+
+                    this.neighborIndex++;
+                    this.neighborIndex = this.neighborIndex > this.neighbors.length - 1 ? 0 : this.neighborIndex;
+                }
+            }
+
+            get neighbors() {
+                if (this.neighborCache.length === 0) {
+                    for (var i of [
+                        [-1, 1],
+                        [0, 1],
+                        [1, 1],
+                        [1, 0],
+                        [1, -1],
+                        [0, -1],
+                        [-1, -1],
+                        [-1, 0]
+                    ]) {
+                        var neighborX = this.x + i[0];
+                        var neighborY = this.y + i[1];
+
+                        if (neighborX < 0 || neighborY < 0 || neighborX >= width || neighborY >= height) {
+                            continue;
+                        }
+
+                        this.neighborCache.push(cell.arr[neighborY][neighborX]);
+                    }
+                }
+
+                return this.neighborCache;
+            }
+
+            get color() {
+                if (this.value > 0) {
+                    var brightness = (235 * this.value) | 0;
+                    return [20, 20 + brightness, 20 + brightness, 255];
+                } else {
+                    return [20, 20, 20, 255];
+                }
+            }
+        }
+
+        function update() {
+            selfChange = parseInt(document.getElementById("additive").value)/100;
+            cvs.height = window.innerHeight / 3;
+            cvs.width = window.innerWidth / 3;
+            width = cvs.width;
+            height = cvs.height;
+
+            cell.update();
+        }
+
+        cell.init();
+
+        setInterval(update, 16);
+    </script>
+</body>
+
+</html>

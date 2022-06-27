@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cellular Automata</title>
+    <link rel="icon" type="image/gif" href="icon.png" />
+    <style>
+        html {
+            background-color: #040e14;
+            color: #b3ddff;
+            font-family: consolas, monospace;
+        }
+
+        body {
+            margin: 0 0 0 0;
+        }
+
+        img {
+            width: 400px;
+            height: 250px;
+            z-index: -1;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -100;
+            width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        h3 {
+            margin: 0.25em;
+        }
+
+        .inline {
+            display: inline-block;
+            vertical-align: top;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+            border: 2px solid #b3ddff;
+            border-radius: 5px;
+            height: 250px;
+            margin: 8px;
+        }
+
+        .inline:hover {
+            filter: brightness(140%);
+    transform: translate(0, -5px);
+        }
+
+        .main-div {
+            padding: 2em;
+            text-align: center;
+        }
+
+        .title-bar {
+            background-color: #000000cc;
+            color: #b3ddff;
+            width: 400px;
+            height: 2em;
+            position: absolute;
+        }
+
+        .warning {
+            color: #ffffff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="cvs"></canvas>
+    <div class="main-div">
+        <div style="background-color: #000000dd;border-radius: 5px;padding: 5px; margin: 5px;">
+            <h1>Cellular Automata</h1>
+            <p class="warning">!Flashing Images Warning!</p>
+            <p>Various cellular automata projects I have made while messing around. Click a section to see the
+                functioning demo.</p>
+        </div>
+        <div>
+            <div class="inline">
+                <a href="life.html">
+                    <div class="title-bar">
+                        <h3>Life</h3>
+                    </div>
+                    <img src="thumbnails/7.png">
+                </a>
+            </div>
+            <div class="inline">
+                <a href="states.html">
+                    <div class="title-bar">
+                        <h3>Rock, Paper, Scissors</h3>
+                    </div>
+                    <img src="thumbnails/6.png">
+                </a>
+            </div>
+            <div class="inline">
+                <a href="filiment.html">
+                    <div class="title-bar">
+                        <h3>Filament</h3>
+                    </div>
+                    <img src="thumbnails/4.png">
+                </a>
+            </div>
+            <div class="inline">
+                <a href="filimentRainbow.html">
+                    <div class="title-bar">
+                        <h3>Rainbow Filament</h3>
+                    </div>
+                    <img src="thumbnails/5.png">
+                </a>
+            </div>
+            <div class="inline">
+                <a href="firefliesFast.html">
+                    <div class="title-bar">
+                        <h3>Fireflies V3</h3>
+                    </div>
+                    <img src="thumbnails/3.png">
+                </a>
+            </div>
+            <div class="inline">
+                <a href="firefliesLowres.html">
+                    <div class="title-bar">
+                        <h3>Fireflies V2</h3>
+                    </div>
+                    <img src="thumbnails/2.png">
+                </a>
+            </div>
+            <div class="inline">
+                <a href="fireflies.html">
+                    <div class="title-bar">
+                        <h3>Fireflies V1</h3>
+                    </div>
+                    <img src="thumbnails/1.png">
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="background.js"></script>
+</body>
+
+</html>

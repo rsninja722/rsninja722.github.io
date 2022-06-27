@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        body {
+            margin: 0 0 0 0;
+            overflow: hidden;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: white;
+        }
+
+        #cvs {
+            width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        #top {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            background-color: #000000cc;
+            border-radius: 5px;
+        }
+
+        #info {
+            width: 400px;
+        }
+        </style>
+    </head>
+    <body>
+        <canvas id="cvs"></canvas>
+        <div id="top">
+            <details>
+                <summary>info</summary>
+                <p>Spontaneous Synchronization Fireflies</p>
+                <div id="info">
+                    Each cell (firefly) slowly builds up a charge. Once it fills up, it flashes. The moment it flashes, it gives its inactive neighbors some extra charge, and decreases the charge of its active neighbors. This eventually leads to the fireflies syncing up.
+                </div>
+            </details>
+        </div>
+        <script>
+var cvs = document.getElementById("cvs");
+var ctx = cvs.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+var width = cvs.width;
+var height = cvs.height;
+const timeStep = 1 / 120;
+const chargeLeak = 0.05;
+const lightDuration = 0.2;
+const colorMulti = 255 / lightDuration;
+var performances = [];
+
+class cell {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        var start = Math.random() * (1 + lightDuration);
+        this.charge = start > 1 ? start - 1 : start;
+        this.active = start > 1;
+        this.threshold = 1; //1 + ((Math.random() - 0.5 ) / 3 );
+        this.neighborCache = [];
+    }
+
+    static arr = [];
+
+    static init() {
+        for (var y = 0; y < height; y++) {
+            var row = [];
+            for (var x = 0; x < width; x++) {
+                row.push(new cell(x, y));
+            }
+            cell.arr.push(row);
+        }
+    }
+
+    static update() {
+        var oldWidth = cell.arr[0].length;
+        var oldHeight = cell.arr.length;
+        if (width > oldWidth) {
+            for (var y = 0; y < oldHeight; y++) {
+                for (var x = oldWidth; x < width; x++) {
+                    cell.arr[y].push(new cell(x, y));
+                }
+            }
+        }
+
+        if (height > oldHeight) {
+            for (var y = oldHeight; y < height; y++) {
+                var row = [];
+                for (var x = 0; x < width; x++) {
+                    row.push(new cell(x, y));
+                }
+                cell.arr.push(row);
+            }
+        }
+
+        if (height < oldHeight) {
+            cell.arr.splice(height);
+            for (var x = 0; x < width; x++) {
+                cell.arr[height-1][x].neighborCache = [];
+            }
+        }
+
+        if (width < oldWidth) {
+            for (var y = 0; y < height; y++) {
+                cell.arr[y].splice(width);
+                cell.arr[y][width-1].neighborCache = [];
+            }
+        }
+
+        var imgData = ctx.createImageData(width, height);
+        var dataOffset = 0;
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                var curCell = cell.arr[y][x];
+
+                curCell.step();
+
+                var c = curCell.color;
+
+                imgData.data[dataOffset] = c[0];
+                imgData.data[dataOffset + 1] = c[1];
+                imgData.data[dataOffset + 2] = c[2];
+                imgData.data[dataOffset + 3] = c[3];
+
+                dataOffset += 4;
+            }
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+    }
+
+    step() {
+        this.charge += timeStep;
+
+        if (this.active) {
+            if (this.charge >= lightDuration) {
+                this.active = false;
+                this.charge = 0;
+            }
+        } else {
+            if (this.charge >= this.threshold) {
+                this.active = true;
+                this.charge = 0;
+ 
+                for (var n of this.neighbors) {
+                    if (!n.active) {
+                        n.charge += chargeLeak;
+                    } else {
+                        n.charge -= chargeLeak;
+                    }
+                }
+            }
+
+        }
+    }
+
+    get neighbors() {
+        if (this.neighborCache.length === 0) {
+            for (var i of [
+                [-1, 1],
+                [0, 1],
+                [1, 1],
+                [1, 0],
+                [1, -1],
+                [0, -1],
+                [-1, -1],
+                [-1, 0]
+            ]) {
+                var neighborX = this.x + i[0];
+                var neighborY = this.y + i[1];
+
+                if (neighborX < 0 || neighborY < 0 || neighborX >= width || neighborY >= height) {
+                    continue;
+                }
+
+                this.neighborCache.push(cell.arr[neighborY][neighborX]);
+            }
+        }
+
+        return this.neighborCache;
+    }
+
+    get color() {
+        if (this.active) {
+            var brightness = (colorMulti * (lightDuration - this.charge)) | 0;
+            return [brightness, brightness, 0, 255];
+        } else {
+            return [0,0,0, 255];
+        }
+    }
+}
+
+function update() {
+    var start = performance.now();
+    cvs.height = window.innerHeight/3;
+    cvs.width = window.innerWidth/3;
+    width = cvs.width;
+    height = cvs.height;
+
+    cell.update();
+
+    var time = performance.now() - start;
+    performances.push(time);
+    const average = (arr) => arr.reduce((p, c) => p + c, 0) / arr.length;
+
+    // console.log(`avg: ${average(performances)} | frame: ${time}`);
+    // requestAnimationFrame(update);
+}
+
+cell.init();
+
+setInterval(update,16);
+// requestAnimationFrame(update);
+        </script>
+    </body>
+</html>
