@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0 0 0 0;
+            overflow: hidden;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: white;
+        }
+
+        #cvs {
+            width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        #top {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            background-color: #000000cc;
+            border-radius: 5px;
+        }
+
+        #info {
+            width: 400px;
+        }
+
+        a {
+            color: #b3ddff;
+        }
+        a:visited {
+            color: #b3ddff;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="cvs"></canvas>
+    <div id="top">
+        <details>
+            <summary>info</summary>
+            <p>painty cells</p>
+            <p>every few frames a cell will spread its color to an adjacent empty cell, while slightly mutating the new cell color.</p>
+            <p>also every few frames a cell will shift the color of nearby cells closer to its own.</p>
+            <div id="info">
+                <p>inspired by the <a href="http://robust.cs.unm.edu/doku.php?id=ulam%3Ademos%3Acoevolution">RGB Plants/Huegene code</a></p>
+            </div>
+        </details>
+    </div>
+    <script>
+        var cvs = document.getElementById("cvs");
+        var ctx = cvs.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        var width = cvs.width;
+        var height = cvs.height;
+        var performances = [];
+        var seeded = false;
+
+        var rand = (low,high) => Math.floor(Math.random() * (high - low + 1) + low);
+
+        const energyRate = 0.25;
+        const reproduceTimeout = 10;
+        const colorChangeRate = 20;
+        const seeds = 500;
+        const TYPES = {
+            EMPTY: 0,
+            PLANT: 1,
+            HERBIVORE: 2
+        }
+
+        class cell {
+
+            constructor(x, y, data) {
+                this.x = x;
+                this.y = y;
+
+                this.type = data.type;
+
+                this.r = data.r;
+                this.g = data.g;
+                this.b = data.b;
+
+                this.energy = 0.5;
+
+                this.reproduceTime = 0;
+
+                this.neighborCache = [];
+
+            }
+
+            static arr = [];
+
+            static init() {
+                for (var y = 0; y < height; y++) {
+                    var row = [];
+                    for (var x = 0; x < width; x++) {
+                        row.push(new cell(x, y, {type: TYPES.EMPTY,r: 0,g: 0,b: 0}));
+                    }
+                    cell.arr.push(row);
+                }
+            }
+
+            static update() {
+                var oldWidth = cell.arr[0].length;
+                var oldHeight = cell.arr.length;
+                if (width > oldWidth) {
+                    for (var y = 0; y < oldHeight; y++) {
+                        for (var x = oldWidth; x < width; x++) {
+                            cell.arr[y].push(new cell(x, y, {type: TYPES.EMPTY,r: 0,g: 0,b: 0}));
+                        }
+                    }
+                }
+
+                if (height > oldHeight) {
+                    for (var y = oldHeight; y < height; y++) {
+                        var row = [];
+                        for (var x = 0; x < width; x++) {
+                            row.push(new cell(x, y, {type: TYPES.EMPTY,r: 0,g: 0,b: 0}));
+                        }
+                        cell.arr.push(row);
+                    }
+                }
+
+                if (height < oldHeight) {
+                    cell.arr.splice(height);
+                    for (var x = 0; x < width; x++) {
+                        cell.arr[height - 1][x].neighborCache = [];
+                    }
+                }
+
+                if (width < oldWidth) {
+                    for (var y = 0; y < height; y++) {
+                        cell.arr[y].splice(width);
+                        cell.arr[y][width - 1].neighborCache = [];
+                    }
+                }
+
+                if (!seeded) {
+                    for(var i=0;i<seeds;i++) {
+                        var x = rand(0, width - 1);
+                        var y = rand(0, height - 1);
+                        cell.arr[y][x].type = TYPES.PLANT;
+                        cell.arr[y][x].r = rand(0, 255);
+                        cell.arr[y][x].g = rand(0, 255);
+                        cell.arr[y][x].b = rand(0, 255);
+                        cell.arr[y][x].energy = 0.5;
+                    }
+                    seeded = true;
+                }
+
+                var imgData = ctx.createImageData(width, height);
+                var dataOffset = 0;
+
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        var curCell = cell.arr[y][x];
+
+                        curCell.step();
+
+                        imgData.data[dataOffset] = curCell.r;
+                        imgData.data[dataOffset + 1] = curCell.g;
+                        imgData.data[dataOffset + 2] = curCell.b;
+                        imgData.data[dataOffset + 3] = 255;
+
+                        dataOffset += 4;
+                    }
+                }
+
+                ctx.putImageData(imgData, 0, 0);
+            }
+
+            step() {
+                if (this.type === TYPES.EMPTY) {
+                    return;
+                }
+
+                this.energy += energyRate;
+
+                if (this.energy > 1) {
+                    this.energy = 1;
+                }
+
+                if (this.type === TYPES.PLANT) {
+                    if (this.energy >= 1) {
+                        if(this.reproduce()) {
+                            this.energy -= 0.5;
+                        }
+                    }
+
+                    if (rand(0,10) === 0) {
+                        var neighbors = this.neighbors;
+                        var search = rand(0,100) > 25 ? ~~(neighbors.length/2): neighbors.length;
+                        for (var i = 0; i < search; i++) {
+                            var neighborCell = this.getCellAt(neighbors[i]);
+                            if(neighborCell.type !== TYPES.PLANT) {
+                                continue;
+                            }
+                            var nr = neighborCell.r;
+                            var ng = neighborCell.g;
+                            var nb = neighborCell.b;
+                            if(nr > this.r) {
+                                neighborCell.r = Math.max(0, nr - 5);
+                            } else {
+                                neighborCell.r = Math.min(255, nr + 4);
+                            }
+                            if(ng > this.g) {
+                                neighborCell.g = Math.max(0, ng - 5);
+                            } else {
+                                neighborCell.g = Math.min(255, ng + 4);
+                            }
+                            if(nb > this.b) {
+                                neighborCell.b = Math.max(0, nb - 5);
+                            } else {
+                                neighborCell.b = Math.min(255, nb + 4);
+                            }
+                        }
+                    }
+                }
+            }
+
+            reproduce() {
+                if (this.reproduceTime > 0) {
+                    this.reproduceTime--;
+                    return false;
+                }
+                this.reproduceTime = reproduceTimeout;
+
+                var neighbors = this.neighbors;
+                var emptyNeighbors = [];
+
+                var search = rand(0,100) > 25 ? ~~(neighbors.length/2): neighbors.length;
+                for (var i = 0; i < search; i++) {
+                    var neighborCell = this.getCellAt(neighbors[i]);
+
+                    if (neighborCell.type === TYPES.EMPTY) {
+                        emptyNeighbors.push(neighbors[i]);
+                    }
+
+                    // if (neighborCell.type === TYPES.PLANT) {
+                    //     if (neighborCell.r + neighborCell.g + neighborCell.b < this.r + this.g + this.b) {
+                    //         emptyNeighbors.push(neighbors[i]);
+                    //     }
+                    // }
+                }
+
+                if (emptyNeighbors.length === 0) {
+                    return false;
+                }
+
+                var neighbor = emptyNeighbors[rand(0, emptyNeighbors.length - 1)];
+                var neighborCell = cell.arr[neighbor[0]][neighbor[1]];
+
+                neighborCell.type = this.type;
+                neighborCell.r = this.r + rand(-colorChangeRate+2, colorChangeRate);
+                neighborCell.r = Math.max(0, Math.min(255, neighborCell.r));
+                neighborCell.g = this.g + rand(-colorChangeRate+2, colorChangeRate);
+                neighborCell.g = Math.max(0, Math.min(255, neighborCell.g));
+                neighborCell.b = this.b + rand(-colorChangeRate+2, colorChangeRate);
+                neighborCell.b = Math.max(0, Math.min(255, neighborCell.b));
+                neighborCell.lifeMax = this.lifeMax + rand(-colorChangeRate, colorChangeRate);
+                neighborCell.energy = 0.5;
+            }
+
+            getCellAt(coords) {
+                return cell.arr[coords[0]][coords[1]];
+            }
+
+            get neighbors() {
+                if (this.neighborCache.length === 0) {
+                    for (var i of [
+                        [0, 1],
+                        [1, 0],
+                        [0, -1],
+                        [-1, 0],
+                        [-1, 1],
+                        [1, 1],
+                        [1, -1],
+                        [-1, -1]
+                    ]) {
+                        var neighborX = this.x + i[0];
+                        var neighborY = this.y + i[1];
+
+                        if (neighborX < 0 || neighborY < 0 || neighborX >= width || neighborY >= height) {
+                            continue;
+                        }
+
+                        this.neighborCache.push([neighborY,neighborX]);
+                    }
+                }
+
+                return this.neighborCache;
+            }
+        }
+
+        function update() {
+            var start = performance.now();
+            cvs.height = window.innerHeight;
+            cvs.width = window.innerWidth;
+            width = cvs.width;
+            height = cvs.height;
+
+            cell.update();
+
+            var time = performance.now() - start;
+            performances.push(time);
+            const average = (arr) => arr.reduce((p, c) => p + c, 0) / arr.length;
+
+            // console.log(`avg: ${average(performances)} | frame: ${time}`);
+            requestAnimationFrame(update);
+        }
+
+        cell.init();
+
+        // setInterval(update, 5);
+requestAnimationFrame(update);
+    </script>
+</body>
+
+</html>
