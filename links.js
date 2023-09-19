@@ -12,11 +12,11 @@ var gameLinks = [
     {title:"Ouro-fill-us",desc:"Puzzle game with the objective of eating your own snake tail. Made in 50hrs for Jim Jam #2.",thumb:"thumbnails/ouro.PNG",link:"seperategames/ouro/index.html"},
     {title:"Textris",desc:"Text based generic block puzzle game that looks old, but plays like new.",thumb:"thumbnails/textris.png",link:"https://rsninja.dev/Textris/index.html"},
     {title:"Minesweeper",desc:"Clean off those dusty mines in this desktop classic.",thumb:"thumbnails/minesweeperthumb.png",link:"https://rsninja.dev/minesweeper/index.html"},
-    {title:"Downloadables",desc:`Projects that have to be downloaded to play.`,thumb:"thumbnails/download.png",link:"notGames/downloadable/index.html"},
     {title:"Space Invaders",desc:"Defend your personal space from the Space Invaders, whoever they are...",thumb:"thumbnails/space.png",link:"games/spaceInvaders/index.html"},
     {title:"Slime Defender Clicker",desc:"Clicker/idle game where you allot currency to upgrade your slime shootin' turret.",thumb:"thumbnails/slime.PNG",link:"seperategames/slimeDefenderClicker/index.html"},
     {title:"Micromanaged Mike",desc:"multitasking platform/rage game made for Ludum Dare 46.",thumb:"thumbnails/mike.png",link:"https://rsninja.dev/LudumDare46"},
     {title:"Zombies",desc:"Simple top down survival shooter.",thumb:"thumbnails/zombie.PNG",link:"seperategames/zombies/index.html"},
+    {title:"Downloadables",desc:`Projects that have to be downloaded to play.`,thumb:"thumbnails/download.png",link:"notGames/downloadable/index.html"},
     {title:"Smaller Projects",desc:"Random projects that aren't worthy of the main page.",thumb:"thumbnails/meta.png",link:"smallProjects.html"},
     {title:"Archive",desc:"Links to all my old stuff that sucks too much to be on this page.",thumb:"thumbnails/archive.PNG",link:"archive.html"},
 ];

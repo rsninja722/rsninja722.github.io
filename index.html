@@ -17,12 +17,16 @@
     <style>
         html {
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #092331;
+            background-color: #060c13;
             color: #dddddd;
         }
 
         img {
             font-size: 25px;
+        }
+
+        #seconds,#minutes,#hours {
+            transition: all 1s ease-in;
         }
 
         #games,#projects {
@@ -41,6 +45,11 @@
             border-radius: 5px;
             box-shadow: 0px 5px 5px black;
             backdrop-filter: blur(6px);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
         }
 
         .bar {
@@ -62,11 +71,13 @@
             text-align: center;
             font-weight: bold;
             font-size: 2em !important;
-            margin: 0 0 0 0;
-            padding-top: 1em;
-            padding-bottom: 1em;
+            margin: 1em 0 0 0;
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
             color: #5fc0eb;
             border-bottom: 1px solid #018edb;
+            background-color: #00000099;
+            backdrop-filter: blur(3px);
         }
 
         h3 {
@@ -100,7 +111,7 @@
 
 <body style="margin: 0 0 0 0;">
     <canvas id="cvs" style="position:fixed;top:0;left:0;z-index:-420;"></canvas>
-    <div style="width: 100%; height: 75px; background-color: #00000099;backdrop-filter: blur(6px); box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;"
+    <div style="width: 100%; height: 75px; background-color: #00000099;backdrop-filter: blur(3px); box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;"
         id="topbar">
         <a href="index.html" style="position:absolute;left:0;height: 75px;">
             <img src="assets/home.png" alt="home"
@@ -128,7 +139,7 @@
         </a>
     </div>
 
-    <p class="header">Coding Projects</p>
+    <p class="header">Projects</p>
     <div id="projects">
 
     </div>
