@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-152717860-1"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-152717860-1');</script>
-    <link rel="icon" type="image/gif" href="assets/tabthing.png"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-152717860-1"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'UA-152717860-1');</script>
+    <link rel="icon" type="image/gif" href="assets/tabthing.png" />
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rsninja.dev/">
+    <meta property="og:title" content="rsninja dev's personal site">
+    <meta property="og:description" content="collection of games and coding projects">
+    <meta property="og:image" content="assets/logo.png">
     <meta charset="utf-8" />
     <title>rsninja dev</title>
     <meta name="description" content="collection of web games made by rsninja">
@@ -13,50 +20,74 @@
             background-color: #092331;
             color: #dddddd;
         }
+
         img {
             font-size: 25px;
         }
-        #games {
+
+        #games,#projects {
             width: 100%;
             margin: auto;
             text-align: center;
         }
+
         .game {
             background-color: #00000099;
             display: inline-block;
             margin: 1em 1em 1em 1em;
-            height: 300px;width: 400px;
-            border: 5px solid #414141;
+            height: 300px;
+            width: 400px;
+            border: 5px solid #5fc0ebad;
             border-radius: 5px;
             box-shadow: 0px 5px 5px black;
+            backdrop-filter: blur(6px);
         }
+
         .bar {
             background-color: #00000099;
             width: 400px;
             position: absolute;
         }
+
         .title {
             transition: 0.3s;
             opacity: 1;
         }
+
         .title:hover {
             opacity: 0;
         }
+
+        .header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 2em !important;
+            margin: 0 0 0 0;
+            padding-top: 1em;
+            padding-bottom: 1em;
+            color: #5fc0eb;
+            border-bottom: 1px solid #018edb;
+        }
+
         h3 {
             color: #dddddd;
             text-align: center;
         }
+
         p {
             padding: 5px;
             color: #dddddd;
             font-size: 20px;
         }
+
         a {
-            color:#00c3ff;
+            color: #00c3ff;
         }
+
         a:visited {
             color: rgb(50, 124, 173);
         }
+
         #footer {
             background-color: #00000099;
             text-align: center;
@@ -66,28 +97,42 @@
         }
     </style>
 </head>
+
 <body style="margin: 0 0 0 0;">
-    <canvas id="cvs"style="position:fixed;top:0;left:0;z-index:-420;"></canvas>
-    <div style="width: 100%; height: 75px; background-color: #00000099;box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;" id="topbar">
+    <canvas id="cvs" style="position:fixed;top:0;left:0;z-index:-420;"></canvas>
+    <div style="width: 100%; height: 75px; background-color: #00000099;backdrop-filter: blur(6px); box-shadow: 0px 5px 5px black;display: flex;justify-content: center;align-items: center;"
+        id="topbar">
         <a href="index.html" style="position:absolute;left:0;height: 75px;">
-            <img src="assets/home.png" alt="home" style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            <img src="assets/home.png" alt="home"
+                style="height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
         </a>
-        <img src="assets/logo.png" alt="rsninja dev" style="position:absolute;left:150px;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
+        <img src="assets/logo.png" alt="rsninja dev"
+            style="position:absolute;left:150px;height: 75px;image-rendering: pixelated;image-rendering: crisp-edges;">
         <a href="https://rsninja.dev/86400clock/86400clock.html" style="top:12px;position:absolute">
-            <img src="assets/clockBack.png" alt="86400 clock" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;">
-            <img src="assets/clockHours.png" id="hours" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
-            <img src="assets/clockMinutes.png" id="minutes" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
-            <img src="assets/clockSeconds.png" id="seconds" style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="assets/clockBack.png" alt="86400 clock"
+                style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;">
+            <img src="assets/clockHours.png" id="hours"
+                style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="assets/clockMinutes.png" id="minutes"
+                style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
+            <img src="assets/clockSeconds.png" id="seconds"
+                style="position:absolute;height: 50px;image-rendering: pixelated;image-rendering: crisp-edges;transform-origin: center center;">
         </a>
         <a href="https://rsninja.itch.io" style="position:absolute;right:10px;top:10px;height:50px;">
             <img src="thumbnails/logo-white-new.svg" alt="itch.io page" style="height: 50px;">
         </a>
-        
-        <a href="https://www.youtube.com/channel/UCUaN_LJvvRGZPvV-sHRfp5w?sub_confirmation=1" style="position:absolute;right:250px;top:10px;height:50px;">
+
+        <a href="https://www.youtube.com/channel/UCUaN_LJvvRGZPvV-sHRfp5w?sub_confirmation=1"
+            style="position:absolute;right:250px;top:10px;height:50px;">
             <img src="thumbnails/youtube_social_icon_red.png" alt="youtube" style="height: 50px;">
         </a>
     </div>
-    
+
+    <p class="header">Coding Projects</p>
+    <div id="projects">
+
+    </div>
+    <p class="header">Games</p>
     <div id="games">
         <!-- <div class="game">
             <a href="index.html">
@@ -106,9 +151,11 @@
             </a>
         </div> -->
     </div>
-    <div id="footer">
-        <span style="top: 4px;position: relative;">Other sites: <a href="https://retrylife.ca">guy that programs stuff other than games</a> | <a href="https://scratch.mit.edu/users/rsninja">my scratch lol</a> | <a href="https://marshmarlow.github.io/">marshmarlows</a></span>
-    </div>
+    <!-- <div id="footer">
+        <span style="top: 4px;position: relative;">Other sites: <a href="https://retrylife.ca">guy that programs stuff
+                other than games</a> | <a href="https://scratch.mit.edu/users/rsninja">my scratch lol</a> | <a
+                href="https://marshmarlow.github.io/">marshmarlows</a></span>
+    </div> -->
     <script src="input.js"></script>
     <script src="pps.js"></script>
     <script src="links.js"></script>
@@ -118,9 +165,9 @@
             var hours = time.getHours();
             var minutes = time.getMinutes();
             var seconds = time.getSeconds();
-            document.getElementById("hours").style.transform = "rotate("+ ~~mapRange(hours,0,23,0,720) +"deg)";
-            document.getElementById("minutes").style.transform = "rotate("+ ~~mapRange(minutes,0,59,0,360) +"deg)";
-            document.getElementById("seconds").style.transform = "rotate("+ ~~mapRange(seconds,0,59,0,360) +"deg)";
+            document.getElementById("hours").style.transform = "rotate(" + ~~mapRange(hours, 0, 23, 0, 720) + "deg)";
+            document.getElementById("minutes").style.transform = "rotate(" + ~~mapRange(minutes, 0, 59, 0, 360) + "deg)";
+            document.getElementById("seconds").style.transform = "rotate(" + ~~mapRange(seconds, 0, 59, 0, 360) + "deg)";
         }
 
         function mapRange(value, valueLow, valueHigh, remappedLow, remappedHigh) {
@@ -131,54 +178,69 @@
         setInterval(updateClock, 1000);
     </script>
     <script>
-    for(var i=0;i<links.length;i++) {
-        //<div class="game">
-        var game = document.createElement("div");
-        game.setAttribute("class","game");
-        if(i ==6 || i == 7) {
-            game.style.borderColor = "#82823b";
+        createSection(projectLinks, document.getElementById("projects"));
+        createSection(gameLinks, document.getElementById("games"));
+
+        function createSection(links, parent) {
+            for (let i of links) {
+                parent.appendChild(createItem(i));
+            }
         }
+
+        function createItem(data) {
+            var game = document.createElement("div");
+            game.setAttribute("class", "game");
+
             //<a href="index.html">
-            var lonk = document.createElement("a");
-            lonk.href = links[i].link;
-                //<div class="desc" style="width:400px;height:300px;position:absolute;">
-                var desc = document.createElement("div");
-                desc.setAttribute("class","desc");
-                desc.style = "width:400px;height:300px;position:absolute;";
-                    //<div class="bar">
-                    var bar = document.createElement("div");
-                    bar.setAttribute("class","bar");
-                        //<h3>generic title</h3>
-                        var head = document.createElement("h3");
-                        head.innerHTML = links[i].title;
-                        bar.appendChild(head);
-                        //<p>generic description</p>
-                        var info = document.createElement("p");
-                        info.innerHTML = links[i].desc;
-                        bar.appendChild(info);
-                    desc.appendChild(bar);
-                lonk.appendChild(desc);
-                //<div class="title" style="width:400px;height:300px;position:absolute;">
-                var title = document.createElement("div");
-                title.setAttribute("class","title");
-                title.style = "width:400px;height:300px;position:absolute;";
-                    //<div class="bar">
-                    var bar2 = document.createElement("div");
-                    bar2.setAttribute("class","bar");
-                        //<h3>generic title</h3>
-                        var head2 = document.createElement("h3");
-                        head2.innerHTML = links[i].title;
-                        bar2.appendChild(head2);
-                    title.appendChild(bar2);
-                    //<img src="Capture.png" style="height: 300px;width: 400px;image-rendering: pixelated;image-rendering: crisp-edges;z-index: -1;">  
-                    var thumb = document.createElement("img");
-                        thumb.src = links[i].thumb;
-                        thumb.style = "height: 300px;width: 400px;image-rendering: pixelated;image-rendering: crisp-edges;z-index: -1;";
-                        title.appendChild(thumb);
-                lonk.appendChild(title);
-            game.appendChild(lonk);
-        document.getElementById("games").appendChild(game);
-    }
+            var link = document.createElement("a");
+            link.href = data.link;
+
+            //<div class="desc" style="width:400px;height:300px;position:absolute;">
+            var desc = document.createElement("div");
+            desc.setAttribute("class", "desc");
+            desc.style = "width:400px;height:300px;position:absolute;";
+
+            //<div class="bar">
+            var bar = document.createElement("div");
+            bar.setAttribute("class", "bar");
+
+            //<h3>generic title</h3>
+            var head = document.createElement("h3");
+            head.innerHTML = data.title;
+            bar.appendChild(head);
+
+            //<p>generic description</p>
+            var info = document.createElement("p");
+            info.innerHTML = data.desc;
+            bar.appendChild(info);
+            desc.appendChild(bar);
+            link.appendChild(desc);
+
+            //<div class="title" style="width:400px;height:300px;position:absolute;">
+            var title = document.createElement("div");
+            title.setAttribute("class", "title");
+            title.style = "width:400px;height:300px;position:absolute;";
+
+            //<div class="bar">
+            var bar2 = document.createElement("div");
+            bar2.setAttribute("class", "bar");
+
+            //<h3>generic title</h3>
+            var head2 = document.createElement("h3");
+            head2.innerHTML = data.title;
+            bar2.appendChild(head2);
+            title.appendChild(bar2);
+
+            //<img src="Capture.png" style="height: 300px;width: 400px;image-rendering: pixelated;image-rendering: crisp-edges;z-index: -1;">  
+            var thumb = document.createElement("img");
+            thumb.src = data.thumb;
+            thumb.style = "height: 300px;width: 400px;image-rendering: pixelated;image-rendering: crisp-edges;z-index: -1;";
+            title.appendChild(thumb);
+            link.appendChild(title);
+            game.appendChild(link);
+            return game;
+        }
     </script>
 </body>
+
 </html>
