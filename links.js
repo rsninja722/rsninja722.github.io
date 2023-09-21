@@ -1,6 +1,6 @@
 var projectLinks = [
     {title:"Cellular Automata",desc:"Collection of cellular automata programs.",thumb:"thumbnails/automata.png",link:"notGames/cellularAutomata/index.html"},
-    {title:"JSFrick",desc:`Converter for my esoteric style of JavaScript programming which doesn't use any numbers, letters, or string literals`,thumb:"./thumbnails/jsfrick.jpg",link:"https://rsninja.dev/JSFrick/"},
+    {title:"Esoteric JS Converter",desc:`Converter for my esoteric style of JavaScript programming which doesn't use any numbers, letters, or string literals`,thumb:"./thumbnails/jsfrick.jpg",link:"https://rsninja.dev/JSFrick/"},
     {title:"Ninja Edit",desc:`Image editor geared towards pixel art. To start press "file > new".`,thumb:"thumbnails/pixeljs.png",link:"notGames/pixelJS/index.html"},
     {title:"Mandelbrot",desc:"Fractal zoom animation and renders.",thumb:"thumbnails/mandel.png",link:"notGames/mandelbrot/mandelbrot.html"},
     {title:"Photo Gallery",desc:`Pictures I've taken throughout my time doing photography.`,thumb:"thumbnails/gallery.png",link:"photos/index.html"},
