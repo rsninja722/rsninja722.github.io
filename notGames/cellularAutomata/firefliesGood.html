@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0 0 0 0;
+            overflow: hidden;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: white;
+        }
+
+        #cvs {
+            width: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+        }
+
+        #top {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+            background-color: #000000cc;
+            border-radius: 5px;
+        }
+
+        #info {
+            width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="cvs"></canvas>
+    <div id="top">
+        <details>
+            <summary>info</summary>
+            <p>Spontaneous Synchronization Fireflies</p>
+            <div id="info">
+                Each cell (firefly) slowly builds up a charge. Once it fills up, it flashes. The moment it flashes, it
+                gives its inactive neighbors some extra charge, and decreases the charge of its active neighbors. This
+                eventually leads to the fireflies syncing up.
+            </div>
+        </details>
+    </div>
+<script>
+var cvs = document.getElementById("cvs");
+var ctx = cvs.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+var width = cvs.width;
+var height = cvs.height;
+const maxCharge = 10;
+var swap = 0;
+
+function mapRange(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
+
+class cell {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.charge = Math.floor(Math.random() * maxCharge);
+        this.received = false;
+        this.sapped = false;
+        this.flashed = false;
+    }
+
+    static arr = [];
+    static caches = [];
+
+    static init() {
+        for (var y = 0; y < height; y++) {
+            var row = [];
+            for (var x = 0; x < width; x++) {
+                row.push(new cell(x, y));
+            }
+            cell.arr.push(row);
+        }
+
+        cell.findNeighbors();
+    }
+
+    static findNeighbors() {
+        cell.caches = [];
+        for (var y = 0; y < height; y++) {
+            var row = [];
+            for (var x = 0; x < width; x++) {
+                var neighborCache = [];
+                for (var i of [
+                    [-1, 1],
+                    [0, 1],
+                    [1, 1],
+                    [1, 0],
+                    [1, -1],
+                    [0, -1],
+                    [-1, -1],
+                    [-1, 0]
+                ]) {
+                    var neighborX = x + i[0];
+                    var neighborY = y + i[1];
+
+                    if (neighborX < 0 || neighborY < 0 || neighborX >= width || neighborY >= height) {
+                        continue;
+                    }
+
+                    neighborCache.push([neighborX,neighborY]);
+                }
+
+                row.push(neighborCache);
+            }
+            cell.caches.push(row);
+        }
+    }
+
+    static update(activeSwap) {
+        var resized = false;
+        var unactiveSwap = activeSwap === 0 ? 1 : 0;
+        var oldWidth = cell.arr[0].length;
+        var oldHeight = cell.arr.length;
+        if (width > oldWidth) {
+            resized = true;
+            for (var y = 0; y < oldHeight; y++) {
+                for (var x = oldWidth; x < width; x++) {
+                    cell.arr[y].push(new cell(x, y));
+                }
+            }
+        }
+
+        if (height > oldHeight) {
+            resized = true;
+            for (var y = oldHeight; y < height; y++) {
+                var row = [];
+                var row2 = [];
+                for (var x = 0; x < width; x++) {
+                    row.push(new cell(x, y));
+                    row2.push(new cell(x, y));
+                }
+                cell.arr.push(row);
+            }
+        }
+
+        if (height < oldHeight) {
+            resized = true;
+            cell.arr.splice(height);
+        }
+
+        if (width < oldWidth) {
+            resized = true;
+            for (var y = 0; y < height; y++) {
+                cell.arr[y].splice(width);
+            }
+        }
+
+        if (resized) {
+            cell.findNeighbors();
+        }
+
+        var imgData = ctx.createImageData(width, height);
+        var dataOffset = 0;
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                var curCell = cell.arr[y][x];
+
+                curCell.step();
+            }
+        }
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                var curCell = cell.arr[y][x];
+
+                var c = curCell.color;
+
+                imgData.data[dataOffset] = c[0];
+                imgData.data[dataOffset + 1] = c[1];
+                imgData.data[dataOffset + 2] = c[2];
+                imgData.data[dataOffset + 3] = c[3];
+
+                dataOffset += 4;
+            }
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                var curCell = cell.arr[y][x];
+                if(curCell.charge >= maxCharge){
+                    curCell.charge = 0;
+                }
+                curCell.received = false;
+                curCell.sapped = false;
+                curCell.flashed = false;
+            }
+        }
+    }
+
+    flash() {
+        this.flashed = true;
+        for (var n of this.neighbors) {
+            var neighbor = cell.arr[n[1]][n[0]];
+            // if(neighbor.charge === maxCharge-1){
+            //     continue;
+            // }
+            // if (neighbor.charge > maxCharge/2) {
+            //     if (futureNeighbor.charge < maxCharge) {
+            //         futureNeighbor.charge += 1;
+            //         futureNeighbor.received = true;
+            //     }
+            // } else {
+            //     if (futureNeighbor.charge > 0) {
+            //         futureNeighbor.charge -= 1;
+            //         futureNeighbor.sapped = true;
+            //     }
+            // }
+
+            // if (futureNeighbor.charge < maxCharge-1) {
+                neighbor.charge += 1;
+                neighbor.received = true;
+                if(neighbor.charge >= maxCharge && !neighbor.flashed){
+                    neighbor.flash();
+                }
+
+            // }
+        }
+    }
+
+    step() {
+        this.charge += 1;
+
+        if (this.charge >= maxCharge) {
+            this.flash();
+        }
+    }
+
+    get neighbors() {
+        return cell.caches[this.y][this.x];
+    }
+
+    get color() {
+        var brightness = mapRange(this.charge, 0, maxCharge, 0, 100) | 0;
+        if (this.charge >= maxCharge) {
+            brightness = 255;
+        }
+        return [brightness, this.received ? 200 : 0, this.sapped ? 200 : 0, 255];
+    }
+}
+
+function update() {
+    cvs.height = window.innerHeight / 75;
+    cvs.width = window.innerWidth / 75;
+    width = cvs.width;
+    height = cvs.height;
+
+    cell.update(swap);
+
+    swap = swap === 0 ? 1 : 0;
+
+
+}
+
+cell.init();
+
+setInterval(update, 32);
+// requestAnimationFrame(update);
+</script>
+</body>
+
+</html>
